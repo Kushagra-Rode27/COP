@@ -1,0 +1,2 @@
+have seperated all the classes into different files but havent yet combined all of them 
+check if only one player class is required or not after this can use the various .h and .cpp files in main part
