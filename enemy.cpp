@@ -20,6 +20,7 @@ enemyDot::enemyDot(int pos)
     //Initialize the velocity
     mVelX = 0;
     mVelY = 16;
+
 }
 
 
@@ -38,6 +39,6 @@ void enemyDot::move( Tile *tiles[] )
     }
 }
 
-void enemyDot::render(SDL_Rect& camera){
+void enemyDot::render(SDL_Rect& camera,SDL_Renderer* gRenderer){
 	genemyDotTexture.render( gRenderer,mBox.x-camera.x, mBox.y -camera.y);
 }

@@ -39,7 +39,7 @@ class Dot2
 
 		//Initializes the variables
 		Dot2();
-
+		Dot2(LTexture gDot2Texture,LTexture gTextTexture,TTF_Font *gFont,SDL_Renderer* gRenderer,Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLow);
 		//Takes key presses and adjusts the dot's velocity
 		void handleEvent2( SDL_Event& e );
 

@@ -30,6 +30,7 @@ Powerup::Powerup(Tile* tile)
 
 	collider.x = position.x;
 	collider.y = position.y;
+
 }
 
 Powerup::~Powerup()
@@ -54,7 +55,7 @@ void Powerup::SetTile(Tile* newTile)
 	}
 }
 
-void Powerup::Render(SDL_Rect& camera)
+void Powerup::Render(SDL_Rect& camera,LTexture powerUpTexture,SDL_Renderer* gRenderer)
 {
 	powerUpTexture.render(gRenderer,position.x- camera.x, position.y- camera.y);
 }

@@ -9,7 +9,6 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 #include "texture.h"
-#include "timer.h"
 #include "tile.h"
 #include "auxFunctions.h"
 #include "Player.h"
@@ -82,9 +81,25 @@ const int TILE_SOME=43;
 
 // till here
 
+Tile* tileSet[ TOTAL_TILES ];
+Dot dot;
+Dot dot2;
+enemyDot enemy1(8);
+enemyDot enemy2(42);
+enemyDot enemy3(81);
 
 
-
+Point n1;
+Point n2;
+Point n3;
+Point n4;
+Point n5;
+Point n6;
+Point n7;
+Point n8;
+Point n9;
+Point n10;
+Point arr[10] = {n1,n2,n3,n4,n5,n6,n7,n8,n9,n10};
 
 
 //Starts up SDL and creates window
@@ -118,9 +133,6 @@ LTexture gTextTexture;
 LTexture pointTexture;
 LTexture powerUpTexture;
 LTexture tasksTexture;
-LTexture gDotTexture;
-LTexture genemyDotTexture;
-LTexture gDot2Texture;
 LTexture gTileTexture;
 SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
 
@@ -314,26 +326,42 @@ bool loadMedia( Tile* tiles[] )
 	bool success = true;
 
 	//Load dot texture
-	if( !gDotTexture.loadFromFile( "assets/character1.png",gRenderer) )
+	if( !dot.gDotTexture.loadFromFile( "assets/character1.png",gRenderer) )
 	{
 		printf( "Failed to load dot texture!\n" );
 		success = false;
 	}
-	if( !genemyDotTexture.loadFromFile( "assets/dog3.png" ,gRenderer) )
+	if( !enemy1.genemyDotTexture.loadFromFile( "assets/dog3.png" ,gRenderer))
 	{
 		printf( "Failed to load dot texture!\n" );
 		success = false;
 	}
-	if( !gDot2Texture.loadFromFile( "assets/character2.png" ,gRenderer) )
+	if( !enemy2.genemyDotTexture.loadFromFile( "assets/dog3.png" ,gRenderer))
 	{
 		printf( "Failed to load dot texture!\n" );
 		success = false;
 	}
-	if( !pointTexture.loadFromFile( "assets/point.bmp",gRenderer ) )
+	if( !enemy3.genemyDotTexture.loadFromFile( "assets/dog3.png" ,gRenderer))
 	{
 		printf( "Failed to load dot texture!\n" );
 		success = false;
 	}
+
+	if( !dot2.gDotTexture.loadFromFile( "assets/character2.png" ,gRenderer) )
+	{
+		printf( "Failed to load dot texture!\n" );
+		success = false;
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		if( !arr[i].pointTexture.loadFromFile( "assets/point.bmp",gRenderer ))
+		{
+			printf( "Failed to load dot texture!\n" );
+			success = false;
+		}
+	}
+	
+	
 
 	if( !powerUpTexture.loadFromFile( "assets/powerup.png" ,gRenderer) )
 	{
@@ -432,9 +460,11 @@ void close( Tile* tiles[] )
 	}
 
 	//Free loaded images
-	gDotTexture.free();
-	genemyDotTexture.free();
-	gDot2Texture.free();
+	dot.gDotTexture.free();
+	enemy1.genemyDotTexture.free();
+	enemy2.genemyDotTexture.free();
+	enemy3.genemyDotTexture.free();
+	dot2.gDotTexture.free();
 	gTileTexture.free();
 	pointTexture.free();
 	//Free loaded images
@@ -612,9 +642,8 @@ int main( int argc, char* argv[] )
 	}
 	else
 	{
-		std :: cout << "init\n";
 		//The level tiles
-		Tile* tileSet[ TOTAL_TILES ];
+		
 
 		//Load media
 		if( !loadMedia( tileSet ) )
@@ -623,7 +652,7 @@ int main( int argc, char* argv[] )
 		}
 		else
 		{	
-			std :: cout << "init2\n";
+			
 			if (SDLNet_Init() == -1) {
 				printf("SDLNet_Init: %s\n", SDLNet_GetError());
 				exit(2);
@@ -636,14 +665,8 @@ int main( int argc, char* argv[] )
 			SDL_Event e;
 
 			//The dot that will be moving around on the screen
-			Dot dot;
-			Dot2 dot2;
-
-			enemyDot enemy1(8);
-			enemyDot enemy2(42);
-			enemyDot enemy3(81);
-
-			Point arr[10];
+			
+			
 			for ( int k=0;k<10;k++){
 				arr[k]=TilePLace(tileSet);
 			}
@@ -799,10 +822,10 @@ int main( int argc, char* argv[] )
 
 			int lastTime = 0,currentTime;
 			//While application is running
-			std :: cout << "init3\n";
+			
 			while( !quit )
 			{
-				std :: cout << "init4\n";
+				
 				//Handle events on queue
 				while( SDL_PollEvent( &e ) != 0 )
 				{
@@ -870,50 +893,49 @@ int main( int argc, char* argv[] )
                     }
 
 					//Handle input for the dot
-					std :: cout << "init5\n";
+					
 					dot.handleEvent( e );
-					dot2.handleEvent2( e );
+					dot2.handleEvent( e );
 				}
 				// const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
 				// dot.handle(currentKeyStates);
 				// dot2.handle(currentKeyStates);
 
 				//Move the dot
-				std :: cout << "init6\n";
-				dot.move( tileSet );
+				
+				dot.move( tileSet,gHigh,gMedium,gLow );
 				dot.setCamera( camera );
 
 				enemy1.move(tileSet);
 				enemy2.move(tileSet);
 				enemy3.move(tileSet);
 				
-				std :: cout << "init7\n";
-				dot2.move2(tileSet);
-				dot2.setCamera2( camera);
+				
+				dot2.move(tileSet,gHigh,gMedium,gLow);
+				dot2.setCamera( camera);
 				//Clear screen
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( gRenderer );
 
 				//Render level
-				std :: cout << "init8\n";
+				
 				for( int i = 0; i < TOTAL_TILES; ++i )
 				{
-					tileSet[ i ]->render( gRenderer,camera,gTileTexture,&gTileClips[ TOTAL_TILE_SPRITES ]);
+					tileSet[ i ]->render( gRenderer,camera,&gTileTexture,&gTileClips[ TOTAL_TILE_SPRITES ]);
 				}
-				std :: cout << "init9\n";
 				//Render dot
-				dot.render( camera );
-				enemy1.render(camera);
-				enemy2.render(camera);
-				enemy3.render(camera);
-				dot2.render2(camera);
+				dot.render( camera,gTextTexture,gFont,gRenderer);
+				enemy1.render(camera,gRenderer);
+				enemy2.render(camera,gRenderer);
+				enemy3.render(camera,gRenderer);
+				dot2.render(camera,gTextTexture,gFont,gRenderer);
 
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) quit=true;
-				if (dot2.myfunctions.checkCollision(dot2.mBox2,enemy1.mBox)) quit=true;
+				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy1.mBox)) quit=true;
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy2.mBox)) quit=true;
-				if (dot2.myfunctions.checkCollision(dot2.mBox2,enemy2.mBox)) quit=true;
+				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy2.mBox)) quit=true;
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy3.mBox)) quit=true;
-				if (dot2.myfunctions.checkCollision(dot2.mBox2,enemy3.mBox)) quit=true;
+				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy3.mBox)) quit=true;
 
 				currentTime1 = SDL_GetTicks();
 				if(currentTime1 > lastTime1 + 1000) //ms to wait before change angle
@@ -935,7 +957,7 @@ int main( int argc, char* argv[] )
 						arr1[k].GetTile()->SetPowerUp =true; 
 					}
 					dot.speed1=false;
-					dot2.speed2=false;
+					dot2.speed1=false;
 					lastTime = currentTime;
 				}
 				// p1.Render(camera);
@@ -948,18 +970,18 @@ int main( int argc, char* argv[] )
 				
 
 				for (int k=0;k<10;k++){
-					if (arr[k].GetTile()->SetPoint==true) arr[k].Render(camera);
+					if (arr[k].GetTile()->SetPoint==true) arr[k].Render(camera,gRenderer,pointTexture);
 				}
 
 				for (int k=0;k<5;k++){
-					if (arr1[k].GetTile()->SetPowerUp==true) arr1[k].Render(camera);
+					if (arr1[k].GetTile()->SetPowerUp==true) arr1[k].Render(camera,powerUpTexture,gRenderer);
 				}
 
 				for (int k=0;k<4;k++){
-					if (finaltask[k].GetTile()->SetTask==true) finaltask[k].Render(camera);
+					if (finaltask[k].GetTile()->SetTask==true) finaltask[k].Render(camera,tasksTexture,gRenderer);
 				}
 				//Update screen
-				std :: cout << "init10\n";
+				
 				SDL_RenderPresent( gRenderer );
 				
 				SDL_Delay(100);

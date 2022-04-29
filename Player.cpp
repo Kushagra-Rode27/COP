@@ -44,6 +44,27 @@ Dot::Dot()
     mVelY = 0;
 }
 
+//Dot :: Dot(LTexture gDotTexture,LTexture gTextTexture,TTF_Font *gFont,SDL_Renderer* gRenderer,Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLow){
+    //Initialize the collision box
+//     mBox.x = 8*32;
+//     mBox.y = 0;
+// 	mBox.w = DOT_WIDTH;
+// 	mBox.h = DOT_HEIGHT;
+
+//     //Initialize the velocity
+//     mVelX = 0;
+//     mVelY = 0;
+    
+//     gDotTexture = gDotTexture;
+//     gTextTexture = gTextTexture;
+//     gFont = gFont;
+//     gRenderer = gRenderer;
+//     gHigh = gHigh;
+//     gMedium = gMedium;
+//     gLow = gLow;
+
+// }
+
 void Dot::handleEvent( SDL_Event& e )
 {
     //If a key was pressed
@@ -156,7 +177,7 @@ void Dot::handle(const Uint8* currentKeyStates)
     // }
 }
 
-void Dot::move( Tile *tiles[] )
+void Dot::move( Tile *tiles[],Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLow )
 {
 
 	for (int k=0;k<TOTAL_TILES;k++){
@@ -237,14 +258,15 @@ void Dot::setCamera( SDL_Rect& camera )
 	}
 }
 
-void Dot::render( SDL_Rect& camera )
+void Dot::render( SDL_Rect& camera,LTexture TextTexture,TTF_Font *gFont ,SDL_Renderer* gRenderer )
 {
     //Show the dot
 	gDotTexture.render( gRenderer, mBox.x - camera.x, mBox.y - camera.y );
 	score_text="score: "+std::to_string(score);
 	SDL_Color textColor = { 0, 0, 0 };
-	gTextTexture.loadFromRenderedText(score_text,textColor,gFont,gRenderer);
-	gTextTexture.render(gRenderer, mBox.x - camera.x -40, mBox.y - camera.y -60);     
+    
+	TextTexture.loadFromRenderedText("1",textColor,gFont,gRenderer);
+	TextTexture.render(gRenderer, mBox.x - camera.x -40, mBox.y - camera.y -60);     
 	// SDL_Color textColor = { 255, 255, 255, 0 };
 	// SDL_Surface* textSurface = TTF_RenderText_Solid(font, score_text.c_str(), textColor);
 	// LTexture* text = SDL_CreateTextureFromSurface(renderer, textSurface);
@@ -254,11 +276,8 @@ void Dot::render( SDL_Rect& camera )
 	// SDL_Rect renderQuad = { 20, win_height - 30, text_width, text_height };
 	// SDL_RenderCopy(renderer, text, NULL, &renderQuad);
 	// SDL_DestroyTexture(text);
-	gTextTexture.loadFromRenderedText("Tasks Completed P1:" + std::to_string(tasksComp),textColor,gFont,gRenderer);
-	gTextTexture.render(gRenderer,0,40);
 
-	gTextTexture.loadFromRenderedText("Cricket ground",textColor,gFont,gRenderer);
-	gTextTexture.render(gRenderer,1120-camera.x,500-camera.y);
-
-	//std::cout<<mBox.x- camera.x<<" "<<mBox.y-camera.y<<"\n";
+	TextTexture.loadFromRenderedText("Tasks Completed P1:" + std::to_string(tasksComp),textColor,gFont,gRenderer);
+    TextTexture.render(gRenderer,0,40);
+    
 }

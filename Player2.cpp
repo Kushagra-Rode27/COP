@@ -32,6 +32,12 @@ bool Dot2 :: touchesWall( SDL_Rect box, Tile* tiles[] )
 
 Dot2::Dot2()
 {
+    
+}
+
+
+Dot2 :: Dot2(LTexture gDot2Texture,LTexture gTextTexture,TTF_Font *gFont,SDL_Renderer* gRenderer,Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLow){
+
     //Initialize the collision box
     mBox2.x = 8*32;
     mBox2.y = 0;
@@ -41,6 +47,15 @@ Dot2::Dot2()
     //Initialize the velocity
     mVelX2 = 0;
     mVelY2 = 0;
+    
+    gDot2Texture = gDot2Texture;
+    gTextTexture = gTextTexture;
+    gFont = gFont;
+    gRenderer = gRenderer;
+    gHigh = gHigh;
+    gMedium = gMedium;
+    gLow = gLow;
+
 }
 
 

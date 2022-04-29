@@ -53,7 +53,7 @@ void Point::SetTile(Tile* newTile)
 	}
 }
 
-void Point::Render(SDL_Rect& camera)
+void Point::Render(SDL_Rect& camera,SDL_Renderer* gRenderer, LTexture pointTexture)
 {
 	pointTexture.render(gRenderer,position.x- camera.x, position.y- camera.y);
 }

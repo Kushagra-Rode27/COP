@@ -30,11 +30,11 @@ class enemyDot
 		void move( Tile *tiles[] );
 
 		//Shows the dot on the screen
-		void render(SDL_Rect& camera);
+		void render(SDL_Rect& camera,SDL_Renderer* gRenderer);
 
 		//Collision box of the dot
 		SDL_Rect mBox;
-		SDL_Renderer* gRenderer;
+		
 		LTexture genemyDotTexture;
 
     private:

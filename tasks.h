@@ -36,7 +36,7 @@ public:
 	void SetTile(Tile* newTile);
 
 	// Renders pacman
-	void Render(SDL_Rect& camera);
+	void Render(SDL_Rect& camera,LTexture tasksTexture,SDL_Renderer* gRenderer);
 
 	// Releases texture memory
 	// void Free();
@@ -53,8 +53,6 @@ public:
 	// Returns wall's tile
 	Tile* GetTile();
 
-    LTexture tasksTexture;
-    SDL_Renderer* gRenderer;
 private:
 
 	SDL_Point position;
