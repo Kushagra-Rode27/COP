@@ -3,7 +3,6 @@
 
 using namespace std;   
 
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
@@ -12,6 +11,7 @@ using namespace std;
 #include <SDL2/SDL_ttf.h>
 #include "tile.h"
 #include <SDL2/SDL_mixer.h>
+#include "auxFunctions.h"
 class Dot
 {
     public:
@@ -70,7 +70,7 @@ class Dot
 		int tasksComp = 0;
 		//Collision box of the dot
 		SDL_Rect mBox;
-
+		bool speed1;
 
 		functions myfunctions  ;
 

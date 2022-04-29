@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 #include <SDL2/SDL_ttf.h>
-#include"texture.h"
+#include "texture.h"
 
 LTexture::LTexture()
 {
@@ -76,7 +76,7 @@ bool LTexture::loadFromRenderedText( std::string textureText, SDL_Color textColo
         mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
 		if( mTexture == NULL )
 		{
-			printf( "Unable to create texture from rendered text! SDL Error: %s %s\n", textSurface, SDL_GetError() );
+			printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
 		}
 		else
 		{
@@ -129,7 +129,7 @@ void LTexture::setAlpha( Uint8 alpha )
 	SDL_SetTextureAlphaMod( mTexture, alpha );
 }
 
-void LTexture::render( SDL_Renderer*  gRenderer,int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE )
+void LTexture::render( SDL_Renderer*  gRenderer,int x, int y, SDL_Rect* clip)
 {
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
@@ -140,9 +140,9 @@ void LTexture::render( SDL_Renderer*  gRenderer,int x, int y, SDL_Rect* clip = N
 		renderQuad.w = clip->w;
 		renderQuad.h = clip->h;
 	}
-
+	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	//Render to screen
-	SDL_RenderCopyEx( gRenderer, mTexture, clip, &renderQuad, angle, center, flip );
+	SDL_RenderCopyEx( gRenderer, mTexture, clip, &renderQuad, 0.0, NULL, flip );
 }
 
 int LTexture::getWidth()

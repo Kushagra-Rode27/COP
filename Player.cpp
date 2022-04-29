@@ -254,7 +254,7 @@ void Dot::render( SDL_Rect& camera )
 	// SDL_Rect renderQuad = { 20, win_height - 30, text_width, text_height };
 	// SDL_RenderCopy(renderer, text, NULL, &renderQuad);
 	// SDL_DestroyTexture(text);
-	gTextTexture.loadFromRenderedText("Tasks Completed P1:" + std::to_string(tasksComp),textColor);
+	gTextTexture.loadFromRenderedText("Tasks Completed P1:" + std::to_string(tasksComp),textColor,gFont,gRenderer);
 	gTextTexture.render(gRenderer,0,40);
 
 	gTextTexture.loadFromRenderedText("Cricket ground",textColor,gFont,gRenderer);

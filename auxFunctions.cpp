@@ -6,7 +6,12 @@
 #include "texture.h"
 #include "auxFunctions.h"
 
-bool checkCollision( SDL_Rect a, SDL_Rect b )
+
+functions :: functions(){
+    
+}
+
+bool functions :: checkCollision( SDL_Rect a, SDL_Rect b )
 {
     //The sides of the rectangles
     int leftA, leftB;

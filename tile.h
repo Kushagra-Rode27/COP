@@ -24,7 +24,7 @@ class Tile
 		Tile( int x, int y, int tileType );
 
 		//Shows the tile
-		void render( SDL_Renderer* gRenderer ,SDL_Rect &camera, LTexture *gTileTexture ,SDL_Rect *gTileClips);
+		void render( SDL_Renderer* gRenderer ,SDL_Rect &camera, LTexture gTileTexture ,SDL_Rect gTileClips[]);
 
 		//Get the tile type
 		int getType();

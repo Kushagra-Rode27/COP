@@ -1,0 +1,1041 @@
+//Using SDL, SDL_image, standard IO, strings, and file streams
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_net.h>
+#include <stdio.h>
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
+#include "texture.h"
+#include "timer.h"
+#include "tile.h"
+#include "auxFunctions.h"
+#include "Player.h"
+#include "Player2.h"
+#include "point.h"
+#include "powerup.h"
+#include "tasks.h"
+#include "enemy.h"
+//sudo apt install libsdl2-mixer-dev
+
+//38,25
+//47,23
+//63,24
+//6,5
+//10,14 yulu
+//5,19
+//6,28
+//lib 49,17
+//57,13
+//51,6
+
+int scorep1;
+int scorep2;
+bool speed1;
+bool speed2;
+
+
+//g++ 39_tiling.cpp `sdl2-config --libs --cflags` -ggdb3 -O0 -Wall -lSDL2_image -lSDL2_net -lm 
+//sudo apt install libsdl2-ttf-2
+
+SDL_Renderer* rend1;
+SDL_Renderer* rende;
+SDL_Texture* tex;
+//Screen dimension constants
+const int SCREEN_WIDTH = 1400;
+const int SCREEN_HEIGHT = 700;
+
+// const int SCREEN_WIDTH = 3200;
+// const int SCREEN_HEIGHT = 1600;
+
+//The dimensions of the level
+const int LEVEL_WIDTH = 3200;
+const int LEVEL_HEIGHT = 1600;
+
+//Tile constants
+const int TILE_WIDTH = 32;
+const int TILE_HEIGHT = 32;
+const int TOTAL_TILES = 50*100;
+const int TOTAL_TILE_SPRITES = 100;
+
+//The different tile sprites
+const int TILE_NONE = 0;
+const int TILE_GREEN = 1;
+const int TILE_ROAD = 13;
+const int TILE_HOSTEL = 46;
+const int TILE_STORE = 65;
+const int TILE_ANOTHER = 74;
+const int TILE_SOME=43;
+
+//Texture wrapper class
+
+// till here in texture.h
+
+
+// from here in tile.h slight change in render function
+//The tile
+
+// in Player1.h
+//The dot that will move around on the screen
+
+// till here
+
+
+
+
+
+
+//Starts up SDL and creates window
+bool init();
+
+//Loads media
+bool loadMedia( Tile* tiles[] );
+
+//Frees media and shuts down SDL
+void close( Tile* tiles[] );
+
+
+
+//Sets tiles from tile map
+bool setTiles( Tile *tiles[] );
+
+//The window we'll be rendering to
+SDL_Window* gWindow = NULL;
+
+//The window renderer
+SDL_Renderer* gRenderer = NULL;
+
+//Scene textures
+
+//Globally used font
+TTF_Font *gFont = NULL;
+
+//Rendered texture
+LTexture gTextTexture;
+
+LTexture pointTexture;
+LTexture powerUpTexture;
+LTexture tasksTexture;
+LTexture gDotTexture;
+LTexture genemyDotTexture;
+LTexture gDot2Texture;
+LTexture gTileTexture;
+SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
+
+//The music that will be played
+Mix_Music *gMusic = NULL;
+
+//The sound effects that will be used
+Mix_Chunk *gScratch = NULL;
+Mix_Chunk *gHigh = NULL;
+Mix_Chunk *gMedium = NULL;
+Mix_Chunk *gLow = NULL;
+
+std::string score_text;
+std::string score_text2;
+
+
+//from here texture.cpp
+
+// LTexture in texture.cpp some change has been done in function definition of loadfromfile. grenderer has been passed as parameter
+
+
+
+
+// in tile.cpp with some modifications
+
+
+
+
+// in Player.cpp
+
+
+
+int ti = 180;
+int lastTime1 = 0,currentTime1;
+void timerRender(){
+	SDL_Color textColor = { 0, 0, 0 };
+	gTextTexture.loadFromRenderedText(std::to_string(ti) + " seconds",textColor,gFont,gRenderer);
+	gTextTexture.render( gRenderer,0, 0);
+}
+
+
+// in point.cpp
+
+
+// Powerup in powerup.cpp
+
+
+// Tasks
+
+
+
+bool init()
+{
+	//Initialization flag
+	bool success = true;
+
+	//Initialize SDL
+	if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0 )
+	{
+		printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
+		success = false;
+	}
+	else
+	{
+		//Set texture filtering to linear
+		if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
+		{
+			printf( "Warning: Linear texture filtering not enabled!" );
+		}
+
+
+		//Create window
+		gWindow = SDL_CreateWindow( "IITD Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		if( gWindow == NULL )
+		{
+			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
+			success = false;
+		}
+		else
+		{
+			Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+			rend1 = SDL_CreateRenderer(gWindow, -1, render_flags);
+			if (!rend1)
+			{
+			printf("error creating renderer: %s\n", SDL_GetError());
+			SDL_DestroyWindow(gWindow);
+			SDL_Quit();
+			return 1;
+			}
+
+			// load the image into memory using SDL_image library function
+			
+
+
+			SDL_Surface* surface = IMG_Load("assets/start.png");
+			if (!surface)
+			{
+				printf("error creating surface\n");
+				SDL_DestroyRenderer(rend1);
+				SDL_DestroyWindow(gWindow);
+				SDL_Quit();
+				return 1;
+			}
+
+			// load the image data into the graphics hardware's memory
+			tex = SDL_CreateTextureFromSurface(rend1, surface);
+			SDL_FreeSurface(surface);
+			if (!tex)
+			{
+				printf("error creating texture: %s\n", SDL_GetError());
+				SDL_DestroyRenderer(rend1);
+				SDL_DestroyWindow(gWindow);
+				SDL_Quit();
+				return 1;
+			}
+
+			// clear the window
+			SDL_RenderClear(rend1);
+			
+			// draw the image to the window
+			SDL_RenderCopy(rend1, tex, NULL, NULL);
+			SDL_RenderPresent(rend1);
+
+			// wait a few seconds
+			SDL_Event initial;
+			bool startscreen=true;
+			int iter=0;
+			while(startscreen){
+				while( SDL_PollEvent( &initial ) != 0 )
+				{
+					//Handle key press
+                    if( initial.type == SDL_KEYDOWN)
+                    {
+                        if (initial.key.keysym.sym==SDLK_1){
+							startscreen=false;
+						}
+                    }
+				}
+				iter+=1;
+				if (iter==50) startscreen=false;
+				SDL_Delay(100);
+			}
+
+			// clean up resources before exiting
+			SDL_DestroyTexture(tex);
+			SDL_DestroyRenderer(rend1);
+
+			//Create renderer for window
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+			if( gRenderer == NULL )
+			{
+				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
+				success = false;
+			}
+			else
+			{
+				//Initialize renderer color
+				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+
+				//Initialize PNG loading
+				int imgFlags = IMG_INIT_PNG;
+				if( !( IMG_Init( imgFlags ) & imgFlags ) )
+				{
+					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+					success = false;
+				}
+			}
+			 //Initialize SDL_ttf
+			if( TTF_Init() == -1 )
+			{
+				printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
+				success = false;
+			}
+
+			 //Initialize SDL_mixer
+			if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+			{
+				printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
+				success = false;
+			}
+
+		}
+	}
+
+	return success;
+}
+
+bool loadMedia( Tile* tiles[] )
+{
+	//Loading success flag
+	bool success = true;
+
+	//Load dot texture
+	if( !gDotTexture.loadFromFile( "assets/character1.png",gRenderer) )
+	{
+		printf( "Failed to load dot texture!\n" );
+		success = false;
+	}
+	if( !genemyDotTexture.loadFromFile( "assets/dog3.png" ,gRenderer) )
+	{
+		printf( "Failed to load dot texture!\n" );
+		success = false;
+	}
+	if( !gDot2Texture.loadFromFile( "assets/character2.png" ,gRenderer) )
+	{
+		printf( "Failed to load dot texture!\n" );
+		success = false;
+	}
+	if( !pointTexture.loadFromFile( "assets/point.bmp",gRenderer ) )
+	{
+		printf( "Failed to load dot texture!\n" );
+		success = false;
+	}
+
+	if( !powerUpTexture.loadFromFile( "assets/powerup.png" ,gRenderer) )
+	{
+		printf( "Failed to load dot texture!\n" );
+		success = false;
+	}
+
+	if( !tasksTexture.loadFromFile( "assets/task.png" ,gRenderer) )
+	{
+		printf( "Failed to load dot texture!\n" );
+		success = false;
+	}
+
+	//Load tile texture
+	if( !gTileTexture.loadFromFile( "assets/tiles.png" ,gRenderer) )
+	{
+		printf( "Failed to load tile set texture!\n" );
+		success = false;
+	}
+	
+	score_text="score: "+std::to_string(scorep1);
+	gFont = TTF_OpenFont( "metal lord.ttf", 28 );
+    if( gFont == NULL )
+    {
+        printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
+        success = false;
+    }
+    else
+    {
+        //Render text
+        SDL_Color textColor = { 0, 0, 0 };
+        if( !gTextTexture.loadFromRenderedText( score_text, textColor ,gFont,gRenderer) )
+        {
+            printf( "Failed to render text texture!\n" );
+            success = false;
+        }
+    }
+	
+    //Load music
+    gMusic = Mix_LoadMUS( "sounds/beat.wav" );
+    if( gMusic == NULL )
+    {
+        printf( "Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError() );
+        success = false;
+    }
+    
+    //Load sound effects
+    gScratch = Mix_LoadWAV( "sounds/scratch.wav" );
+    if( gScratch == NULL )
+    {
+        printf( "Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        success = false;
+    }
+    
+    gHigh = Mix_LoadWAV( "sounds/high.wav" );
+    if( gHigh == NULL )
+    {
+        printf( "Failed to load high sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        success = false;
+    }
+
+    gMedium = Mix_LoadWAV( "sounds/medium.wav" );
+    if( gMedium == NULL )
+    {
+        printf( "Failed to load medium sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        success = false;
+    }
+
+    gLow = Mix_LoadWAV( "sounds/low.wav" );
+    if( gLow == NULL )
+    {
+        printf( "Failed to load low sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        success = false;
+    }
+
+	//Load tile map
+	if( !setTiles( tiles ) )
+	{
+		printf( "Failed to load tile set!\n" );
+		success = false;
+	}
+
+	return success;
+}
+
+void close( Tile* tiles[] )
+{
+	//Deallocate tiles
+	for( int i = 0; i < TOTAL_TILES; ++i )
+	{
+		 if( tiles[ i ] != NULL )
+		 {
+			delete tiles[ i ];
+			tiles[ i ] = NULL;
+		 }
+	}
+
+	//Free loaded images
+	gDotTexture.free();
+	genemyDotTexture.free();
+	gDot2Texture.free();
+	gTileTexture.free();
+	pointTexture.free();
+	//Free loaded images
+    gTextTexture.free();
+	powerUpTexture.free();
+	tasksTexture.free();
+    //Free global font
+    TTF_CloseFont( gFont );
+    gFont = NULL;
+
+    //Free the sound effects
+    Mix_FreeChunk( gScratch );
+    Mix_FreeChunk( gHigh );
+    Mix_FreeChunk( gMedium );
+    Mix_FreeChunk( gLow );
+    gScratch = NULL;
+    gHigh = NULL;
+    gMedium = NULL;
+    gLow = NULL;
+    
+    //Free the music
+    Mix_FreeMusic( gMusic );
+    gMusic = NULL;
+
+	//Destroy window	
+	//SDL_DestroyRenderer( gRenderer );
+	SDL_DestroyWindow( gWindow );
+	gWindow = NULL;
+	gRenderer = NULL;
+
+	//Quit SDL subsystems
+	Mix_Quit();
+	TTF_Quit();
+	IMG_Quit();
+	SDL_Quit();
+}
+
+//functions.cpp and .h
+
+// till here
+
+bool setTiles( Tile* tiles[] )
+{
+	//Success flag
+	bool tilesLoaded = true;
+
+    //The tile offsets
+    int x = 0, y = 0;
+
+    //Open the map
+    std::ifstream map( "./lazy.map" );
+
+    //If the map couldn't be loaded
+    if( map.fail() )
+    {
+		printf( "Unable to load map file!\n" );
+		tilesLoaded = false;
+    }
+	else
+	{
+		//Initialize the tiles
+		for( int i = 0; i < TOTAL_TILES; ++i )
+		{
+			//Determines what kind of tile will be made
+			int tileType = -1;
+
+			//Read tile from map file
+			map >> tileType;
+
+			//If the was a problem in reading the map
+			if( map.fail() )
+			{
+				//Stop loading map
+				printf( "Error loading map: Unexpected end of file!\n" );
+				tilesLoaded = false;
+				break;
+			}
+
+			//If the number is a valid tile number && ( tileType < TOTAL_TILE_SPRITES )
+			if( ( tileType >= 0 ) )
+			{
+				tiles[ i ] = new Tile( x, y, tileType );
+			}
+			//If we don't recognize the tile type
+			else
+			{
+				//Stop loading map
+				printf( "Error loading map: Invalid tile type at %d!\n", i );
+				tilesLoaded = false;
+				break;
+			}
+
+			//Move to next tile spot
+			x += TILE_WIDTH;
+
+			//If we've gone too far
+			if( x >= LEVEL_WIDTH )
+			{
+				//Move back
+				x = 0;
+
+				//Move to the next row
+				y += TILE_HEIGHT;
+			}
+		}
+		
+		//Clip the sprite sheet
+		if( tilesLoaded )
+		{
+			gTileClips[ TILE_NONE ].x = 0;
+			gTileClips[ TILE_NONE ].y = 0;
+			gTileClips[ TILE_NONE ].w = TILE_WIDTH;
+			gTileClips[ TILE_NONE ].h = TILE_HEIGHT;
+
+			gTileClips[ TILE_GREEN ].x = 0;
+			gTileClips[ TILE_GREEN ].y = 32;
+			gTileClips[ TILE_GREEN ].w = TILE_WIDTH;
+			gTileClips[ TILE_GREEN ].h = TILE_HEIGHT;
+
+			gTileClips[ TILE_ROAD ].x = 0;
+			gTileClips[ TILE_ROAD ].y = 64;
+			gTileClips[ TILE_ROAD ].w = TILE_WIDTH;
+			gTileClips[ TILE_ROAD ].h = TILE_HEIGHT;
+
+			gTileClips[ TILE_STORE ].x = 32;
+			gTileClips[ TILE_STORE ].y = 0;
+			gTileClips[ TILE_STORE ].w = TILE_WIDTH;
+			gTileClips[ TILE_STORE ].h = TILE_HEIGHT;
+
+			gTileClips[ TILE_ANOTHER ].x = 64;
+			gTileClips[ TILE_ANOTHER ].y = 0;
+			gTileClips[ TILE_ANOTHER ].w = TILE_WIDTH;
+			gTileClips[ TILE_ANOTHER ].h = TILE_HEIGHT;
+
+			gTileClips[ TILE_SOME ].x = 64;
+			gTileClips[ TILE_SOME ].y = 32;
+			gTileClips[ TILE_SOME ].w = TILE_WIDTH;
+			gTileClips[ TILE_SOME ].h = TILE_HEIGHT;
+
+			gTileClips[ TILE_HOSTEL ].x = 160;
+			gTileClips[ TILE_HOSTEL ].y = 160;
+			gTileClips[ TILE_HOSTEL ].w = TILE_WIDTH;
+			gTileClips[ TILE_HOSTEL ].h = TILE_HEIGHT;
+		}
+	}
+
+    //Close the file
+    map.close();
+
+    //If the map was loaded fine
+    return tilesLoaded;
+}
+
+
+
+Point TilePLace(Tile* tiles[]){
+	srand(time(0));
+	for ( int i = 0; i < TOTAL_TILES; 	i++ ){
+		int j=rand()%5000;
+		if (tiles[j]->getType() == TILE_ROAD && !tiles[j]->SetPoint){
+			
+			return Point(tiles[j]);
+		}
+		
+	}
+	return Point(tiles[0]);
+}
+
+int main( int argc, char* argv[] )
+{
+	//Start up SDL and create window
+	if( !init() )
+	{
+		printf( "Failed to initialize!\n" );
+	}
+	else
+	{
+		std :: cout << "init\n";
+		//The level tiles
+		Tile* tileSet[ TOTAL_TILES ];
+
+		//Load media
+		if( !loadMedia( tileSet ) )
+		{
+			printf( "Failed to load media!\n" );
+		}
+		else
+		{	
+			std :: cout << "init2\n";
+			if (SDLNet_Init() == -1) {
+				printf("SDLNet_Init: %s\n", SDLNet_GetError());
+				exit(2);
+			}
+
+			//Main loop flag
+			bool quit = false;
+
+			//Event handler
+			SDL_Event e;
+
+			//The dot that will be moving around on the screen
+			Dot dot;
+			Dot2 dot2;
+
+			enemyDot enemy1(8);
+			enemyDot enemy2(42);
+			enemyDot enemy3(81);
+
+			Point arr[10];
+			for ( int k=0;k<10;k++){
+				arr[k]=TilePLace(tileSet);
+			}
+			// Point p1=TilePLace(tileSet);
+			// Point p2=TilePLace(tileSet);
+			Powerup p1(tileSet[100*4 + 5]);
+			Powerup p2(tileSet[100*5 + 14]);
+			Powerup p3(tileSet[100*10 + 5]);
+			Powerup p4(tileSet[100*17 + 5]);
+			Powerup p5(tileSet[100*8 + 24]);
+			Powerup p6(tileSet[100*20 + 22]);
+
+			Powerup arr1[6] = {p1,p2,p3,p4,p5,p6};
+
+
+			Tasks t1(tileSet[100*24 + 38]);
+			Tasks t2(tileSet[100*22 + 47]);
+			Tasks t3(tileSet[100*23 + 64]);
+			Tasks t4(tileSet[100*6 + 5]);
+			Tasks t5(tileSet[100*16 + 49]);
+			Tasks t6(tileSet[100*12 + 57]);
+			Tasks t7(tileSet[100*5 + 51]);
+			Tasks t8(tileSet[100*18 + 5]);
+			Tasks t9(tileSet[100*27 + 6]);
+
+
+			// int location[9] = {100*24 + 38,100*22 + 47,100*23 + 64,100*4 + 8,100*16 + 49};
+			Tasks task[9] = {t1,t2,t3,t4,t5,t6,t7,t8,t9};
+
+			Tasks finaltask[4];
+			srand(time(0));
+			for (int i = 0; i < 4; i++)
+			{
+				int k = rand() % 9;
+				finaltask[i] = task[k];
+				
+			}	
+			// Point p2(tileSet[1]);
+
+			//Level camera
+			SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+
+			bool done = false;
+
+			if (argc == 2 && strcmp(argv[1], "server") == 0) {
+				printf("Starting server...\n");
+				TCPsocket server, client;
+				IPaddress ip;
+				if (SDLNet_ResolveHost(&ip, NULL, 9999) == -1) {
+				printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+				exit(1);
+				}
+				server = SDLNet_TCP_Open(&ip);
+				if (!server) {
+				printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+				exit(2);
+				}
+				while (!done) {
+				/* try to accept a connection */
+				client = SDLNet_TCP_Accept(server);
+				if (!client) { /* no connection accepted */
+					/*printf("SDLNet_TCP_Accept: %s\n",SDLNet_GetError()); */
+					SDL_Delay(100); /*sleep 1/10th of a second */
+					continue;
+				}
+
+				/* get the clients IP and port number */
+				IPaddress *remoteip;
+				remoteip = SDLNet_TCP_GetPeerAddress(client);
+				if (!remoteip) {
+					printf("SDLNet_TCP_GetPeerAddress: %s\n", SDLNet_GetError());
+					continue;
+				}
+
+				/* print out the clients IP and port number */
+				Uint32 ipaddr;
+				ipaddr = SDL_SwapBE32(remoteip->host);
+				printf("Accepted a connection from %d.%d.%d.%d port %hu\n", ipaddr >> 24,
+						(ipaddr >> 16) & 0xff, (ipaddr >> 8) & 0xff, ipaddr & 0xff,
+						remoteip->port);
+
+				while (1) {
+					/* read the buffer from client */
+					char message[1024];
+					int len = SDLNet_TCP_Recv(client, message, 1024);
+					if (!len) {
+					printf("SDLNet_TCP_Recv: %s\n", SDLNet_GetError());
+					break;
+					}
+					/* print out the message */
+					printf("Received: %.*s\n", len, message);
+					//break;
+					if (message[0] == 'q') {
+					printf("Disconecting on a q\n");
+					break;
+					}
+					if (message[0] == 'Q') {
+					printf("Closing server on a Q.\n");
+					done = true;
+					break;
+					}
+				}
+				break;
+				SDLNet_TCP_Close(client);
+				}
+			} else if (argc == 2 && strcmp(argv[1], "client") == 0) {
+				printf("Starting client...\n");
+				IPaddress ip;
+				TCPsocket tcpsock;
+				//192.168.1.2
+				if (SDLNet_ResolveHost(&ip, "192.168.29.119", 9999) == -1) {
+				printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+				exit(1);
+				}
+
+				tcpsock = SDLNet_TCP_Open(&ip);
+				if (!tcpsock) {
+				printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+				exit(2);
+				}
+
+				while (1) {
+				printf("message: ");
+				//break;
+				char message[1024];
+				fgets(message, 1024, stdin);
+				int len = strlen(message);
+
+				/* strip the newline */
+				message[len - 1] = '\0';
+
+				if (len) {
+					int result;
+
+					/* print out the message */
+					printf("Sending: %.*s\n", len, message);
+
+					result =
+						SDLNet_TCP_Send(tcpsock, message, len); /* add 1 for the NULL */
+					if (result < len)
+					printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+				}
+
+				if (len == 2 && tolower(message[0]) == 'q') {
+					break;
+				}
+				}
+
+				SDLNet_TCP_Close(tcpsock);
+			} else {
+				printf("Choose server or client\n");
+			}
+
+			int lastTime = 0,currentTime;
+			//While application is running
+			std :: cout << "init3\n";
+			while( !quit )
+			{
+				std :: cout << "init4\n";
+				//Handle events on queue
+				while( SDL_PollEvent( &e ) != 0 )
+				{
+					//User requests quit
+
+					if( e.type == SDL_QUIT )
+					{
+						quit = true;
+					}
+					//Handle key press
+                    else if( e.type == SDL_KEYDOWN )
+                    {
+                        switch( e.key.keysym.sym )
+                        {
+                            //Play high sound effect
+                            case SDLK_1:
+                            Mix_PlayChannel( -1, gHigh, 0 );
+                            break;
+                            
+                            //Play medium sound effect
+                            case SDLK_2:
+                            Mix_PlayChannel( -1, gMedium, 0 );
+                            break;
+                            
+                            //Play low sound effect
+                            case SDLK_3:
+                            Mix_PlayChannel( -1, gLow, 0 );
+                            break;
+                            
+                            //Play scratch sound effect
+                            case SDLK_4:
+                            Mix_PlayChannel( -1, gScratch, 0 );
+                            break;
+
+							case SDLK_9:
+                            //If there is no music playing
+                            if( Mix_PlayingMusic() == 0 )
+                            {
+                                //Play the music
+                                Mix_PlayMusic( gMusic, -1 );
+                            }
+                            //If music is being played
+                            else
+                            {
+                                //If the music is paused
+                                if( Mix_PausedMusic() == 1 )
+                                {
+                                    //Resume the music
+                                    Mix_ResumeMusic();
+                                }
+                                //If the music is playing
+                                else
+                                {
+                                    //Pause the music
+                                    Mix_PauseMusic();
+                                }
+                            }
+                            break;
+                            
+                            case SDLK_0:
+                            //Stop the music
+                            Mix_HaltMusic();
+                            break;
+                        }
+                    }
+
+					//Handle input for the dot
+					std :: cout << "init5\n";
+					dot.handleEvent( e );
+					dot2.handleEvent2( e );
+				}
+				// const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
+				// dot.handle(currentKeyStates);
+				// dot2.handle(currentKeyStates);
+
+				//Move the dot
+				std :: cout << "init6\n";
+				dot.move( tileSet );
+				dot.setCamera( camera );
+
+				enemy1.move(tileSet);
+				enemy2.move(tileSet);
+				enemy3.move(tileSet);
+				
+				std :: cout << "init7\n";
+				dot2.move2(tileSet);
+				dot2.setCamera2( camera);
+				//Clear screen
+				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_RenderClear( gRenderer );
+
+				//Render level
+				std :: cout << "init8\n";
+				for( int i = 0; i < TOTAL_TILES; ++i )
+				{
+					tileSet[ i ]->render( gRenderer,camera,gTileTexture,&gTileClips[ TOTAL_TILE_SPRITES ]);
+				}
+				std :: cout << "init9\n";
+				//Render dot
+				dot.render( camera );
+				enemy1.render(camera);
+				enemy2.render(camera);
+				enemy3.render(camera);
+				dot2.render2(camera);
+
+				if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) quit=true;
+				if (dot2.myfunctions.checkCollision(dot2.mBox2,enemy1.mBox)) quit=true;
+				if (dot.myfunctions.checkCollision(dot.mBox,enemy2.mBox)) quit=true;
+				if (dot2.myfunctions.checkCollision(dot2.mBox2,enemy2.mBox)) quit=true;
+				if (dot.myfunctions.checkCollision(dot.mBox,enemy3.mBox)) quit=true;
+				if (dot2.myfunctions.checkCollision(dot2.mBox2,enemy3.mBox)) quit=true;
+
+				currentTime1 = SDL_GetTicks();
+				if(currentTime1 > lastTime1 + 1000) //ms to wait before change angle
+				{
+					if (ti>0){
+						ti -= 1;
+						lastTime1 = currentTime1;
+					}
+					else {
+						currentTime1 = 0;
+					}
+				}
+				timerRender();
+				currentTime = SDL_GetTicks();
+
+				if(currentTime > lastTime + 20000) //ms to wait before change angle
+				{
+					for (int k=0;k<5;k++){
+						arr1[k].GetTile()->SetPowerUp =true; 
+					}
+					dot.speed1=false;
+					dot2.speed2=false;
+					lastTime = currentTime;
+				}
+				// p1.Render(camera);
+				// p2.Render(camera);
+				// p3.Render(camera);
+				// p4.Render(camera);
+				// p5.Render(camera);
+				// p6.Render(camera);
+				
+				
+
+				for (int k=0;k<10;k++){
+					if (arr[k].GetTile()->SetPoint==true) arr[k].Render(camera);
+				}
+
+				for (int k=0;k<5;k++){
+					if (arr1[k].GetTile()->SetPowerUp==true) arr1[k].Render(camera);
+				}
+
+				for (int k=0;k<4;k++){
+					if (finaltask[k].GetTile()->SetTask==true) finaltask[k].Render(camera);
+				}
+				//Update screen
+				std :: cout << "init10\n";
+				SDL_RenderPresent( gRenderer );
+				
+				SDL_Delay(100);
+			}
+
+			SDL_DestroyRenderer( gRenderer );
+			
+			Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+			rende = SDL_CreateRenderer(gWindow, -1, render_flags);
+			if (!rende)
+			{
+			printf("error creating renderer: %s\n", SDL_GetError());
+			SDL_DestroyWindow(gWindow);
+			SDL_Quit();
+			return 1;
+			}
+
+			// load the image into memory using SDL_image library function
+			SDL_Surface* surface = IMG_Load("assets/gamend.jpg");
+			if (!surface)
+			{
+				printf("error creating surface\n");
+				SDL_DestroyRenderer(rende);
+				SDL_DestroyWindow(gWindow);
+				SDL_Quit();
+				return 1;
+			}
+
+			// load the image data into the graphics hardware's memory
+			tex = SDL_CreateTextureFromSurface(rende, surface);
+			SDL_FreeSurface(surface);
+			if (!tex)
+			{
+				printf("error creating texture: %s\n", SDL_GetError());
+				SDL_DestroyRenderer(rende);
+				SDL_DestroyWindow(gWindow);
+				SDL_Quit();
+				return 1;
+			}
+
+			// clear the window
+			SDL_RenderClear(rende);
+			
+			// draw the image to the window
+			SDL_RenderCopy(rende, tex, NULL, NULL);
+			SDL_RenderPresent(rende);
+
+			// wait a few seconds
+			SDL_Event initial;
+			bool startscreen=true;
+			int iter=0;
+			while(startscreen){
+				while( SDL_PollEvent( &initial ) != 0 )
+				{
+					//Handle key press
+                    if( initial.type == SDL_KEYDOWN)
+                    {
+                        if (initial.key.keysym.sym==SDLK_1){
+							startscreen=false;
+						}
+                    }
+				}
+				iter+=1;
+				if (iter==50) startscreen=false;
+				SDL_Delay(100);
+			}
+
+			// clean up resources before exiting
+			SDL_DestroyTexture(tex);
+			SDL_DestroyRenderer(rende);
+		
+		}
+		SDLNet_Quit();
+		//Free resources and close SDL
+		close( tileSet );
+	}
+
+	return 0;
+}
