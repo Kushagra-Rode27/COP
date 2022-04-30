@@ -261,12 +261,12 @@ void Dot::setCamera( SDL_Rect& camera )
 void Dot::render( SDL_Rect& camera,LTexture TextTexture,TTF_Font *gFont ,SDL_Renderer* gRenderer )
 {
     //Show the dot
-	gDotTexture.render( gRenderer, mBox.x - camera.x, mBox.y - camera.y );
+	gDotTexture.render( gRenderer, mBox.x - camera.x, mBox.y - camera.y,0,0 );
 	score_text="score: "+std::to_string(score);
 	SDL_Color textColor = { 0, 0, 0 };
     
-	TextTexture.loadFromRenderedText("1",textColor,gFont,gRenderer);
-	TextTexture.render(gRenderer, mBox.x - camera.x -40, mBox.y - camera.y -60);     
+	TextTexture.loadFromRenderedText("Score : " + score_text,textColor,gFont,gRenderer);
+	TextTexture.render(gRenderer, mBox.x - camera.x -40, mBox.y - camera.y -60,0,0);     
 	// SDL_Color textColor = { 255, 255, 255, 0 };
 	// SDL_Surface* textSurface = TTF_RenderText_Solid(font, score_text.c_str(), textColor);
 	// LTexture* text = SDL_CreateTextureFromSurface(renderer, textSurface);
@@ -278,6 +278,6 @@ void Dot::render( SDL_Rect& camera,LTexture TextTexture,TTF_Font *gFont ,SDL_Ren
 	// SDL_DestroyTexture(text);
 
 	TextTexture.loadFromRenderedText("Tasks Completed P1:" + std::to_string(tasksComp),textColor,gFont,gRenderer);
-    TextTexture.render(gRenderer,0,40);
+    TextTexture.render(gRenderer,0,40,0,0);
     
 }

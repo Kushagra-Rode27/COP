@@ -40,5 +40,5 @@ void enemyDot::move( Tile *tiles[] )
 }
 
 void enemyDot::render(SDL_Rect& camera,SDL_Renderer* gRenderer){
-	genemyDotTexture.render( gRenderer,mBox.x-camera.x, mBox.y -camera.y);
+	genemyDotTexture.render( gRenderer,mBox.x-camera.x, mBox.y -camera.y,0,0);
 }

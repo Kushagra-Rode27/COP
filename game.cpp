@@ -432,6 +432,7 @@ LTexture tasksTexture;
 LTexture gDotTexture;
 LTexture genemyDotTexture;
 LTexture gDot2Texture;
+
 LTexture gTileTexture;
 SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
 

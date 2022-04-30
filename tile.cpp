@@ -20,13 +20,20 @@ Tile::Tile( int x, int y, int tileType )
     mType = tileType;
 }
 
-void Tile::render( SDL_Renderer* gRenderer ,  SDL_Rect& camera ,LTexture *gTileTexture,SDL_Rect gTileClips[])
+void Tile::render( SDL_Renderer* gRenderer ,  SDL_Rect& camera ,LTexture *gTileTexture)
 {
     //If the tile is on screen
+    int tyleX = 32*((mType-1)%10) ; 
+    int tyleY = ((mType-1)/10) ; 
+     tyleY = 32*tyleY;
+
+    SDL_Rect renderQuad = { tyleX, tyleY, mBox.w, mBox.h };
+
+
     if( myfunctions.checkCollision( camera, mBox ) )
     {
         //Show the tile
-        (*gTileTexture).render(gRenderer, mBox.x - camera.x, mBox.y - camera.y, &gTileClips[mType] );
+        (*gTileTexture).render(gRenderer, mBox.x - camera.x, mBox.y - camera.y,0,0, &renderQuad );
     }
 }
 

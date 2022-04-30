@@ -55,7 +55,7 @@ void Tasks::SetTile(Tile* newTile)
 
 void Tasks::Render(SDL_Rect& camera,LTexture tasksTexture,SDL_Renderer* gRenderer)
 {
-	tasksTexture.render(gRenderer,position.x- camera.x, position.y- camera.y);
+	tasksTexture.render(gRenderer,position.x- camera.x, position.y- camera.y,0,0);
 }
 
 void Tasks::Delete()

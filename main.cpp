@@ -17,6 +17,8 @@
 #include "powerup.h"
 #include "tasks.h"
 #include "enemy.h"
+#include "Button.h"
+#include "timer.h"
 //sudo apt install libsdl2-mixer-dev
 
 //38,25
@@ -35,7 +37,7 @@ int scorep2;
 bool speed1;
 bool speed2;
 
-
+int gameState = 0;
 //g++ 39_tiling.cpp `sdl2-config --libs --cflags` -ggdb3 -O0 -Wall -lSDL2_image -lSDL2_net -lm 
 //sudo apt install libsdl2-ttf-2
 
@@ -89,17 +91,17 @@ enemyDot enemy2(42);
 enemyDot enemy3(81);
 
 
-Point n1;
-Point n2;
-Point n3;
-Point n4;
-Point n5;
-Point n6;
-Point n7;
-Point n8;
-Point n9;
-Point n10;
-Point arr[10] = {n1,n2,n3,n4,n5,n6,n7,n8,n9,n10};
+// Point n1;
+// Point n2;
+// Point n3;
+// Point n4;
+// Point n5;
+// Point n6;
+// Point n7;
+// Point n8;
+// Point n9;
+// Point n10;
+Point arr[10];
 
 
 //Starts up SDL and creates window
@@ -134,7 +136,8 @@ LTexture pointTexture;
 LTexture powerUpTexture;
 LTexture tasksTexture;
 LTexture gTileTexture;
-SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
+
+//SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
 
 //The music that will be played
 Mix_Music *gMusic = NULL;
@@ -170,7 +173,7 @@ int lastTime1 = 0,currentTime1;
 void timerRender(){
 	SDL_Color textColor = { 0, 0, 0 };
 	gTextTexture.loadFromRenderedText(std::to_string(ti) + " seconds",textColor,gFont,gRenderer);
-	gTextTexture.render( gRenderer,0, 0);
+	gTextTexture.render( gRenderer,0, 0,0,0);
 }
 
 
@@ -352,14 +355,14 @@ bool loadMedia( Tile* tiles[] )
 		printf( "Failed to load dot texture!\n" );
 		success = false;
 	}
-	for (int i = 0; i < 10; i++)
-	{
-		if( !arr[i].pointTexture.loadFromFile( "assets/point.bmp",gRenderer ))
+	
+	
+		if( !pointTexture.loadFromFile( "assets/point.bmp",gRenderer ))
 		{
 			printf( "Failed to load dot texture!\n" );
 			success = false;
 		}
-	}
+	
 	
 	
 
@@ -572,43 +575,43 @@ bool setTiles( Tile* tiles[] )
 		}
 		
 		//Clip the sprite sheet
-		if( tilesLoaded )
-		{
-			gTileClips[ TILE_NONE ].x = 0;
-			gTileClips[ TILE_NONE ].y = 0;
-			gTileClips[ TILE_NONE ].w = TILE_WIDTH;
-			gTileClips[ TILE_NONE ].h = TILE_HEIGHT;
+		// if( tilesLoaded )
+		// {
+		// 	gTileClips[ TILE_NONE ].x = 0;
+		// 	gTileClips[ TILE_NONE ].y = 0;
+		// 	gTileClips[ TILE_NONE ].w = TILE_WIDTH;
+		// 	gTileClips[ TILE_NONE ].h = TILE_HEIGHT;
 
-			gTileClips[ TILE_GREEN ].x = 0;
-			gTileClips[ TILE_GREEN ].y = 32;
-			gTileClips[ TILE_GREEN ].w = TILE_WIDTH;
-			gTileClips[ TILE_GREEN ].h = TILE_HEIGHT;
+		// 	gTileClips[ TILE_GREEN ].x = 0;
+		// 	gTileClips[ TILE_GREEN ].y = 32;
+		// 	gTileClips[ TILE_GREEN ].w = TILE_WIDTH;
+		// 	gTileClips[ TILE_GREEN ].h = TILE_HEIGHT;
 
-			gTileClips[ TILE_ROAD ].x = 0;
-			gTileClips[ TILE_ROAD ].y = 64;
-			gTileClips[ TILE_ROAD ].w = TILE_WIDTH;
-			gTileClips[ TILE_ROAD ].h = TILE_HEIGHT;
+		// 	gTileClips[ TILE_ROAD ].x = 0;
+		// 	gTileClips[ TILE_ROAD ].y = 64;
+		// 	gTileClips[ TILE_ROAD ].w = TILE_WIDTH;
+		// 	gTileClips[ TILE_ROAD ].h = TILE_HEIGHT;
 
-			gTileClips[ TILE_STORE ].x = 32;
-			gTileClips[ TILE_STORE ].y = 0;
-			gTileClips[ TILE_STORE ].w = TILE_WIDTH;
-			gTileClips[ TILE_STORE ].h = TILE_HEIGHT;
+		// 	gTileClips[ TILE_STORE ].x = 32;
+		// 	gTileClips[ TILE_STORE ].y = 0;
+		// 	gTileClips[ TILE_STORE ].w = TILE_WIDTH;
+		// 	gTileClips[ TILE_STORE ].h = TILE_HEIGHT;
 
-			gTileClips[ TILE_ANOTHER ].x = 64;
-			gTileClips[ TILE_ANOTHER ].y = 0;
-			gTileClips[ TILE_ANOTHER ].w = TILE_WIDTH;
-			gTileClips[ TILE_ANOTHER ].h = TILE_HEIGHT;
+		// 	gTileClips[ TILE_ANOTHER ].x = 64;
+		// 	gTileClips[ TILE_ANOTHER ].y = 0;
+		// 	gTileClips[ TILE_ANOTHER ].w = TILE_WIDTH;
+		// 	gTileClips[ TILE_ANOTHER ].h = TILE_HEIGHT;
 
-			gTileClips[ TILE_SOME ].x = 64;
-			gTileClips[ TILE_SOME ].y = 32;
-			gTileClips[ TILE_SOME ].w = TILE_WIDTH;
-			gTileClips[ TILE_SOME ].h = TILE_HEIGHT;
+		// 	gTileClips[ TILE_SOME ].x = 64;
+		// 	gTileClips[ TILE_SOME ].y = 32;
+		// 	gTileClips[ TILE_SOME ].w = TILE_WIDTH;
+		// 	gTileClips[ TILE_SOME ].h = TILE_HEIGHT;
 
-			gTileClips[ TILE_HOSTEL ].x = 160;
-			gTileClips[ TILE_HOSTEL ].y = 160;
-			gTileClips[ TILE_HOSTEL ].w = TILE_WIDTH;
-			gTileClips[ TILE_HOSTEL ].h = TILE_HEIGHT;
-		}
+		// 	gTileClips[ TILE_HOSTEL ].x = 160;
+		// 	gTileClips[ TILE_HOSTEL ].y = 160;
+		// 	gTileClips[ TILE_HOSTEL ].w = TILE_WIDTH;
+		// 	gTileClips[ TILE_HOSTEL ].h = TILE_HEIGHT;
+		// }
 	}
 
     //Close the file
@@ -892,6 +895,7 @@ int main( int argc, char* argv[] )
                         }
                     }
 
+					
 					//Handle input for the dot
 					
 					dot.handleEvent( e );
@@ -906,6 +910,18 @@ int main( int argc, char* argv[] )
 				dot.move( tileSet,gHigh,gMedium,gLow );
 				dot.setCamera( camera );
 
+
+
+				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_RenderClear( gRenderer );
+
+				//Render level
+				
+				for( int i = 0; i < TOTAL_TILES; ++i )
+				{
+					tileSet[ i ]->render( gRenderer,camera,&gTileTexture);
+				}
+
 				enemy1.move(tileSet);
 				enemy2.move(tileSet);
 				enemy3.move(tileSet);
@@ -914,15 +930,7 @@ int main( int argc, char* argv[] )
 				dot2.move(tileSet,gHigh,gMedium,gLow);
 				dot2.setCamera( camera);
 				//Clear screen
-				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-				SDL_RenderClear( gRenderer );
-
-				//Render level
 				
-				for( int i = 0; i < TOTAL_TILES; ++i )
-				{
-					tileSet[ i ]->render( gRenderer,camera,&gTileTexture,&gTileClips[ TOTAL_TILE_SPRITES ]);
-				}
 				//Render dot
 				dot.render( camera,gTextTexture,gFont,gRenderer);
 				enemy1.render(camera,gRenderer);
