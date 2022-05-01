@@ -23,8 +23,8 @@ Tile::Tile( int x, int y, int tileType )
 void Tile::render( SDL_Renderer* gRenderer ,  SDL_Rect& camera ,LTexture *gTileTexture)
 {
     //If the tile is on screen
-    int tyleX = 32*((mType-1)%10) ; 
-    int tyleY = ((mType-1)/10) ; 
+    int tyleX = 32*((mType)%48) ; 
+    int tyleY = ((mType)/48) ; 
      tyleY = 32*tyleY;
 
     SDL_Rect renderQuad = { tyleX, tyleY, mBox.w, mBox.h };

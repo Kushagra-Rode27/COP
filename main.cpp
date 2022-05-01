@@ -52,14 +52,14 @@ const int SCREEN_HEIGHT = 700;
 // const int SCREEN_HEIGHT = 1600;
 
 //The dimensions of the level
-const int LEVEL_WIDTH = 3200;
-const int LEVEL_HEIGHT = 1600;
+const int LEVEL_WIDTH = 4800;
+const int LEVEL_HEIGHT = 2400;
 
 //Tile constants
 const int TILE_WIDTH = 32;
 const int TILE_HEIGHT = 32;
-const int TOTAL_TILES = 50*100;
-const int TOTAL_TILE_SPRITES = 100;
+const int TOTAL_TILES = 75*150;
+const int TOTAL_TILE_SPRITES = 48*48;
 
 //The different tile sprites
 const int TILE_NONE = 0;
@@ -379,7 +379,7 @@ bool loadMedia( Tile* tiles[] )
 	}
 
 	//Load tile texture
-	if( !gTileTexture.loadFromFile( "assets/tiles.png" ,gRenderer) )
+	if( !gTileTexture.loadFromFile( "./AtruXd.png" ,gRenderer) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
@@ -518,7 +518,7 @@ bool setTiles( Tile* tiles[] )
     int x = 0, y = 0;
 
     //Open the map
-    std::ifstream map( "./lazy.map" );
+    std::ifstream map( "./map.txt" );
 
     //If the map couldn't be loaded
     if( map.fail() )
@@ -533,7 +533,6 @@ bool setTiles( Tile* tiles[] )
 		{
 			//Determines what kind of tile will be made
 			int tileType = -1;
-
 			//Read tile from map file
 			map >> tileType;
 
@@ -647,7 +646,6 @@ int main( int argc, char* argv[] )
 	{
 		//The level tiles
 		
-
 		//Load media
 		if( !loadMedia( tileSet ) )
 		{
