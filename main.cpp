@@ -45,8 +45,8 @@ SDL_Renderer* rend1;
 SDL_Renderer* rende;
 SDL_Texture* tex;
 //Screen dimension constants
-const int SCREEN_WIDTH = 1400;
-const int SCREEN_HEIGHT = 700;
+const int SCREEN_WIDTH = 1600;
+const int SCREEN_HEIGHT = 800;
 
 // const int SCREEN_WIDTH = 3200;
 // const int SCREEN_HEIGHT = 1600;
@@ -83,7 +83,10 @@ const int TILE_SOME=43;
 
 // till here
 
-Tile* tileSet[ TOTAL_TILES ];
+Tile* tileSet1[ TOTAL_TILES ];
+Tile* tileSet2[ TOTAL_TILES ];
+Tile* tileSet3[ TOTAL_TILES ];
+Tile* tileSet4[ TOTAL_TILES ];
 Dot dot;
 Dot dot2;
 enemyDot enemy1(8);
@@ -108,7 +111,7 @@ Point arr[10];
 bool init();
 
 //Loads media
-bool loadMedia( Tile* tiles[] );
+bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* tileslayer4[] );
 
 //Frees media and shuts down SDL
 void close( Tile* tiles[] );
@@ -116,7 +119,7 @@ void close( Tile* tiles[] );
 
 
 //Sets tiles from tile map
-bool setTiles( Tile *tiles[] );
+bool setTiles( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* tileslayer4[] );
 
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
@@ -135,7 +138,10 @@ LTexture gTextTexture;
 LTexture pointTexture;
 LTexture powerUpTexture;
 LTexture tasksTexture;
-LTexture gTileTexture;
+LTexture gTileTexture1;
+LTexture gTileTexture2;
+LTexture gTileTexture3;
+LTexture gTileTexture4;
 
 //SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
 
@@ -323,7 +329,7 @@ bool init()
 	return success;
 }
 
-bool loadMedia( Tile* tiles[] )
+bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* tileslayer4[] )
 {
 	//Loading success flag
 	bool success = true;
@@ -379,7 +385,25 @@ bool loadMedia( Tile* tiles[] )
 	}
 
 	//Load tile texture
-	if( !gTileTexture.loadFromFile( "./AtruXd.png" ,gRenderer) )
+	if( !gTileTexture1.loadFromFile( "./AtruXd.png" ,gRenderer) )
+	{
+		printf( "Failed to load tile set texture!\n" );
+		success = false;
+	}
+	//Load tile texture
+	if( !gTileTexture2.loadFromFile( "./AtruXd.png" ,gRenderer) )
+	{
+		printf( "Failed to load tile set texture!\n" );
+		success = false;
+	}
+	//Load tile texture
+	if( !gTileTexture3.loadFromFile( "./AtruXd.png" ,gRenderer) )
+	{
+		printf( "Failed to load tile set texture!\n" );
+		success = false;
+	}
+	//Load tile texture
+	if( !gTileTexture4.loadFromFile( "./AtruXd.png" ,gRenderer) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
@@ -441,7 +465,7 @@ bool loadMedia( Tile* tiles[] )
     }
 
 	//Load tile map
-	if( !setTiles( tiles ) )
+	if( !setTiles(tileslayer1, tileslayer2, tileslayer3,tileslayer4))
 	{
 		printf( "Failed to load tile set!\n" );
 		success = false;
@@ -450,15 +474,39 @@ bool loadMedia( Tile* tiles[] )
 	return success;
 }
 
-void close( Tile* tiles[] )
+void close( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* tileslayer4[] )
 {
 	//Deallocate tiles
 	for( int i = 0; i < TOTAL_TILES; ++i )
 	{
-		 if( tiles[ i ] != NULL )
+		 if( tileslayer1[ i ] != NULL )
 		 {
-			delete tiles[ i ];
-			tiles[ i ] = NULL;
+			delete tileslayer1[ i ];
+			tileslayer1[ i ] = NULL;
+		 }
+	}
+	for( int i = 0; i < TOTAL_TILES; ++i )
+	{
+		 if( tileslayer2[ i ] != NULL )
+		 {
+			delete tileslayer2[ i ];
+			tileslayer2[ i ] = NULL;
+		 }
+	}
+	for( int i = 0; i < TOTAL_TILES; ++i )
+	{
+		 if( tileslayer3[ i ] != NULL )
+		 {
+			delete tileslayer3[ i ];
+			tileslayer3[ i ] = NULL;
+		 }
+	}
+	for( int i = 0; i < TOTAL_TILES; ++i )
+	{
+		 if( tileslayer4[ i ] != NULL )
+		 {
+			delete tileslayer4[ i ];
+			tileslayer4[ i ] = NULL;
 		 }
 	}
 
@@ -468,7 +516,10 @@ void close( Tile* tiles[] )
 	enemy2.genemyDotTexture.free();
 	enemy3.genemyDotTexture.free();
 	dot2.gDotTexture.free();
-	gTileTexture.free();
+	gTileTexture1.free();
+	gTileTexture2.free();
+	gTileTexture3.free();
+	gTileTexture4.free();
 	pointTexture.free();
 	//Free loaded images
     gTextTexture.free();
@@ -509,7 +560,7 @@ void close( Tile* tiles[] )
 
 // till here
 
-bool setTiles( Tile* tiles[] )
+bool setTiles( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* tileslayer4[] )
 {
 	//Success flag
 	bool tilesLoaded = true;
@@ -518,10 +569,10 @@ bool setTiles( Tile* tiles[] )
     int x = 0, y = 0;
 
     //Open the map
-    std::ifstream map( "./map.txt" );
+    std::ifstream map1( "./layer1.txt" );
 
     //If the map couldn't be loaded
-    if( map.fail() )
+    if( map1.fail() )
     {
 		printf( "Unable to load map file!\n" );
 		tilesLoaded = false;
@@ -534,10 +585,10 @@ bool setTiles( Tile* tiles[] )
 			//Determines what kind of tile will be made
 			int tileType = -1;
 			//Read tile from map file
-			map >> tileType;
+			map1 >> tileType;
 
 			//If the was a problem in reading the map
-			if( map.fail() )
+			if( map1.fail() )
 			{
 				//Stop loading map
 				printf( "Error loading map: Unexpected end of file!\n" );
@@ -548,7 +599,7 @@ bool setTiles( Tile* tiles[] )
 			//If the number is a valid tile number && ( tileType < TOTAL_TILE_SPRITES )
 			if( ( tileType >= 0 ) )
 			{
-				tiles[ i ] = new Tile( x, y, tileType );
+				tileslayer1[ i ] = new Tile( x, y, tileType );
 			}
 			//If we don't recognize the tile type
 			else
@@ -573,51 +624,211 @@ bool setTiles( Tile* tiles[] )
 			}
 		}
 		
-		//Clip the sprite sheet
-		// if( tilesLoaded )
-		// {
-		// 	gTileClips[ TILE_NONE ].x = 0;
-		// 	gTileClips[ TILE_NONE ].y = 0;
-		// 	gTileClips[ TILE_NONE ].w = TILE_WIDTH;
-		// 	gTileClips[ TILE_NONE ].h = TILE_HEIGHT;
-
-		// 	gTileClips[ TILE_GREEN ].x = 0;
-		// 	gTileClips[ TILE_GREEN ].y = 32;
-		// 	gTileClips[ TILE_GREEN ].w = TILE_WIDTH;
-		// 	gTileClips[ TILE_GREEN ].h = TILE_HEIGHT;
-
-		// 	gTileClips[ TILE_ROAD ].x = 0;
-		// 	gTileClips[ TILE_ROAD ].y = 64;
-		// 	gTileClips[ TILE_ROAD ].w = TILE_WIDTH;
-		// 	gTileClips[ TILE_ROAD ].h = TILE_HEIGHT;
-
-		// 	gTileClips[ TILE_STORE ].x = 32;
-		// 	gTileClips[ TILE_STORE ].y = 0;
-		// 	gTileClips[ TILE_STORE ].w = TILE_WIDTH;
-		// 	gTileClips[ TILE_STORE ].h = TILE_HEIGHT;
-
-		// 	gTileClips[ TILE_ANOTHER ].x = 64;
-		// 	gTileClips[ TILE_ANOTHER ].y = 0;
-		// 	gTileClips[ TILE_ANOTHER ].w = TILE_WIDTH;
-		// 	gTileClips[ TILE_ANOTHER ].h = TILE_HEIGHT;
-
-		// 	gTileClips[ TILE_SOME ].x = 64;
-		// 	gTileClips[ TILE_SOME ].y = 32;
-		// 	gTileClips[ TILE_SOME ].w = TILE_WIDTH;
-		// 	gTileClips[ TILE_SOME ].h = TILE_HEIGHT;
-
-		// 	gTileClips[ TILE_HOSTEL ].x = 160;
-		// 	gTileClips[ TILE_HOSTEL ].y = 160;
-		// 	gTileClips[ TILE_HOSTEL ].w = TILE_WIDTH;
-		// 	gTileClips[ TILE_HOSTEL ].h = TILE_HEIGHT;
-		// }
 	}
 
     //Close the file
-    map.close();
+    map1.close();
 
-    //If the map was loaded fine
-    return tilesLoaded;
+	// The tile offsets
+    x = 0;
+    y = 0;
+
+    // Open the map
+    std::ifstream map2("./layer2.txt");
+
+    // If the map couldn't be loaded
+    if (map2.fail())
+    {
+        printf("Unable to load map2 file!\n");
+        tilesLoaded = false;
+    }
+    else
+    {
+        // Initialize the tiles
+        for (int i = 0; i < TOTAL_TILES; i++)
+        {
+            // Determines what kind of tile will be made
+            long long tileType = -1;
+
+            // Read tile from map file
+            map2 >> tileType;
+            
+
+            // If the was a problem in reading the map
+            if (map2.fail())
+            {
+                // Stop loading map
+                std::cout << "Error loading map: Unexpected end of file 2 !\n " << i;
+                tilesLoaded = false;
+                break;
+            }
+
+            // If the number is a valid tile number
+            if ((tileType >= 0)) // originally there was tileType< TotalTileSPrites
+            {
+                tileslayer2[i] = new Tile(x, y, tileType);
+            }
+            // If we don't recognize the tile type
+            else
+            {
+                // Stop loading map
+                printf("Error loading map: Invalid tile type at %d!\n", i);
+                tilesLoaded = false;
+                break;
+            }
+
+            // Move to next tile spot
+            x += TILE_WIDTH;
+
+            // If we've gone too far
+            if (x >= LEVEL_WIDTH)
+            {
+                // Move back
+                x = 0;
+
+                // Move to the next row
+                y += TILE_HEIGHT;
+            }
+        }
+    }
+
+    // Close the file
+    map2.close();
+
+    // The tile offsets
+    x = 0;
+    y = 0;
+
+    // Open the map
+    std::ifstream map3("./layer3.txt");
+
+    // If the map couldn't be loaded
+    if (map3.fail())
+    {
+        printf("Unable to load map file!\n");
+        tilesLoaded = false;
+    }
+    else
+    {
+        // Initialize the tiles
+        for (int i = 0; i < TOTAL_TILES; i++)
+        {
+            // Determines what kind of tile will be made
+            long long tileType = -1;
+
+            // Read tile from map file
+            map3 >> tileType;
+            
+
+            // If the was a problem in reading the map
+            if (map3.fail())
+            {
+                // Stop loading map
+                std::cout << "Error loading map: Unexpected end of file 3 !\n " << i;
+                tilesLoaded = false;
+                break;
+            }
+
+            // If the number is a valid tile number
+            if ((tileType >= 0)) // originally there was tileType< TotalTileSPrites
+            {
+                tileslayer3[i] = new Tile(x, y, tileType);
+            }
+            // If we don't recognize the tile type
+            else
+            {
+                // Stop loading map
+                printf("Error loading map: Invalid tile type at %d!\n", i);
+                tilesLoaded = false;
+                break;
+            }
+
+            // Move to next tile spot
+            x += TILE_WIDTH;
+
+            // If we've gone too far
+            if (x >= LEVEL_WIDTH)
+            {
+                // Move back
+                x = 0;
+
+                // Move to the next row
+                y += TILE_HEIGHT;
+            }
+        }
+	}
+    map3.close();
+
+
+
+	// The tile offsets
+    x = 0;
+    y = 0;
+
+    // Open the map
+    std::ifstream map4("./layer4.txt");
+
+    // If the map couldn't be loaded
+    if (map4.fail())
+    {
+        printf("Unable to load map file!\n");
+        tilesLoaded = false;
+    }
+    else
+    {
+        // Initialize the tiles
+        for (int i = 0; i < TOTAL_TILES; i++)
+        {
+            // Determines what kind of tile will be made
+            int tileType = -1;
+
+            // Read tile from map file
+            map4 >> tileType;
+            
+
+            // If the was a problem in reading the map
+            if (map4.fail())
+            {
+                // Stop loading map
+                std::cout << "Error loading map: Unexpected end of file 4 !\n " << i;
+                tilesLoaded = false;
+                break;
+            }
+
+            // If the number is a valid tile number
+            if ((tileType >= 0)) // originally there was tileType< TotalTileSPrites
+            {
+                tileslayer4[i] = new Tile(x, y, tileType);
+            }
+            // If we don't recognize the tile type
+            else
+            {
+                // Stop loading map
+                printf("Error loading map: Invalid tile type at %d!\n", i);
+                tilesLoaded = false;
+                break;
+            }
+
+            // Move to next tile spot
+            x += TILE_WIDTH;
+
+            // If we've gone too far
+            if (x >= LEVEL_WIDTH)
+            {
+                // Move back
+                x = 0;
+
+                // Move to the next row
+                y += TILE_HEIGHT;
+            }
+        }
+	
+    map4.close();
+
+		  //If the map was loaded fine
+    
+	}
+	return tilesLoaded;
 }
 
 
@@ -647,7 +858,7 @@ int main( int argc, char* argv[] )
 		//The level tiles
 		
 		//Load media
-		if( !loadMedia( tileSet ) )
+		if( !loadMedia( tileSet1,tileSet2,tileSet3,tileSet4 ) )
 		{
 			printf( "Failed to load media!\n" );
 		}
@@ -668,43 +879,43 @@ int main( int argc, char* argv[] )
 			//The dot that will be moving around on the screen
 			
 			
-			for ( int k=0;k<10;k++){
-				arr[k]=TilePLace(tileSet);
-			}
-			// Point p1=TilePLace(tileSet);
-			// Point p2=TilePLace(tileSet);
-			Powerup p1(tileSet[100*4 + 5]);
-			Powerup p2(tileSet[100*5 + 14]);
-			Powerup p3(tileSet[100*10 + 5]);
-			Powerup p4(tileSet[100*17 + 5]);
-			Powerup p5(tileSet[100*8 + 24]);
-			Powerup p6(tileSet[100*20 + 22]);
+			// for ( int k=0;k<10;k++){
+			// 	arr[k]=TilePLace(tileSet);
+			// }
+			// // Point p1=TilePLace(tileSet);
+			// // Point p2=TilePLace(tileSet);
+			// Powerup p1(tileSet[100*4 + 5]);
+			// Powerup p2(tileSet[100*5 + 14]);
+			// Powerup p3(tileSet[100*10 + 5]);
+			// Powerup p4(tileSet[100*17 + 5]);
+			// Powerup p5(tileSet[100*8 + 24]);
+			// Powerup p6(tileSet[100*20 + 22]);
 
-			Powerup arr1[6] = {p1,p2,p3,p4,p5,p6};
-
-
-			Tasks t1(tileSet[100*24 + 38]);
-			Tasks t2(tileSet[100*22 + 47]);
-			Tasks t3(tileSet[100*23 + 64]);
-			Tasks t4(tileSet[100*6 + 5]);
-			Tasks t5(tileSet[100*16 + 49]);
-			Tasks t6(tileSet[100*12 + 57]);
-			Tasks t7(tileSet[100*5 + 51]);
-			Tasks t8(tileSet[100*18 + 5]);
-			Tasks t9(tileSet[100*27 + 6]);
+			// Powerup arr1[6] = {p1,p2,p3,p4,p5,p6};
 
 
-			// int location[9] = {100*24 + 38,100*22 + 47,100*23 + 64,100*4 + 8,100*16 + 49};
-			Tasks task[9] = {t1,t2,t3,t4,t5,t6,t7,t8,t9};
+			// Tasks t1(tileSet[100*24 + 38]);
+			// Tasks t2(tileSet[100*22 + 47]);
+			// Tasks t3(tileSet[100*23 + 64]);
+			// Tasks t4(tileSet[100*6 + 5]);
+			// Tasks t5(tileSet[100*16 + 49]);
+			// Tasks t6(tileSet[100*12 + 57]);
+			// Tasks t7(tileSet[100*5 + 51]);
+			// Tasks t8(tileSet[100*18 + 5]);
+			// Tasks t9(tileSet[100*27 + 6]);
 
-			Tasks finaltask[4];
-			srand(time(0));
-			for (int i = 0; i < 4; i++)
-			{
-				int k = rand() % 9;
-				finaltask[i] = task[k];
+
+			// // int location[9] = {100*24 + 38,100*22 + 47,100*23 + 64,100*4 + 8,100*16 + 49};
+			// Tasks task[9] = {t1,t2,t3,t4,t5,t6,t7,t8,t9};
+
+			// Tasks finaltask[4];
+			// srand(time(0));
+			// for (int i = 0; i < 4; i++)
+			// {
+			// 	int k = rand() % 9;
+			// 	finaltask[i] = task[k];
 				
-			}	
+			// }	
 			// Point p2(tileSet[1]);
 
 			//Level camera
@@ -821,7 +1032,7 @@ int main( int argc, char* argv[] )
 				printf("Choose server or client\n");
 			}
 
-			int lastTime = 0,currentTime;
+			//int lastTime = 0,currentTime;
 			//While application is running
 			
 			while( !quit )
@@ -905,7 +1116,7 @@ int main( int argc, char* argv[] )
 
 				//Move the dot
 				
-				dot.move( tileSet,gHigh,gMedium,gLow );
+				//dot.move( tileSet,gHigh,gMedium,gLow );
 				dot.setCamera( camera );
 
 
@@ -917,24 +1128,37 @@ int main( int argc, char* argv[] )
 				
 				for( int i = 0; i < TOTAL_TILES; ++i )
 				{
-					tileSet[ i ]->render( gRenderer,camera,&gTileTexture);
+					tileSet1[ i ]->render( gRenderer,camera,&gTileTexture1);
 				}
 
-				enemy1.move(tileSet);
-				enemy2.move(tileSet);
-				enemy3.move(tileSet);
+				for( int i = 0; i < TOTAL_TILES; ++i )
+				{
+					tileSet2[ i ]->render( gRenderer,camera,&gTileTexture2);
+				}
+				for( int i = 0; i < TOTAL_TILES; ++i )
+				{
+					tileSet3[ i ]->render( gRenderer,camera,&gTileTexture3);
+				}
+				for( int i = 0; i < TOTAL_TILES; ++i )
+				{
+					tileSet4[ i ]->render( gRenderer,camera,&gTileTexture4);
+				}
+
+				//enemy1.move(tileSet);
+				//enemy2.move(tileSet);
+				//enemy3.move(tileSet);
 				
 				
-				dot2.move(tileSet,gHigh,gMedium,gLow);
+				//dot2.move(tileSet,gHigh,gMedium,gLow);
 				dot2.setCamera( camera);
 				//Clear screen
 				
 				//Render dot
-				dot.render( camera,gTextTexture,gFont,gRenderer);
-				enemy1.render(camera,gRenderer);
-				enemy2.render(camera,gRenderer);
-				enemy3.render(camera,gRenderer);
-				dot2.render(camera,gTextTexture,gFont,gRenderer);
+				// dot.render( camera,gTextTexture,gFont,gRenderer);
+				// enemy1.render(camera,gRenderer);
+				// enemy2.render(camera,gRenderer);
+				// enemy3.render(camera,gRenderer);
+				// dot2.render(camera,gTextTexture,gFont,gRenderer);
 
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) quit=true;
 				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy1.mBox)) quit=true;
@@ -955,17 +1179,17 @@ int main( int argc, char* argv[] )
 					}
 				}
 				timerRender();
-				currentTime = SDL_GetTicks();
+				// currentTime = SDL_GetTicks();
 
-				if(currentTime > lastTime + 20000) //ms to wait before change angle
-				{
-					for (int k=0;k<5;k++){
-						arr1[k].GetTile()->SetPowerUp =true; 
-					}
-					dot.speed1=false;
-					dot2.speed1=false;
-					lastTime = currentTime;
-				}
+				// if(currentTime > lastTime + 20000) //ms to wait before change angle
+				// {
+				// 	for (int k=0;k<5;k++){
+				// 		arr1[k].GetTile()->SetPowerUp =true; 
+				// 	}
+				// 	dot.speed1=false;
+				// 	dot2.speed1=false;
+				// 	lastTime = currentTime;
+				// }
 				// p1.Render(camera);
 				// p2.Render(camera);
 				// p3.Render(camera);
@@ -975,17 +1199,17 @@ int main( int argc, char* argv[] )
 				
 				
 
-				for (int k=0;k<10;k++){
-					if (arr[k].GetTile()->SetPoint==true) arr[k].Render(camera,gRenderer,pointTexture);
-				}
+				// for (int k=0;k<10;k++){
+				// 	if (arr[k].GetTile()->SetPoint==true) arr[k].Render(camera,gRenderer,pointTexture);
+				// }
 
-				for (int k=0;k<5;k++){
-					if (arr1[k].GetTile()->SetPowerUp==true) arr1[k].Render(camera,powerUpTexture,gRenderer);
-				}
+				// for (int k=0;k<5;k++){
+				// 	if (arr1[k].GetTile()->SetPowerUp==true) arr1[k].Render(camera,powerUpTexture,gRenderer);
+				// }
 
-				for (int k=0;k<4;k++){
-					if (finaltask[k].GetTile()->SetTask==true) finaltask[k].Render(camera,tasksTexture,gRenderer);
-				}
+				// for (int k=0;k<4;k++){
+				// 	if (finaltask[k].GetTile()->SetTask==true) finaltask[k].Render(camera,tasksTexture,gRenderer);
+				// }
 				//Update screen
 				
 				SDL_RenderPresent( gRenderer );
@@ -1062,7 +1286,7 @@ int main( int argc, char* argv[] )
 		}
 		SDLNet_Quit();
 		//Free resources and close SDL
-		close( tileSet );
+		close( tileSet1,tileSet2,tileSet3,tileSet4 );
 	}
 
 	return 0;

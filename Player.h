@@ -59,7 +59,14 @@ class Dot
 
 
 		LTexture gDotTexture;
-
+		string Sprite;
+		int Xcycle;
+		int Ycycle;
+		int Spriteheight;
+		int Spritewidth;
+		int Renderwidth;
+		int Renderheight;
+		int stayState;
 
 		string score_text;
 		int score=0;
