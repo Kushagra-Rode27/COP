@@ -666,7 +666,8 @@ bool setTiles( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile*
             // If the number is a valid tile number
             if ((tileType >= 0)) // originally there was tileType< TotalTileSPrites
             {
-                tileslayer2[i] = new Tile(x, y, tileType);
+                if (tileType>5000) tileslayer2[i] = new Tile(x, y, 835);
+                else tileslayer2[i] = new Tile(x, y, tileType);
             }
             // If we don't recognize the tile type
             else
@@ -732,7 +733,8 @@ bool setTiles( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile*
             // If the number is a valid tile number
             if ((tileType >= 0)) // originally there was tileType< TotalTileSPrites
             {
-                tileslayer3[i] = new Tile(x, y, tileType);
+				if (tileType>5000) tileslayer3[i] = new Tile(x, y, 835);
+                else tileslayer3[i] = new Tile(x, y, tileType);
             }
             // If we don't recognize the tile type
             else
@@ -1133,16 +1135,17 @@ int main( int argc, char* argv[] )
 
 				for( int i = 0; i < TOTAL_TILES; ++i )
 				{
-					tileSet2[ i ]->render( gRenderer,camera,&gTileTexture2);
+					if (tileSet2[i]->getType()!=0) tileSet2[ i ]->render( gRenderer,camera,&gTileTexture2);
+					//std::cout<<tileSet2[i]->getType()<<"\n";
 				}
 				for( int i = 0; i < TOTAL_TILES; ++i )
 				{
-					tileSet3[ i ]->render( gRenderer,camera,&gTileTexture3);
+					if (tileSet3[i]->getType()!=0) tileSet3[ i ]->render( gRenderer,camera,&gTileTexture3);
 				}
-				for( int i = 0; i < TOTAL_TILES; ++i )
-				{
-					tileSet4[ i ]->render( gRenderer,camera,&gTileTexture4);
-				}
+				// for( int i = 0; i < TOTAL_TILES; ++i )
+				// {
+				// 	if (tileSet4[i]->getType()!=0) tileSet4[ i ]->render( gRenderer,camera,&gTileTexture4);
+				// }
 
 				//enemy1.move(tileSet);
 				//enemy2.move(tileSet);
