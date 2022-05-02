@@ -16,8 +16,8 @@ class LButton
 
         bool loadButton();
 
-        int WindowWidth = 640; 
-        int WindowHeight = 480;
+        int WindowWidth = 1700; 
+        int WindowHeight = 850;
         int ButtonWidth ; 
         int ButtonHeight ; 
 

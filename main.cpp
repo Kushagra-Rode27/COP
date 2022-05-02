@@ -19,6 +19,7 @@
 #include "enemy.h"
 #include "Button.h"
 #include "timer.h"
+
 //sudo apt install libsdl2-mixer-dev
 
 //38,25
@@ -37,7 +38,6 @@ int scorep2;
 bool speed1;
 bool speed2;
 
-int gameState = 0;
 //g++ 39_tiling.cpp `sdl2-config --libs --cflags` -ggdb3 -O0 -Wall -lSDL2_image -lSDL2_net -lm 
 //sudo apt install libsdl2-ttf-2
 
@@ -45,8 +45,8 @@ SDL_Renderer* rend1;
 SDL_Renderer* rende;
 SDL_Texture* tex;
 //Screen dimension constants
-const int SCREEN_WIDTH = 1600;
-const int SCREEN_HEIGHT = 800;
+const int SCREEN_WIDTH = 1700;
+const int SCREEN_HEIGHT = 850;
 
 // const int SCREEN_WIDTH = 3200;
 // const int SCREEN_HEIGHT = 1600;
@@ -54,6 +54,7 @@ const int SCREEN_HEIGHT = 800;
 //The dimensions of the level
 const int LEVEL_WIDTH = 4800;
 const int LEVEL_HEIGHT = 2400;
+
 
 //Tile constants
 const int TILE_WIDTH = 32;
@@ -82,6 +83,7 @@ const int TILE_SOME=43;
 //The dot that will move around on the screen
 
 // till here
+
 
 Tile* tileSet1[ TOTAL_TILES ];
 Tile* tileSet2[ TOTAL_TILES ];
@@ -143,6 +145,8 @@ LTexture gTileTexture2;
 LTexture gTileTexture3;
 LTexture gTileTexture4;
 
+LTexture StartScreenTexture;
+LTexture HostelTexture;
 //SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
 
 //The music that will be played
@@ -156,6 +160,10 @@ Mix_Chunk *gLow = NULL;
 
 std::string score_text;
 std::string score_text2;
+
+
+int curr_state = 0;
+int curr_stateP2 = 0;
 
 
 //from here texture.cpp
@@ -222,72 +230,7 @@ bool init()
 		}
 		else
 		{
-			Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
-			rend1 = SDL_CreateRenderer(gWindow, -1, render_flags);
-			if (!rend1)
-			{
-			printf("error creating renderer: %s\n", SDL_GetError());
-			SDL_DestroyWindow(gWindow);
-			SDL_Quit();
-			return 1;
-			}
-
-			// load the image into memory using SDL_image library function
 			
-
-
-			SDL_Surface* surface = IMG_Load("assets/start.png");
-			if (!surface)
-			{
-				printf("error creating surface\n");
-				SDL_DestroyRenderer(rend1);
-				SDL_DestroyWindow(gWindow);
-				SDL_Quit();
-				return 1;
-			}
-
-			// load the image data into the graphics hardware's memory
-			tex = SDL_CreateTextureFromSurface(rend1, surface);
-			SDL_FreeSurface(surface);
-			if (!tex)
-			{
-				printf("error creating texture: %s\n", SDL_GetError());
-				SDL_DestroyRenderer(rend1);
-				SDL_DestroyWindow(gWindow);
-				SDL_Quit();
-				return 1;
-			}
-
-			// clear the window
-			SDL_RenderClear(rend1);
-			
-			// draw the image to the window
-			SDL_RenderCopy(rend1, tex, NULL, NULL);
-			SDL_RenderPresent(rend1);
-
-			// wait a few seconds
-			SDL_Event initial;
-			bool startscreen=true;
-			int iter=0;
-			while(startscreen){
-				while( SDL_PollEvent( &initial ) != 0 )
-				{
-					//Handle key press
-                    if( initial.type == SDL_KEYDOWN)
-                    {
-                        if (initial.key.keysym.sym==SDLK_1){
-							startscreen=false;
-						}
-                    }
-				}
-				iter+=1;
-				if (iter==50) startscreen=false;
-				SDL_Delay(100);
-			}
-
-			// clean up resources before exiting
-			SDL_DestroyTexture(tex);
-			SDL_DestroyRenderer(rend1);
 
 			//Create renderer for window
 			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
@@ -408,6 +351,15 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
+	if(!StartScreenTexture.loadFromFile("assets/start screen.png",gRenderer)){
+		printf("Failed to load start screen texture\n");
+		success = false;
+	}
+
+	if(!HostelTexture.loadFromFile("assets/hostel.png",gRenderer)){
+		printf("Failed to load start screen texture\n");
+		success = false;
+	}
 	
 	score_text="score: "+std::to_string(scorep1);
 	gFont = TTF_OpenFont( "metal lord.ttf", 28 );
@@ -525,6 +477,7 @@ void close( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* ti
     gTextTexture.free();
 	powerUpTexture.free();
 	tasksTexture.free();
+	StartScreenTexture.free();
     //Free global font
     TTF_CloseFont( gFont );
     gFont = NULL;
@@ -925,6 +878,20 @@ int main( int argc, char* argv[] )
 
 			bool done = false;
 
+			LTimer gameTimer;
+
+			LButton gameStartButton; 
+			gameStartButton.InitialiseButton(1,&gameTimer,&curr_state,0.4,0.25,0.2,0.25,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"start-up.png","start-down.png");
+			
+			LButton girnar; 
+			girnar.InitialiseButton(1,&gameTimer,&curr_state,0.06,0.25,0.2,0.2,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/GIRNAR.png","");
+			
+			LButton udaigiri; 
+			udaigiri.InitialiseButton(1,&gameTimer,&curr_state,0.4,0.25,0.2,0.2,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/UDAIGIRI.png","");
+			
+			LButton satpura; 
+			satpura.InitialiseButton(1,&gameTimer,&curr_state,0.74,0.25,0.2,0.2,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/SATPURA.png","");
+			
 			if (argc == 2 && strcmp(argv[1], "server") == 0) {
 				printf("Starting server...\n");
 				TCPsocket server, client;
@@ -1039,7 +1006,8 @@ int main( int argc, char* argv[] )
 			
 			while( !quit )
 			{
-				
+				if(curr_state == 0)
+				{
 				//Handle events on queue
 				while( SDL_PollEvent( &e ) != 0 )
 				{
@@ -1108,9 +1076,59 @@ int main( int argc, char* argv[] )
 
 					
 					//Handle input for the dot
-					
+					gameStartButton.handleEvent(&e , 1);
+
 					dot.handleEvent( e );
 					dot2.handleEvent( e );
+				}
+
+				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0xFF, 0xFF);
+            	SDL_RenderClear(gRenderer);
+				StartScreenTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+
+				gameStartButton.render();
+				SDL_RenderPresent(gRenderer);
+			}
+			else if(curr_state==1)
+			{
+				//Handle events on queue
+				while( SDL_PollEvent( &e ) != 0 )
+				{
+					//User requests quit
+
+					if( e.type == SDL_QUIT )
+					{
+						quit = true;
+					}
+					//Handle key press
+                    girnar.handleEvent(&e,2);
+					if(curr_state==2){dot.mBox.x=1400;dot.mBox.y = 30;curr_state = 5;};
+					udaigiri.handleEvent(&e,3);
+					if(curr_state==3){dot.mBox.x=1600;dot.mBox.y = 30;curr_state=5;};
+					satpura.handleEvent(&e,4);
+					if(curr_state==3){dot.mBox.x=1600;dot.mBox.y = 30;curr_state=5;};
+				}
+				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0xFF, 0xFF);
+            	SDL_RenderClear(gRenderer);
+				HostelTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+
+				girnar.render();
+				udaigiri.render();
+				satpura.render();
+				SDL_RenderPresent(gRenderer);
+
+					
+			}
+			else if(curr_state == 5){
+				while( SDL_PollEvent( &e ) != 0 )
+				{
+					//User requests quit
+
+					if( e.type == SDL_QUIT )
+					{
+						quit = true;
+					}
+					
 				}
 				// const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
 				// dot.handle(currentKeyStates);
@@ -1142,10 +1160,10 @@ int main( int argc, char* argv[] )
 				{
 					if (tileSet3[i]->getType()!=0) tileSet3[ i ]->render( gRenderer,camera,&gTileTexture3);
 				}
-				// for( int i = 0; i < TOTAL_TILES; ++i )
-				// {
-				// 	if (tileSet4[i]->getType()!=0) tileSet4[ i ]->render( gRenderer,camera,&gTileTexture4);
-				// }
+				for( int i = 0; i < TOTAL_TILES; ++i )
+				{
+				 	if (tileSet4[i]->getType()!=0) tileSet4[ i ]->render( gRenderer,camera,&gTileTexture4);
+				}
 
 				//enemy1.move(tileSet);
 				//enemy2.move(tileSet);
@@ -1216,7 +1234,7 @@ int main( int argc, char* argv[] )
 				//Update screen
 				
 				SDL_RenderPresent( gRenderer );
-				
+			}
 				SDL_Delay(100);
 			}
 

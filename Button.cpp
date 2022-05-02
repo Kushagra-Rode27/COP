@@ -152,16 +152,19 @@ bool LButton :: InitialiseButton(int type ,LTimer* timer, int* State , double a,
     gRenderer=Renderer;
     ButtonWidth = (int)((double)WindowWidth * w);
     ButtonHeight= (int)((double)WindowHeight * h);
+	mPosition.x = (int)((double)WindowWidth * x);
+    mPosition.y = (int)((double)WindowHeight * y);
+	
 	// printf("Button Width is %d , the window width was %d , while the h was %f", ButtonWidth , WindowWidth ,w );
 
     if(!MyTexture1.loadFromFile(PrimaryImage,gRenderer)) {
-        printf("Problem in loading button texture from image file %s \n",PrimaryImage);
+        printf("Problem in loading button texture from image file \n");
         return false;
     }
     if(SecondaryImage.compare("")!=0){
 
         if(!MyTexture2.loadFromFile(SecondaryImage,gRenderer)) {
-        printf("Problem in loading button texture from image file %s \n",SecondaryImage);
+        printf("Problem in loading button texture from image file  \n");
         return false;
     }}
 
