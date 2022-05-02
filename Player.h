@@ -54,10 +54,11 @@ class Dot
 		//Shows the dot on the screen
 		void render( SDL_Rect& camera,LTexture TextTexture,TTF_Font *gFont ,SDL_Renderer* gRenderer);
 
+		void renderPlayer2( SDL_Rect &camera,LTexture TextTexture,TTF_Font *gFont, SDL_Renderer* gRenderer );
 		// touchesWall check
 		bool touchesWall( SDL_Rect box, Tile* tiles[] );
 
-
+		string double2String(double a);
 		LTexture gDotTexture;
 		string Sprite;
 		int Xcycle;
@@ -71,10 +72,15 @@ class Dot
 		pair<int,int> myState = {0,1};
 
 		// winning criteria deciding attributes	
-		int money;
-		int health;
-		int CG;
+		double money = 50;
+		double health = 100;
+		double CG = 6;
 		bool isPowerUpEnabled = false;
+
+
+		double mRate;
+		double hRate;
+		double cgRate;
 
 		string score_text;
 		int score=0;

@@ -125,7 +125,7 @@ SDL_Renderer* gRenderer = NULL;
 
 //Globally used font
 TTF_Font *gFont = NULL;
-
+TTF_Font *myFont = NULL;
 //Rendered texture
 LTexture gTextTexture;
 
@@ -138,6 +138,7 @@ LTexture gTileTexture3;
 LTexture gTileTexture4;
 LTexture MinimapTexture;
 
+LTexture InfoScreenTexture; 
 LTexture StartScreenTexture;
 LTexture HostelTexture;
 //SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
@@ -280,7 +281,7 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 	bool success = true;
 
 	//Load dot texture
-	if( !dot.gDotTexture.loadFromFile( "assets/character1.png",gRenderer) )
+	if( !dot.gDotTexture.loadFromFile( "assets/Player1Sprite.png",gRenderer) )
 	{
 		printf( "Failed to load dot texture!\n" );
 		success = false;
@@ -366,6 +367,12 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		printf("Failed to load start screen texture\n");
 		success = false;
 	}
+
+	if(!InfoScreenTexture.loadFromFile("assets/INFO sheet.png",gRenderer)){
+		printf("Failed to load start screen texture\n");
+		success = false;
+	}
+
 	if(!MinimapTexture.loadFromFile("assets/untitled.png",gRenderer)){
 		printf("Failed to load mini map texture\n");
 		success = false;
@@ -388,7 +395,15 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
             success = false;
         }
     }
-	
+	myFont = TTF_OpenFont( "assets/US101.TTF", 26 );
+    if( myFont == NULL )
+    {
+        printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
+        success = false;
+    }
+    
+
+
     //Load music
     gMusic = Mix_LoadMUS( "sounds/beat.wav" );
     if( gMusic == NULL )
@@ -498,6 +513,9 @@ void close( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* ti
     //Free global font
     TTF_CloseFont( gFont );
     gFont = NULL;
+
+	TTF_CloseFont( myFont );
+    myFont = NULL;
 
     //Free the sound effects
     Mix_FreeChunk( gScratch );
@@ -854,8 +872,6 @@ int main( int argc, char* argv[] )
 			for ( int k=0;k<10;k++){
 			 	arr[k]=TilePLace(tileSet2);
 			}
-			Point p1= Point(tileSet2[0]);
-			Point p2= Point(tileSet2[1]);
 
 			// Powerup p1(tileSet[100*4 + 5]);
 			// Powerup p2(tileSet[100*5 + 14]);
@@ -909,7 +925,7 @@ int main( int argc, char* argv[] )
 			InfoButton.InitialiseButton(1,&gameTimer,&curr_state,0.01,0.92,0.04,0.06,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/infobutton.png","");
 
 			LButton ResumeButton; 
-			ResumeButton.InitialiseButton(1,&gameTimer,&curr_state,0.01,0.96,0.04,0.06,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/info1.png","");
+			ResumeButton.InitialiseButton(1,&gameTimer,&curr_state,0.01,0.92,0.06,0.08,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/resume1.png","");
 			
 			LButton girnar; 
 			girnar.InitialiseButton(1,&gameTimer,&curr_state,0.06,0.25,0.2,0.2,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/GIRNAR.png","");
@@ -1106,8 +1122,7 @@ int main( int argc, char* argv[] )
 					//Handle input for the dot
 					gameStartButton.handleEvent(&e , 1);
 
-					dot.handleEvent( e );
-					dot2.handleEvent( e );
+					
 				}
 
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0xFF, 0xFF);
@@ -1131,7 +1146,7 @@ int main( int argc, char* argv[] )
 					}
 					//Handle key press
                     girnar.handleEvent(&e,2);
-					if(curr_state==2){dot.mBox.x=1400;dot.mBox.y = 30;curr_state = 5;};
+					if(curr_state==2){dot.mBox.x=32*8;dot.mBox.y = 0;curr_state = 5;};
 					udaigiri.handleEvent(&e,3);
 					if(curr_state==3){dot.mBox.x=1600;dot.mBox.y = 30;curr_state=5;};
 					satpura.handleEvent(&e,4);
@@ -1162,8 +1177,11 @@ int main( int argc, char* argv[] )
 					}
 
 					//dot.handleEvent( e );
+					dot.handleEvent( e );
+					if(ti == 0){quit = true;}
+					//dot2.handleEvent( e );
 					InfoButton.handleEvent(&e , 6); 
-					dot2.handleEvent( e );
+					//dot2.handleEvent( e );
 					
 				}
 				// const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
@@ -1172,8 +1190,8 @@ int main( int argc, char* argv[] )
 
 				//Move the dot
 				
-				//dot.move( tileSet2,gHigh,gMedium,gLow );
-				//dot.setCamera( camera );
+				dot.move( tileSet2,gHigh,gMedium,gLow );
+				dot.setCamera( camera );
 
 
 
@@ -1201,6 +1219,8 @@ int main( int argc, char* argv[] )
 				 	if (tileSet4[i]->getType()!=0) tileSet4[ i ]->render( gRenderer,camera,&gTileTexture4);
 				}
 
+				dot.render(camera,gTextTexture,myFont,gRenderer);
+				
 				enemy1.move(tileSet2);
 				enemy2.move(tileSet2);
 				enemy3.move(tileSet2);
@@ -1212,9 +1232,11 @@ int main( int argc, char* argv[] )
 				gTextTexture.render(gRenderer,1280-camera.x,1280-camera.y,0,0);
 				
 				MinimapTexture.render(gRenderer,1500,0,0,0);
+				dot2.renderPlayer2(camera,gTextTexture,myFont,gRenderer);
 
-				dot2.move(tileSet2,gHigh,gMedium,gLow);
-				dot2.setCamera( camera);
+
+				//dot2.move(tileSet2,gHigh,gMedium,gLow);
+				//dot2.setCamera( camera);
 				//Clear screen
 				
 				//Render dot
@@ -1223,7 +1245,7 @@ int main( int argc, char* argv[] )
 				enemy2.render(camera,gRenderer);
 				enemy3.render(camera,gRenderer);
 
-				dot2.render(camera,gTextTexture,gFont,gRenderer);
+				
 
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) quit=true;
 				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy1.mBox)) quit=true;
@@ -1301,7 +1323,7 @@ int main( int argc, char* argv[] )
 					
 				}
 
-				HostelTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+				InfoScreenTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
 				ResumeButton.render();
 				SDL_RenderPresent( gRenderer );
 			}

@@ -213,7 +213,7 @@ void Dot::move( Tile *tiles[],Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLo
 	for (int k=0;k<TOTAL_TILES;k++){
 		if (tiles[k]->SetPoint){
 			if (myfunctions.checkCollision(tiles[k]->getBox(),mBox)){
-				score+=1;
+				money+=5;
 				Mix_PlayChannel( -1, gLow, 0 );
 				tiles[k]->SetPoint=NULL;
 			}
@@ -288,15 +288,20 @@ void Dot::setCamera( SDL_Rect& camera )
 	}
 }
 
+string Dot ::double2String(double a){
+    string b =  std::to_string(a);
+    return b.substr(0,b.find(".") + 3);
+}
+
 void Dot::render( SDL_Rect& camera,LTexture TextTexture,TTF_Font *gFont ,SDL_Renderer* gRenderer )
 {
     SDL_Rect myClip ={ Spritewidth*myState.second , Spriteheight*myState.first, Spritewidth,Spriteheight};
     //Show the dot
 	gDotTexture.render( gRenderer, mBox.x - camera.x, mBox.y - camera.y,Renderwidth,Renderheight,&myClip );
-	score_text="score: "+std::to_string(score);
-	SDL_Color textColor = { 0, 0, 0 };
+	score_text="Money: "+double2String(money);
+	SDL_Color textColor = { 0, 96, 255 };
     
-	TextTexture.loadFromRenderedText("Score : " + score_text,textColor,gFont,gRenderer);
+	TextTexture.loadFromRenderedText( score_text,textColor,gFont,gRenderer);
 	TextTexture.render(gRenderer, mBox.x - camera.x -40, mBox.y - camera.y -60,0,0);     
 	// SDL_Color textColor = { 255, 255, 255, 0 };
 	// SDL_Surface* textSurface = TTF_RenderText_Solid(font, score_text.c_str(), textColor);
@@ -308,7 +313,38 @@ void Dot::render( SDL_Rect& camera,LTexture TextTexture,TTF_Font *gFont ,SDL_Ren
 	// SDL_RenderCopy(renderer, text, NULL, &renderQuad);
 	// SDL_DestroyTexture(text);
 
-	TextTexture.loadFromRenderedText("Tasks Completed P1:" + std::to_string(tasksComp),textColor,gFont,gRenderer);
-    TextTexture.render(gRenderer,0,40,0,0);
     
+	TextTexture.loadFromRenderedText("Tasks Completed P1 :" + std::to_string(tasksComp),textColor,gFont,gRenderer);
+    TextTexture.render(gRenderer,65,70,0,0);
+    
+    TextTexture.loadFromRenderedText("CG P1 : " + double2String(CG),textColor,gFont,gRenderer);
+    TextTexture.render(gRenderer,65,110,0,0);
+
+    TextTexture.loadFromRenderedText("HEALTH P1 : " + double2String(health),textColor,gFont,gRenderer);
+    TextTexture.render(gRenderer,65,150,0,0);
+}
+
+void Dot :: renderPlayer2( SDL_Rect &camera,LTexture TextTexture,TTF_Font *gFont, SDL_Renderer* gRenderer )
+{
+    SDL_Rect myClip ={ Spritewidth*myState.second , Spriteheight*myState.first, Spritewidth,Spriteheight};
+    //Show the dot
+	gDotTexture.render( gRenderer, mBox.x - camera.x, mBox.y - camera.y,Renderwidth,Renderheight,&myClip );
+	score_text="Money: "+double2String(money);
+	SDL_Color textColor = { 0, 96, 255 };
+    
+	TextTexture.loadFromRenderedText( score_text,textColor,gFont,gRenderer);
+	TextTexture.render(gRenderer, mBox.x - camera.x -40, mBox.y - camera.y -60,0,0);
+
+
+    TextTexture.loadFromRenderedText("Tasks Completed P2 :" + std::to_string(tasksComp),textColor,gFont,gRenderer);
+    TextTexture.render(gRenderer,SCREEN_WIDTH - 65,70,0,0);
+    
+    TextTexture.loadFromRenderedText("CG P2 : " + double2String(CG),textColor,gFont,gRenderer);
+    TextTexture.render(gRenderer,SCREEN_WIDTH - 65,110,0,0);
+
+    TextTexture.loadFromRenderedText("HEALTH P2 : " + double2String(health),textColor,gFont,gRenderer);
+    TextTexture.render(gRenderer,SCREEN_WIDTH - 65,150,0,0);
+
+    
+   
 }
