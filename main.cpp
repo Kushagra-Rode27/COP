@@ -901,6 +901,12 @@ int main( int argc, char* argv[] )
 			LButton gameStartButton; 
 			gameStartButton.InitialiseButton(1,&gameTimer,&curr_state,0.4,0.25,0.2,0.25,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"start-up.png","start-down.png");
 			
+			LButton InfoButton; 
+			InfoButton.InitialiseButton(1,&gameTimer,&curr_state,0.01,0.92,0.04,0.06,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/infobutton.png","");
+
+			LButton ResumeButton; 
+			ResumeButton.InitialiseButton(1,&gameTimer,&curr_state,0.01,0.96,0.04,0.06,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/info1.png","");
+			
 			LButton girnar; 
 			girnar.InitialiseButton(1,&gameTimer,&curr_state,0.06,0.25,0.2,0.2,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/GIRNAR.png","");
 			
@@ -1109,6 +1115,7 @@ int main( int argc, char* argv[] )
 			}
 			else if(curr_state==1)
 			{
+				gameStartButton.close();
 				//Handle events on queue
 				while( SDL_PollEvent( &e ) != 0 )
 				{
@@ -1138,6 +1145,9 @@ int main( int argc, char* argv[] )
 					
 			}
 			else if(curr_state == 5){
+				girnar.close();
+				udaigiri.close();
+				satpura.close();
 				while( SDL_PollEvent( &e ) != 0 )
 				{
 					//User requests quit
@@ -1148,6 +1158,7 @@ int main( int argc, char* argv[] )
 					}
 
 					//dot.handleEvent( e );
+					InfoButton.handleEvent(&e , 6); 
 					dot2.handleEvent( e );
 					
 				}
@@ -1240,9 +1251,7 @@ int main( int argc, char* argv[] )
 				// 	dot2.speed1=false;
 				// 	lastTime = currentTime;
 				// }
-				p1.Render(camera,gRenderer);
-				p2.Render(camera,gRenderer);
-
+			
 				// p1.Render(camera);
 				// p2.Render(camera);
 				// p3.Render(camera);
@@ -1260,6 +1269,7 @@ int main( int argc, char* argv[] )
 					}
 				}
 
+
 				// for (int k=0;k<5;k++){
 				// 	if (arr1[k].GetTile()->SetPowerUp==true) arr1[k].Render(camera,powerUpTexture,gRenderer);
 				// }
@@ -1268,9 +1278,31 @@ int main( int argc, char* argv[] )
 				// 	if (finaltask[k].GetTile()->SetTask==true) finaltask[k].Render(camera,tasksTexture,gRenderer);
 				// }
 				//Update screen
-				
+				InfoButton.render();
 				SDL_RenderPresent( gRenderer );
 			}
+			else if (curr_state==6){
+				
+				while( SDL_PollEvent( &e ) != 0 )
+				{
+					//User requests quit
+
+					if( e.type == SDL_QUIT )
+					{
+						quit = true;
+					}
+
+					//dot.handleEvent( e );
+					ResumeButton.handleEvent(&e,5);
+					
+				}
+
+				HostelTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+				ResumeButton.render();
+				SDL_RenderPresent( gRenderer );
+			}
+
+
 				SDL_Delay(100);
 			}
 
