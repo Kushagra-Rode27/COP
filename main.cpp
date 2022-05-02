@@ -1128,16 +1128,19 @@ int main( int argc, char* argv[] )
 					{
 						quit = true;
 					}
+
+					//dot.handleEvent( e );
+					dot2.handleEvent( e );
 					
 				}
 				// const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
-				// dot.handle(currentKeyStates);
+				//dot.handle(currentKeyStates);
 				// dot2.handle(currentKeyStates);
 
 				//Move the dot
 				
-				//dot.move( tileSet,gHigh,gMedium,gLow );
-				dot.setCamera( camera );
+				//dot.move( tileSet2,gHigh,gMedium,gLow );
+				//dot.setCamera( camera );
 
 
 
@@ -1170,23 +1173,23 @@ int main( int argc, char* argv[] )
 				//enemy3.move(tileSet);
 				
 				
-				//dot2.move(tileSet,gHigh,gMedium,gLow);
+				dot2.move(tileSet2,gHigh,gMedium,gLow);
 				dot2.setCamera( camera);
 				//Clear screen
 				
 				//Render dot
-				// dot.render( camera,gTextTexture,gFont,gRenderer);
+				//dot.render( camera,gTextTexture,gFont,gRenderer);
 				// enemy1.render(camera,gRenderer);
 				// enemy2.render(camera,gRenderer);
 				// enemy3.render(camera,gRenderer);
-				// dot2.render(camera,gTextTexture,gFont,gRenderer);
+				dot2.render(camera,gTextTexture,gFont,gRenderer);
 
-				if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) quit=true;
-				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy1.mBox)) quit=true;
-				if (dot.myfunctions.checkCollision(dot.mBox,enemy2.mBox)) quit=true;
-				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy2.mBox)) quit=true;
-				if (dot.myfunctions.checkCollision(dot.mBox,enemy3.mBox)) quit=true;
-				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy3.mBox)) quit=true;
+				// if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) quit=true;
+				// if (dot2.myfunctions.checkCollision(dot2.mBox,enemy1.mBox)) quit=true;
+				// if (dot.myfunctions.checkCollision(dot.mBox,enemy2.mBox)) quit=true;
+				// if (dot2.myfunctions.checkCollision(dot2.mBox,enemy2.mBox)) quit=true;
+				// if (dot.myfunctions.checkCollision(dot.mBox,enemy3.mBox)) quit=true;
+				// if (dot2.myfunctions.checkCollision(dot2.mBox,enemy3.mBox)) quit=true;
 
 				currentTime1 = SDL_GetTicks();
 				if(currentTime1 > lastTime1 + 1000) //ms to wait before change angle
