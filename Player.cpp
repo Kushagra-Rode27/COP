@@ -31,17 +31,28 @@ bool Dot :: touchesWall( SDL_Rect box, Tile* tiles[] )
 }
 
 
-Dot::Dot()
+Dot::Dot(int XCycle,int YCycle,int PlayerSpriteWidth , int PlayerSpriteHeight , int PlayerRenderHeight , int PlayerRenderWidth , int bestState)
 {
     //Initialize the collision box
     mBox.x = 8*32;
     mBox.y = 0;
-	mBox.w = DOT_WIDTH;
-	mBox.h = DOT_HEIGHT;
+	mBox.w = PlayerRenderWidth;
+	mBox.h = PlayerRenderHeight;
 
     //Initialize the velocity
     mVelX = 0;
     mVelY = 0;
+
+    //Initialize other Params for spritesheet
+    Xcycle = XCycle;
+    Ycycle = YCycle;
+    Spritewidth = PlayerSpriteWidth;
+    Spriteheight = PlayerSpriteHeight;
+    Renderheight = PlayerRenderHeight;
+    Renderwidth = PlayerRenderWidth;
+    
+
+
 }
 
 //Dot :: Dot(LTexture gDotTexture,LTexture gTextTexture,TTF_Font *gFont,SDL_Renderer* gRenderer,Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLow){
@@ -68,15 +79,34 @@ Dot::Dot()
 void Dot::handleEvent( SDL_Event& e )
 {
     //If a key was pressed
-	if( e.type == SDL_KEYDOWN && e.key.repeat == 0 )
+    if( e.type == SDL_KEYDOWN)
     {
-        //Adjust the velocity
-        switch( e.key.keysym.sym )
+
+        switch(e.key.keysym.sym)
+        {   
+            case SDLK_DOWN : if(myState.first == 0) myState.second+=1 ;else myState={0,stayState};break;
+
+            case SDLK_LEFT : if(myState.first == 1) myState.second+=1;else myState={1,stayState};break;
+
+            case SDLK_RIGHT : if(myState.first == 0) myState.second+=1;else myState={0,stayState};break;
+            
+            case SDLK_UP : if(myState.first ==1) myState.second+=1;else myState={1,stayState};break;
+
+            
+        }
+        if (myState.second <0 ) myState.second+=Xcycle;
+        if(myState.second>=Xcycle) myState.second-=Xcycle;
+
+        // VELOCITY ADJUSTED
+        if(e.key.repeat==0)
         {
-            case SDLK_UP: mVelY =- DOT_VEL; break;
-            case SDLK_DOWN: mVelY =+ DOT_VEL; break;
-            case SDLK_LEFT: mVelX =- DOT_VEL; break;
-            case SDLK_RIGHT: mVelX =+ DOT_VEL; break;
+            switch( e.key.keysym.sym )
+            {
+                case SDLK_UP: mVelY -= DOT_VEL; break;
+                case SDLK_DOWN: mVelY += DOT_VEL; break;
+                case SDLK_LEFT: mVelX -= DOT_VEL; break;
+                case SDLK_RIGHT: mVelX += DOT_VEL; break;
+            }
         }
     }
     //If a key was released
@@ -236,8 +266,8 @@ void Dot::move( Tile *tiles[],Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLo
 void Dot::setCamera( SDL_Rect& camera )
 {
 	//Center the camera over the dot
-	camera.x = ( mBox.x + DOT_WIDTH / 2 ) - SCREEN_WIDTH / 2;
-	camera.y = ( mBox.y + DOT_HEIGHT / 2 ) - SCREEN_HEIGHT / 2;
+	camera.x = ( mBox.x + Renderwidth / 2 ) - SCREEN_WIDTH / 2;
+	camera.y = ( mBox.y + Renderheight / 2 ) - SCREEN_HEIGHT / 2;
 
 	//Keep the camera in bounds
 	if( camera.x < 0 )
@@ -260,8 +290,9 @@ void Dot::setCamera( SDL_Rect& camera )
 
 void Dot::render( SDL_Rect& camera,LTexture TextTexture,TTF_Font *gFont ,SDL_Renderer* gRenderer )
 {
+    SDL_Rect myClip ={ Spritewidth*myState.second , Spriteheight*myState.first, Spritewidth,Spriteheight};
     //Show the dot
-	gDotTexture.render( gRenderer, mBox.x - camera.x, mBox.y - camera.y,0,0 );
+	gDotTexture.render( gRenderer, mBox.x - camera.x, mBox.y - camera.y,Renderwidth,Renderheight,&myClip );
 	score_text="score: "+std::to_string(score);
 	SDL_Color textColor = { 0, 0, 0 };
     

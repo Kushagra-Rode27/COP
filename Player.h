@@ -37,7 +37,7 @@ class Dot
 		int DOT_VEL = 16;
 
 		//Initializes the variables
-		Dot();
+		Dot(int XCycle,int YCycle, int PlayerSpriteWidth , int PlayerSpriteHeight , int PlayerRenderHeight , int PlayerRenderWidth ,int bestState);
 		//Dot(LTexture gDotTexture,LTexture gTextTexture,TTF_Font *gFont,SDL_Renderer* gRenderer,Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLow);
 
 		//Takes key presses and adjusts the dot's velocity
@@ -67,6 +67,14 @@ class Dot
 		int Renderwidth;
 		int Renderheight;
 		int stayState;
+
+		pair<int,int> myState = {0,1};
+
+		// winning criteria deciding attributes	
+		int money;
+		int health;
+		int CG;
+		bool isPowerUpEnabled = false;
 
 		string score_text;
 		int score=0;

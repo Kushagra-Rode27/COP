@@ -85,15 +85,7 @@ const int TILE_SOME=43;
 // till here
 
 
-Tile* tileSet1[ TOTAL_TILES ];
-Tile* tileSet2[ TOTAL_TILES ];
-Tile* tileSet3[ TOTAL_TILES ];
-Tile* tileSet4[ TOTAL_TILES ];
-Dot dot;
-Dot dot2;
-enemyDot enemy1(8);
-enemyDot enemy2(42);
-enemyDot enemy3(81);
+
 
 
 // Point n1;
@@ -165,6 +157,15 @@ std::string score_text2;
 int curr_state = 0;
 int curr_stateP2 = 0;
 
+Tile* tileSet1[ TOTAL_TILES ];
+Tile* tileSet2[ TOTAL_TILES ];
+Tile* tileSet3[ TOTAL_TILES ];
+Tile* tileSet4[ TOTAL_TILES ];
+Dot dot(6,2,78,127,32,32,1);
+Dot dot2(6,2,78,127,32,32,1);
+enemyDot enemy1(8);
+enemyDot enemy2(42);
+enemyDot enemy3(81);
 
 //from here texture.cpp
 
@@ -299,7 +300,7 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		success = false;
 	}
 
-	if( !dot2.gDotTexture.loadFromFile( "assets/character2.png" ,gRenderer) )
+	if( !dot2.gDotTexture.loadFromFile( "assets/Player2Sprite1.png" ,gRenderer) )
 	{
 		printf( "Failed to load dot texture!\n" );
 		success = false;
