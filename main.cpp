@@ -866,29 +866,33 @@ int main( int argc, char* argv[] )
 
 			// Powerup arr1[6] = {p1,p2,p3,p4,p5,p6};
 
-
-			// Tasks t1(tileSet[100*24 + 38]);
-			// Tasks t2(tileSet[100*22 + 47]);
-			// Tasks t3(tileSet[100*23 + 64]);
-			// Tasks t4(tileSet[100*6 + 5]);
-			// Tasks t5(tileSet[100*16 + 49]);
-			// Tasks t6(tileSet[100*12 + 57]);
-			// Tasks t7(tileSet[100*5 + 51]);
-			// Tasks t8(tileSet[100*18 + 5]);
-			// Tasks t9(tileSet[100*27 + 6]);
+			//hostel tasks
+			Tasks t1(tileSet4[150*12 + 12]);
+			Tasks t2(tileSet4[150*20 + 12]);
+			Tasks t3(tileSet4[150*27 + 12]);
+			Tasks t4(tileSet4[150*37 + 12]);
+			Tasks t5(tileSet4[150*6 + 23]);
+			Tasks t6(tileSet4[150*5 + 78]);
+			Tasks t7(tileSet4[150*6 + 42]);
+			Tasks t8(tileSet4[150*5 + 54]);
+			Tasks t9(tileSet4[150*12 + 76]);
 
 
 			// // int location[9] = {100*24 + 38,100*22 + 47,100*23 + 64,100*4 + 8,100*16 + 49};
-			// Tasks task[9] = {t1,t2,t3,t4,t5,t6,t7,t8,t9};
+			Tasks task[9] = {t1,t2,t3,t4,t5,t6,t7,t8,t9};
+			for (int i=0;i<9;i++){
+				task[i].type=0; //hostel
+				task[i].msg="hostel task";
+			}
 
-			// Tasks finaltask[4];
-			// srand(time(0));
-			// for (int i = 0; i < 4; i++)
-			// {
-			// 	int k = rand() % 9;
-			// 	finaltask[i] = task[k];
+			Tasks finaltask[4];
+			srand(time(0));
+			for (int i = 0; i < 4; i++)
+			{
+				int k = rand() % 9;
+				finaltask[i] = task[k];
 				
-			// }	
+			}	
 			// Point p2(tileSet[1]);
 
 			//Level camera
@@ -1221,12 +1225,12 @@ int main( int argc, char* argv[] )
 
 				dot2.render(camera,gTextTexture,gFont,gRenderer);
 
-				// if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) quit=true;
-				// if (dot2.myfunctions.checkCollision(dot2.mBox,enemy1.mBox)) quit=true;
-				// if (dot.myfunctions.checkCollision(dot.mBox,enemy2.mBox)) quit=true;
-				// if (dot2.myfunctions.checkCollision(dot2.mBox,enemy2.mBox)) quit=true;
-				// if (dot.myfunctions.checkCollision(dot.mBox,enemy3.mBox)) quit=true;
-				// if (dot2.myfunctions.checkCollision(dot2.mBox,enemy3.mBox)) quit=true;
+				if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) quit=true;
+				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy1.mBox)) quit=true;
+				if (dot.myfunctions.checkCollision(dot.mBox,enemy2.mBox)) quit=true;
+				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy2.mBox)) quit=true;
+				if (dot.myfunctions.checkCollision(dot.mBox,enemy3.mBox)) quit=true;
+				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy3.mBox)) quit=true;
 
 				currentTime1 = SDL_GetTicks();
 				if(currentTime1 > lastTime1 + 1000) //ms to wait before change angle
@@ -1274,9 +1278,9 @@ int main( int argc, char* argv[] )
 				// 	if (arr1[k].GetTile()->SetPowerUp==true) arr1[k].Render(camera,powerUpTexture,gRenderer);
 				// }
 
-				// for (int k=0;k<4;k++){
-				// 	if (finaltask[k].GetTile()->SetTask==true) finaltask[k].Render(camera,tasksTexture,gRenderer);
-				// }
+				for (int k=0;k<4;k++){
+					if (finaltask[k].GetTile()->SetTask==true) finaltask[k].Render(camera,gRenderer);
+				}
 				//Update screen
 				InfoButton.render();
 				SDL_RenderPresent( gRenderer );

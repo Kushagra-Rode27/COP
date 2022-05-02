@@ -53,8 +53,9 @@ void Tasks::SetTile(Tile* newTile)
 	}
 }
 
-void Tasks::Render(SDL_Rect& camera,LTexture tasksTexture,SDL_Renderer* gRenderer)
+void Tasks::Render(SDL_Rect& camera,SDL_Renderer* gRenderer)
 {
+	tasksTexture.loadFromFile("assets/point.bmp",gRenderer);
 	tasksTexture.render(gRenderer,position.x- camera.x, position.y- camera.y,0,0);
 }
 

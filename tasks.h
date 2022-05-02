@@ -36,13 +36,15 @@ public:
 	void SetTile(Tile* newTile);
 
 	// Renders pacman
-	void Render(SDL_Rect& camera,LTexture tasksTexture,SDL_Renderer* gRenderer);
+	void Render(SDL_Rect& camera,SDL_Renderer* gRenderer);
 
 	// Releases texture memory
 	// void Free();
 
 	// Mark the object to be deleted
 	void Delete();
+
+	LTexture tasksTexture;
 
 	// Returns collider
 	SDL_Rect GetCollider();
@@ -52,6 +54,9 @@ public:
 
 	// Returns wall's tile
 	Tile* GetTile();
+
+	int type;
+	string msg;
 
 private:
 
