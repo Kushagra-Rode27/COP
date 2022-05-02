@@ -136,6 +136,7 @@ LTexture gTileTexture1;
 LTexture gTileTexture2;
 LTexture gTileTexture3;
 LTexture gTileTexture4;
+LTexture MinimapTexture;
 
 LTexture StartScreenTexture;
 LTexture HostelTexture;
@@ -361,6 +362,10 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		printf("Failed to load start screen texture\n");
 		success = false;
 	}
+	if(!MinimapTexture.loadFromFile("assets/untitled.png",gRenderer)){
+		printf("Failed to load mini map texture\n");
+		success = false;
+	}
 	
 	score_text="score: "+std::to_string(scorep1);
 	gFont = TTF_OpenFont( "metal lord.ttf", 28 );
@@ -476,6 +481,7 @@ void close( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* ti
 	pointTexture.free();
 	//Free loaded images
     gTextTexture.free();
+	MinimapTexture.free();
 	powerUpTexture.free();
 	tasksTexture.free();
 	StartScreenTexture.free();
@@ -1172,8 +1178,15 @@ int main( int argc, char* argv[] )
 				//enemy1.move(tileSet);
 				//enemy2.move(tileSet);
 				//enemy3.move(tileSet);
+				// Render Names
+				SDL_Color textColor = { 0, 0, 0 };
+				gTextTexture.loadFromRenderedText("Tennis",textColor,gFont,gRenderer);
+				gTextTexture.render(gRenderer,1120-camera.x,480-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("SAC",textColor,gFont,gRenderer);
+				gTextTexture.render(gRenderer,1280-camera.x,1280-camera.y,0,0);
 				
-				
+				MinimapTexture.render(gRenderer,1500,0,0,0);
+
 				dot2.move(tileSet2,gHigh,gMedium,gLow);
 				dot2.setCamera( camera);
 				//Clear screen

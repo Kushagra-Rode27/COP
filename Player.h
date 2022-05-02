@@ -19,9 +19,9 @@ class Dot
         const int SCREEN_HEIGHT = 700;
         const int TILE_WIDTH = 32;
         const int TILE_HEIGHT = 32;
-		const int TOTAL_TILES = 50*100;
-		const int LEVEL_WIDTH = 3200;
-		const int LEVEL_HEIGHT = 1600;
+		const int TOTAL_TILES = 75*150;
+		const int LEVEL_WIDTH = 4800;
+		const int LEVEL_HEIGHT = 2400;
 		const int TILE_NONE = 0;
 		const int TILE_GREEN = 1;
 		const int TILE_ROAD = 13;
