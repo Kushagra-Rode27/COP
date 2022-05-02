@@ -88,16 +88,16 @@ const int TILE_SOME=43;
 
 
 
-// Point n1;
-// Point n2;
-// Point n3;
-// Point n4;
-// Point n5;
-// Point n6;
-// Point n7;
-// Point n8;
-// Point n9;
-// Point n10;
+Point n1;
+Point n2;
+Point n3;
+Point n4;
+Point n5;
+Point n6;
+Point n7;
+Point n8;
+Point n9;
+Point n10;
 Point arr[10];
 
 
@@ -129,7 +129,7 @@ TTF_Font *gFont = NULL;
 //Rendered texture
 LTexture gTextTexture;
 
-LTexture pointTexture;
+//LTexture pointTexture;
 LTexture powerUpTexture;
 LTexture tasksTexture;
 LTexture gTileTexture1;
@@ -164,7 +164,7 @@ Tile* tileSet3[ TOTAL_TILES ];
 Tile* tileSet4[ TOTAL_TILES ];
 Dot dot(6,2,78,127,32,32,1);
 Dot dot2(6,2,78,127,32,32,1);
-enemyDot enemy1(8);
+enemyDot enemy1(16);
 enemyDot enemy2(42);
 enemyDot enemy3(81);
 
@@ -307,12 +307,16 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		success = false;
 	}
 	
-	
-		if( !pointTexture.loadFromFile( "assets/point.bmp",gRenderer ))
+	for (int i = 0; i < 10; i++)
+	{
+		if( !arr[i].pointTexture.loadFromFile( "assets/task.png",gRenderer ))
 		{
 			printf( "Failed to load dot texture!\n" );
 			success = false;
 		}
+	}
+	
+		
 	
 	
 	
@@ -478,13 +482,19 @@ void close( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* ti
 	gTileTexture2.free();
 	gTileTexture3.free();
 	gTileTexture4.free();
-	pointTexture.free();
+	for (int i = 0; i < 10; i++)
+	{
+		arr[i].pointTexture.free();
+	}
+	
+	
 	//Free loaded images
     gTextTexture.free();
 	MinimapTexture.free();
 	powerUpTexture.free();
 	tasksTexture.free();
 	StartScreenTexture.free();
+	HostelTexture.free();
     //Free global font
     TTF_CloseFont( gFont );
     gFont = NULL;
@@ -799,7 +809,7 @@ Point TilePLace(Tile* tiles[]){
 	srand(time(0));
 	for ( int i = 0; i < TOTAL_TILES; 	i++ ){
 		int j=rand()%5000;
-		if (tiles[j]->getType() == TILE_ROAD && !tiles[j]->SetPoint){
+		if (tiles[j]->getType() != 0 && !tiles[j]->SetPoint){
 			
 			return Point(tiles[j]);
 		}
@@ -841,11 +851,12 @@ int main( int argc, char* argv[] )
 			//The dot that will be moving around on the screen
 			
 			
-			// for ( int k=0;k<10;k++){
-			// 	arr[k]=TilePLace(tileSet);
-			// }
-			// // Point p1=TilePLace(tileSet);
-			// // Point p2=TilePLace(tileSet);
+			for ( int k=0;k<10;k++){
+			 	arr[k]=TilePLace(tileSet2);
+			}
+			Point p1= Point(tileSet2[0]);
+			Point p2= Point(tileSet2[1]);
+
 			// Powerup p1(tileSet[100*4 + 5]);
 			// Powerup p2(tileSet[100*5 + 14]);
 			// Powerup p3(tileSet[100*10 + 5]);
@@ -1175,9 +1186,9 @@ int main( int argc, char* argv[] )
 				 	if (tileSet4[i]->getType()!=0) tileSet4[ i ]->render( gRenderer,camera,&gTileTexture4);
 				}
 
-				//enemy1.move(tileSet);
-				//enemy2.move(tileSet);
-				//enemy3.move(tileSet);
+				enemy1.move(tileSet2);
+				enemy2.move(tileSet2);
+				enemy3.move(tileSet2);
 				// Render Names
 				SDL_Color textColor = { 0, 0, 0 };
 				gTextTexture.loadFromRenderedText("Tennis",textColor,gFont,gRenderer);
@@ -1193,9 +1204,10 @@ int main( int argc, char* argv[] )
 				
 				//Render dot
 				//dot.render( camera,gTextTexture,gFont,gRenderer);
-				// enemy1.render(camera,gRenderer);
-				// enemy2.render(camera,gRenderer);
-				// enemy3.render(camera,gRenderer);
+				enemy1.render(camera,gRenderer);
+				enemy2.render(camera,gRenderer);
+				enemy3.render(camera,gRenderer);
+
 				dot2.render(camera,gTextTexture,gFont,gRenderer);
 
 				// if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) quit=true;
@@ -1228,6 +1240,9 @@ int main( int argc, char* argv[] )
 				// 	dot2.speed1=false;
 				// 	lastTime = currentTime;
 				// }
+				p1.Render(camera,gRenderer);
+				p2.Render(camera,gRenderer);
+
 				// p1.Render(camera);
 				// p2.Render(camera);
 				// p3.Render(camera);
@@ -1237,9 +1252,13 @@ int main( int argc, char* argv[] )
 				
 				
 
-				// for (int k=0;k<10;k++){
-				// 	if (arr[k].GetTile()->SetPoint==true) arr[k].Render(camera,gRenderer,pointTexture);
-				// }
+				for (int k=0;k<10;k++){
+
+					if (arr[k].GetTile()->SetPoint==true ) {
+						
+						arr[k].Render(camera,gRenderer);
+					}
+				}
 
 				// for (int k=0;k<5;k++){
 				// 	if (arr1[k].GetTile()->SetPowerUp==true) arr1[k].Render(camera,powerUpTexture,gRenderer);

@@ -38,7 +38,7 @@ Point::~Point()
 void Point::SetTile(Tile* newTile)
 {
 	if (currTile != NULL)
-		currTile->SetPoint=NULL;
+		currTile->SetPoint=false;
 
 	currTile = newTile;
 
@@ -53,8 +53,9 @@ void Point::SetTile(Tile* newTile)
 	}
 }
 
-void Point::Render(SDL_Rect& camera,SDL_Renderer* gRenderer, LTexture pointTexture)
+void Point::Render(SDL_Rect& camera,SDL_Renderer* gRenderer)
 {
+	//SDL_Rect clip = {position.x,position.y,32,32};
 	pointTexture.render(gRenderer,position.x- camera.x, position.y- camera.y,0,0);
 }
 

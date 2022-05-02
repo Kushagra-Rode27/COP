@@ -37,7 +37,7 @@ public:
 	void SetTile(Tile* newTile);
 
 	// Renders pacman
-	void Render(SDL_Rect& camera,SDL_Renderer* gRenderer,  LTexture pointTexture);
+	void Render(SDL_Rect& camera,SDL_Renderer* gRenderer);
 
 	// Releases texture memory
 	// void Free();
