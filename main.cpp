@@ -19,7 +19,20 @@
 #include "enemy.h"
 #include "Button.h"
 #include "timer.h"
-
+#include <cstdio>
+#include <unistd.h>
+#include <cstdlib>
+#include <cstring>
+#include <time.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <sstream>
+#include <stdlib.h>
+#include <sstream>
+#define PORT 8080
 //sudo apt install libsdl2-mixer-dev
 
 //38,25
@@ -105,6 +118,19 @@ Point n9;
 Point n10;
 Point arr[10];
 
+
+struct Info
+{
+    int stateFirst;
+    int stateSecond;
+    int Xcoord;
+    int Ycoord;
+    int myState;
+    double health;
+    double CG;
+    int money;
+	Point* pointarr;
+};
 
 //Starts up SDL and creates window
 bool init();
@@ -342,25 +368,25 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 	}
 
 	//Load tile texture
-	if( !gTileTexture1.loadFromFile( "./AtruXd.png" ,gRenderer) )
+	if( !gTileTexture1.loadFromFile( "assets/AtruXd.png" ,gRenderer) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
 	//Load tile texture
-	if( !gTileTexture2.loadFromFile( "./AtruXd.png" ,gRenderer) )
+	if( !gTileTexture2.loadFromFile( "assets/AtruXd.png" ,gRenderer) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
 	//Load tile texture
-	if( !gTileTexture3.loadFromFile( "./AtruXd.png" ,gRenderer) )
+	if( !gTileTexture3.loadFromFile( "assets/AtruXd.png" ,gRenderer) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
 	//Load tile texture
-	if( !gTileTexture4.loadFromFile( "./AtruXd.png" ,gRenderer) )
+	if( !gTileTexture4.loadFromFile( "assets/AtruXd.png" ,gRenderer) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
@@ -852,6 +878,79 @@ Point TilePLace(Tile* tiles[]){
 
 int main( int argc, char* argv[] )
 {
+	//starting sockets
+	int serv_fd, newserv_fd, bytes_sent, bytes_recvd;
+    int port_no = PORT;
+    char in_buffer[32], out_buffer[32], sname[64], cname[64];
+    struct Info indata;
+    struct Info mydata = {42, 5, 6, 7, 8, 9, 1, 4};
+    bool validate_data;
+
+    char cli_ip[INET_ADDRSTRLEN];
+    // IP address of server
+    char serv_ip[INET_ADDRSTRLEN] = "192.168.43.53";
+
+    struct sockaddr_in serv_addr, cli_addr;
+
+    // creating sever side socket
+    if ((serv_fd = socket(AF_INET, SOCK_STREAM, 0)) < -1)
+    {
+        perror("Server side listening Socket could not be created!");
+        return 1;
+    }
+
+    int opt = 1;
+
+    if (setsockopt(serv_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
+    {
+        perror("setsockopt");
+        exit(EXIT_FAILURE);
+    }
+
+    memset(&serv_addr, 0, sizeof(serv_addr));
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(port_no);
+
+    // serv_addr.sin_addr.s_addr = INADDR_ANY;
+
+    // Convert IPv4 addresses from text to binary form
+    if (inet_pton(AF_INET, serv_ip, &serv_addr.sin_addr) <= 0)
+    {
+        printf(
+            "\nInvalid address/ Address not supported \n");
+        return -1;
+    }
+
+    // binding socket
+    if (bind(serv_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    {
+        perror("Failed to bind!");
+        return 1;
+    }
+
+    if (listen(serv_fd, 5) == -1)
+    {
+        perror("Failed to listen!");
+        return 1;
+    }
+
+    memset(&cli_addr, 0, sizeof(cli_addr));
+
+    socklen_t cli_size = sizeof(cli_addr);
+
+    if ((newserv_fd = accept(serv_fd, (struct sockaddr *)&cli_addr, &cli_size)) == -1)
+    {
+        perror("Failed to accept from client!");
+        return 1;
+    }
+    //fcntl(newserv_fd, F_SETFL, fcntl(newserv_fd, F_GETFL, 0) | O_NONBLOCK);
+
+    inet_ntop(AF_INET, &cli_addr.sin_addr, cli_ip, INET_ADDRSTRLEN);
+    cout << "Server received connections from " << cli_ip << "\n";
+
+
+
 	//Start up SDL and create window
 	if( !init() )
 	{
@@ -868,12 +967,6 @@ int main( int argc, char* argv[] )
 		}
 		else
 		{	
-			
-			if (SDLNet_Init() == -1) {
-				printf("SDLNet_Init: %s\n", SDLNet_GetError());
-				exit(2);
-			}
-
 			//Main loop flag
 			bool quit = false;
 
@@ -930,147 +1023,45 @@ int main( int argc, char* argv[] )
 
 			bool done = false;
 
+
+			LTimer Timerframe;
+
 			LTimer gameTimer;
 
 			LButton gameStartButton; 
-			gameStartButton.InitialiseButton(1,&gameTimer,&curr_state,0.4,0.25,0.2,0.25,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"start-up.png","start-down.png");
+			gameStartButton.InitialiseButton(1,&gameTimer,&curr_state,0.4,0.25,0.2,0.25,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/start-up.png","assets/start-down.png");
 			
 			LButton InfoButton; 
-			InfoButton.InitialiseButton(1,&gameTimer,&curr_state,0.01,0.92,0.04,0.06,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/infobutton.png","");
+			InfoButton.InitialiseButton(1,&gameTimer,&curr_state,0.01,0.92,0.04,0.06,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/infobutton.png","");
 
 			LButton ResumeButton; 
-			ResumeButton.InitialiseButton(1,&gameTimer,&curr_state,0.01,0.92,0.06,0.08,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/resume1.png","");
+			ResumeButton.InitialiseButton(1,&gameTimer,&curr_state,0.01,0.92,0.06,0.08,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/resume1.png","");
 			
 			LButton RetryButton; 
-			RetryButton.InitialiseButton(1,&gameTimer,&curr_state,0.45,0.65,0.09,0.12,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/restart1.png","");
+			RetryButton.InitialiseButton(1,&gameTimer,&curr_state,0.45,0.65,0.09,0.12,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/restart1.png","");
 
 			LButton ExitButton; 
-			ExitButton.InitialiseButton(1,&gameTimer,&curr_state,0.45,0.85,0.09,0.12,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/exit1.png","");
+			ExitButton.InitialiseButton(1,&gameTimer,&curr_state,0.45,0.85,0.09,0.12,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/exit1.png","");
 			
 			
 			LButton girnar; 
-			girnar.InitialiseButton(1,&gameTimer,&curr_state,0.06,0.25,0.2,0.2,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/GIRNAR.png","");
+			girnar.InitialiseButton(1,&gameTimer,&curr_state,0.06,0.25,0.2,0.2,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/GIRNAR.png","");
 			
 			LButton udaigiri; 
-			udaigiri.InitialiseButton(1,&gameTimer,&curr_state,0.4,0.25,0.2,0.2,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/UDAIGIRI.png","");
+			udaigiri.InitialiseButton(1,&gameTimer,&curr_state,0.4,0.25,0.2,0.2,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/UDAIGIRI.png","");
 			
 			LButton satpura; 
-			satpura.InitialiseButton(1,&gameTimer,&curr_state,0.74,0.25,0.2,0.2,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/SATPURA.png","");
+			satpura.InitialiseButton(1,&gameTimer,&curr_state,0.74,0.25,0.2,0.2,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/SATPURA.png","");
 			
-			if (argc == 2 && strcmp(argv[1], "server") == 0) {
-				printf("Starting server...\n");
-				TCPsocket server, client;
-				IPaddress ip;
-				if (SDLNet_ResolveHost(&ip, NULL, 9999) == -1) {
-				printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
-				exit(1);
-				}
-				server = SDLNet_TCP_Open(&ip);
-				if (!server) {
-				printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
-				exit(2);
-				}
-				while (!done) {
-				/* try to accept a connection */
-				client = SDLNet_TCP_Accept(server);
-				if (!client) { /* no connection accepted */
-					/*printf("SDLNet_TCP_Accept: %s\n",SDLNet_GetError()); */
-					SDL_Delay(100); /*sleep 1/10th of a second */
-					continue;
-				}
-
-				/* get the clients IP and port number */
-				IPaddress *remoteip;
-				remoteip = SDLNet_TCP_GetPeerAddress(client);
-				if (!remoteip) {
-					printf("SDLNet_TCP_GetPeerAddress: %s\n", SDLNet_GetError());
-					continue;
-				}
-
-				/* print out the clients IP and port number */
-				Uint32 ipaddr;
-				ipaddr = SDL_SwapBE32(remoteip->host);
-				printf("Accepted a connection from %d.%d.%d.%d port %hu\n", ipaddr >> 24,
-						(ipaddr >> 16) & 0xff, (ipaddr >> 8) & 0xff, ipaddr & 0xff,
-						remoteip->port);
-
-				while (1) {
-					/* read the buffer from client */
-					char message[1024];
-					int len = SDLNet_TCP_Recv(client, message, 1024);
-					if (!len) {
-					printf("SDLNet_TCP_Recv: %s\n", SDLNet_GetError());
-					break;
-					}
-					/* print out the message */
-					printf("Received: %.*s\n", len, message);
-					//break;
-					if (message[0] == 'q') {
-					printf("Disconecting on a q\n");
-					break;
-					}
-					if (message[0] == 'Q') {
-					printf("Closing server on a Q.\n");
-					done = true;
-					break;
-					}
-				}
-				break;
-				SDLNet_TCP_Close(client);
-				}
-			} else if (argc == 2 && strcmp(argv[1], "client") == 0) {
-				printf("Starting client...\n");
-				IPaddress ip;
-				TCPsocket tcpsock;
-				//192.168.1.2
-				if (SDLNet_ResolveHost(&ip, "192.168.29.119", 9999) == -1) {
-				printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
-				exit(1);
-				}
-
-				tcpsock = SDLNet_TCP_Open(&ip);
-				if (!tcpsock) {
-				printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
-				exit(2);
-				}
-
-				while (1) {
-				printf("message: ");
-				//break;
-				char message[1024];
-				fgets(message, 1024, stdin);
-				int len = strlen(message);
-
-				/* strip the newline */
-				message[len - 1] = '\0';
-
-				if (len) {
-					int result;
-
-					/* print out the message */
-					printf("Sending: %.*s\n", len, message);
-
-					result =
-						SDLNet_TCP_Send(tcpsock, message, len); /* add 1 for the NULL */
-					if (result < len)
-					printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-				}
-
-				if (len == 2 && tolower(message[0]) == 'q') {
-					break;
-				}
-				}
-
-				SDLNet_TCP_Close(tcpsock);
-			} else {
-				printf("Choose server or client\n");
-			}
-
+			
 			//int lastTime = 0,currentTime;
 			//While application is running
-			
+			int countedFrames = 0;
+
 			while( !quit )
 			{
+
+				Timerframe.start();
 				if(curr_state == 0)
 				{
 				//Handle events on queue
@@ -1369,9 +1360,15 @@ int main( int argc, char* argv[] )
 				SDL_RenderPresent( gRenderer );
 			}
 
+			// If frame finished early
+            	int frameTicks = Timerframe.getTicks();
+                if (frameTicks < SCREEN_TICK_PER_FRAME)
+                {
+                        // Wait remaining time
+                    SDL_Delay(SCREEN_TICK_PER_FRAME - frameTicks);
+                }
 
-
-				SDL_Delay(100);
+				//SDL_Delay(100);
 			}
 
 			SDL_DestroyRenderer( gRenderer );
@@ -1384,7 +1381,7 @@ int main( int argc, char* argv[] )
 				RetryButton.close();
 				ExitButton.close();
 		}
-		SDLNet_Quit();
+		//SDLNet_Quit();
 		//Free resources and close SDL
 		
 		close( tileSet1,tileSet2,tileSet3,tileSet4 );

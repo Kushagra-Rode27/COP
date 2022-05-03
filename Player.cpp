@@ -299,7 +299,7 @@ void Dot::render( SDL_Rect& camera,LTexture TextTexture,TTF_Font *gFont ,SDL_Ren
     //Show the dot
 	gDotTexture.render( gRenderer, mBox.x - camera.x, mBox.y - camera.y,Renderwidth,Renderheight,&myClip );
 	score_text="Money: "+std :: to_string((int)money);
-	SDL_Color textColor = { 0, 96, 255 };
+	SDL_Color textColor = { 255, 255, 255 };
     
 	TextTexture.loadFromRenderedText( score_text,textColor,gFont,gRenderer);
 	TextTexture.render(gRenderer, mBox.x - camera.x -40, mBox.y - camera.y -60,0,0);     
@@ -330,7 +330,7 @@ void Dot :: renderPlayer2( SDL_Rect &camera,LTexture TextTexture,TTF_Font *gFont
     //Show the dot
 	gDotTexture.render( gRenderer, mBox.x - camera.x, mBox.y - camera.y,Renderwidth,Renderheight,&myClip );
 	score_text="Money: "+std :: to_string((int)money);
-	SDL_Color textColor = { 0, 96, 255 };
+	SDL_Color textColor = { 255, 255, 255 };
     
 	TextTexture.loadFromRenderedText( score_text,textColor,gFont,gRenderer);
 	TextTexture.render(gRenderer, mBox.x - camera.x -40, mBox.y - camera.y -60,0,0);

@@ -63,7 +63,7 @@ class Dot
 		bool touchesWall( SDL_Rect box, Tile* tiles1[] , Tile* tiles2[] );
 
 		string double2String(double a);
-		
+
 		LTexture gDotTexture;
 		string Sprite;
 		int Xcycle;
@@ -77,7 +77,7 @@ class Dot
 		pair<int,int> myState = {0,1};
 
 		// winning criteria deciding attributes	
-		double money = 50;
+		int money = 50;
 		double health = 100;
 		double CG = 6;
 		bool isPowerUpEnabled = false;
