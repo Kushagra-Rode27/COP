@@ -348,3 +348,27 @@ void Dot :: renderPlayer2( SDL_Rect &camera,LTexture TextTexture,TTF_Font *gFont
     
    
 }
+
+
+void Dot::displayMyText( std::string sentence,  int sentenceX, int sentenceY,TTF_Font *gFont,SDL_Renderer* gRenderer)
+{
+    LTexture myTexture;
+    SDL_Color textColor = {0, 0, 0};
+    if (!myTexture.loadFromRenderedText(sentence, textColor, gFont, gRenderer))
+    {
+        printf("Error in loading texture for string ");
+    }
+
+    
+
+    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    
+    // myTexture.render(gRenderer,WindowWidth/3 , WindowHeight*9/10, WindowWidth/3 , WindowHeight/11 );
+
+    // myTexture.render(gRenderer, (int)(((double)(*SCREEN_WIDTH)) * sentenceX), (int)(((double)(*SCREEN_HEIGHT)) * sentenceY));
+    
+
+     myTexture.render(gRenderer, sentenceX,sentenceY);
+
+    myTexture.free();
+}

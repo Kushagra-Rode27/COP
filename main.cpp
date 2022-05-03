@@ -45,6 +45,11 @@ SDL_Renderer* rend1;
 SDL_Renderer* rende;
 SDL_Texture* tex;
 //Screen dimension constants
+
+const int SCREEN_FPS = 30;
+const int SCREEN_TICK_PER_FRAME = 1000 / SCREEN_FPS;
+
+
 const int SCREEN_WIDTH = 1700;
 const int SCREEN_HEIGHT = 850;
 
@@ -140,11 +145,13 @@ LTexture MinimapTexture;
 
 LTexture InfoScreenTexture; 
 LTexture StartScreenTexture;
+LTexture EndScreenTexture;
 LTexture HostelTexture;
 //SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
 
 //The music that will be played
 Mix_Music *gMusic = NULL;
+Mix_Music *BgMusic = NULL;
 
 //The sound effects that will be used
 Mix_Chunk *gScratch = NULL;
@@ -373,6 +380,11 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		success = false;
 	}
 
+	if(!EndScreenTexture.loadFromFile("assets/EndScreen.png",gRenderer)){
+		printf("Failed to load start screen texture\n");
+		success = false;
+	}
+
 	if(!MinimapTexture.loadFromFile("assets/untitled.png",gRenderer)){
 		printf("Failed to load mini map texture\n");
 		success = false;
@@ -401,8 +413,8 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
         printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
         success = false;
     }
-    
 
+ 
 
     //Load music
     gMusic = Mix_LoadMUS( "sounds/beat.wav" );
@@ -510,6 +522,8 @@ void close( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* ti
 	tasksTexture.free();
 	StartScreenTexture.free();
 	HostelTexture.free();
+	InfoScreenTexture.free();
+	EndScreenTexture.free();
     //Free global font
     TTF_CloseFont( gFont );
     gFont = NULL;
@@ -927,6 +941,13 @@ int main( int argc, char* argv[] )
 			LButton ResumeButton; 
 			ResumeButton.InitialiseButton(1,&gameTimer,&curr_state,0.01,0.92,0.06,0.08,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/resume1.png","");
 			
+			LButton RetryButton; 
+			RetryButton.InitialiseButton(1,&gameTimer,&curr_state,0.45,0.65,0.09,0.12,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/restart1.png","");
+
+			LButton ExitButton; 
+			ExitButton.InitialiseButton(1,&gameTimer,&curr_state,0.45,0.85,0.09,0.12,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/exit1.png","");
+			
+			
 			LButton girnar; 
 			girnar.InitialiseButton(1,&gameTimer,&curr_state,0.06,0.25,0.2,0.2,"mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/GIRNAR.png","");
 			
@@ -1134,7 +1155,7 @@ int main( int argc, char* argv[] )
 			}
 			else if(curr_state==1)
 			{
-				gameStartButton.close();
+				
 				//Handle events on queue
 				while( SDL_PollEvent( &e ) != 0 )
 				{
@@ -1150,7 +1171,7 @@ int main( int argc, char* argv[] )
 					udaigiri.handleEvent(&e,3);
 					if(curr_state==3){dot.mBox.x=1600;dot.mBox.y = 30;curr_state=5;};
 					satpura.handleEvent(&e,4);
-					if(curr_state==3){dot.mBox.x=1600;dot.mBox.y = 30;curr_state=5;};
+					if(curr_state==4){dot.mBox.x=1600;dot.mBox.y = 30;curr_state=5;};
 				}
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0xFF, 0xFF);
             	SDL_RenderClear(gRenderer);
@@ -1164,9 +1185,7 @@ int main( int argc, char* argv[] )
 					
 			}
 			else if(curr_state == 5){
-				girnar.close();
-				udaigiri.close();
-				satpura.close();
+				
 				while( SDL_PollEvent( &e ) != 0 )
 				{
 					//User requests quit
@@ -1178,7 +1197,7 @@ int main( int argc, char* argv[] )
 
 					//dot.handleEvent( e );
 					dot.handleEvent( e );
-					if(ti == 0){quit = true;}
+					if(ti == 0){curr_state=7;}
 					//dot2.handleEvent( e );
 					InfoButton.handleEvent(&e , 6); 
 					//dot2.handleEvent( e );
@@ -1247,7 +1266,7 @@ int main( int argc, char* argv[] )
 
 				
 
-				if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) quit=true;
+				if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) curr_state = 7;
 				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy1.mBox)) quit=true;
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy2.mBox)) quit=true;
 				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy2.mBox)) quit=true;
@@ -1307,7 +1326,8 @@ int main( int argc, char* argv[] )
 				InfoButton.render();
 				SDL_RenderPresent( gRenderer );
 			}
-			else if (curr_state==6){
+			else if (curr_state==6)
+			{
 				
 				while( SDL_PollEvent( &e ) != 0 )
 				{
@@ -1327,80 +1347,46 @@ int main( int argc, char* argv[] )
 				ResumeButton.render();
 				SDL_RenderPresent( gRenderer );
 			}
+			else if (curr_state == 7)
+			{
+				while( SDL_PollEvent( &e ) != 0 )
+				{
+					//User requests quit
+
+					if( e.type == SDL_QUIT )
+					{
+						quit = true;
+					}
+
+					//dot.handleEvent( e );
+					RetryButton.handleEvent(&e,0);
+					ExitButton.handleEvent(&e,8);
+					if(curr_state==8){quit = true;}
+				}
+				EndScreenTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+				RetryButton.render();
+				ExitButton.render();
+				SDL_RenderPresent( gRenderer );
+			}
+
 
 
 				SDL_Delay(100);
 			}
 
 			SDL_DestroyRenderer( gRenderer );
-			
-			Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
-			rende = SDL_CreateRenderer(gWindow, -1, render_flags);
-			if (!rende)
-			{
-			printf("error creating renderer: %s\n", SDL_GetError());
-			SDL_DestroyWindow(gWindow);
-			SDL_Quit();
-			return 1;
-			}
-
-			// load the image into memory using SDL_image library function
-			SDL_Surface* surface = IMG_Load("assets/gamend.jpg");
-			if (!surface)
-			{
-				printf("error creating surface\n");
-				SDL_DestroyRenderer(rende);
-				SDL_DestroyWindow(gWindow);
-				SDL_Quit();
-				return 1;
-			}
-
-			// load the image data into the graphics hardware's memory
-			tex = SDL_CreateTextureFromSurface(rende, surface);
-			SDL_FreeSurface(surface);
-			if (!tex)
-			{
-				printf("error creating texture: %s\n", SDL_GetError());
-				SDL_DestroyRenderer(rende);
-				SDL_DestroyWindow(gWindow);
-				SDL_Quit();
-				return 1;
-			}
-
-			// clear the window
-			SDL_RenderClear(rende);
-			
-			// draw the image to the window
-			SDL_RenderCopy(rende, tex, NULL, NULL);
-			SDL_RenderPresent(rende);
-
-			// wait a few seconds
-			SDL_Event initial;
-			bool startscreen=true;
-			int iter=0;
-			while(startscreen){
-				while( SDL_PollEvent( &initial ) != 0 )
-				{
-					//Handle key press
-                    if( initial.type == SDL_KEYDOWN)
-                    {
-                        if (initial.key.keysym.sym==SDLK_1){
-							startscreen=false;
-						}
-                    }
-				}
-				iter+=1;
-				if (iter==50) startscreen=false;
-				SDL_Delay(100);
-			}
-
-			// clean up resources before exiting
-			SDL_DestroyTexture(tex);
-			SDL_DestroyRenderer(rende);
-		
+				gameStartButton.close();
+				girnar.close();
+				udaigiri.close();
+				satpura.close();
+				InfoButton.close();
+				ResumeButton.close();
+				RetryButton.close();
+				ExitButton.close();
 		}
 		SDLNet_Quit();
 		//Free resources and close SDL
+		
 		close( tileSet1,tileSet2,tileSet3,tileSet4 );
 	}
 

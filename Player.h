@@ -55,6 +55,8 @@ class Dot
 		void render( SDL_Rect& camera,LTexture TextTexture,TTF_Font *gFont ,SDL_Renderer* gRenderer);
 
 		void renderPlayer2( SDL_Rect &camera,LTexture TextTexture,TTF_Font *gFont, SDL_Renderer* gRenderer );
+
+		void displayMyText( std::string sentence,  int sentenceX, int sentenceY,TTF_Font *gFont,SDL_Renderer* gRenderer);
 		// touchesWall check
 		bool touchesWall( SDL_Rect box, Tile* tiles[] );
 

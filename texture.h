@@ -46,7 +46,7 @@ class LTexture
 
 
 		//Renders texture at given point
-		void render( SDL_Renderer*  gRenderer,int x, int y, int newwidth,int newheight,SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+		void render( SDL_Renderer*  gRenderer,int x, int y, int newwidth = 0,int newheight = 0,SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 
 
