@@ -9,17 +9,17 @@
 #include "auxFunctions.h"
 
 
-bool Dot :: touchesWall( SDL_Rect box, Tile* tiles[] )
+bool Dot :: touchesWall( SDL_Rect box, Tile* tiles1[] , Tile* tiles2[] )
 {
     //Go through the tiles
     for( int i = 0; i < TOTAL_TILES; ++i )
     {
         //If the tile is a wall type tile
 		//( tiles[ i ]->getType() >= TILE_ROAD ) && ( tiles[ i ]->getType() <= TILE_STORE )
-        if( tiles[ i ]->getType() == 0)
+        if( tiles1[ i ]->getType() == 0 || tiles2[i]->getType() == 0)
         {
             //If the collision box touches the wall tile
-            if( myfunctions.checkCollision( box, tiles[ i ]->getBox() ) )
+            if( myfunctions.checkCollision( box, tiles1[ i ]->getBox() ) )
             {
                 return true;
             }
@@ -207,30 +207,30 @@ void Dot::handle(const Uint8* currentKeyStates)
     // }
 }
 
-void Dot::move( Tile *tiles[],Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLow )
+void Dot::move( Tile *tiles1[],Tile *tiles2[],Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLow )
 {
 
 	for (int k=0;k<TOTAL_TILES;k++){
-		if (tiles[k]->SetPoint){
-			if (myfunctions.checkCollision(tiles[k]->getBox(),mBox)){
+		if (tiles1[k]->SetPoint){
+			if (myfunctions.checkCollision(tiles1[k]->getBox(),mBox)){
 				money+=5;
 				Mix_PlayChannel( -1, gLow, 0 );
-				tiles[k]->SetPoint=NULL;
+				tiles1[k]->SetPoint=NULL;
 			}
 		}
-		if (tiles[k]->SetPowerUp){
-			if (myfunctions.checkCollision(tiles[k]->getBox(),mBox)){
+		if (tiles1[k]->SetPowerUp){
+			if (myfunctions.checkCollision(tiles1[k]->getBox(),mBox)){
 				score+=5;
 				Mix_PlayChannel( -1, gMedium, 0 );
-				tiles[k]->SetPowerUp=NULL;
+				tiles1[k]->SetPowerUp=NULL;
 			}
 		}
 
-		if (tiles[k]->SetTask){
-			if (myfunctions.checkCollision(tiles[k]->getBox(),mBox)){
+		if (tiles2[k]->SetTask){
+			if (myfunctions.checkCollision(tiles2[k]->getBox(),mBox)){
 				tasksComp+=1;
 				Mix_PlayChannel( -1, gMedium, 0 );
-				tiles[k]->SetTask=NULL;
+				tiles2[k]->SetTask=NULL;
 				speed1=true;
 			}
 		}
@@ -246,7 +246,7 @@ void Dot::move( Tile *tiles[],Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLo
 	}
 
     //If the dot went too far to the left or right or touched a wall || touchesWall( mBox, tiles ) 
-    if( ( mBox.x < 0 ) || ( mBox.x + DOT_WIDTH > LEVEL_WIDTH )  || touchesWall( mBox, tiles ) )
+    if( ( mBox.x < 0 ) || ( mBox.x + DOT_WIDTH > LEVEL_WIDTH )  || touchesWall( mBox, tiles1 ,tiles2)   )
     {
         //move back
         mBox.x -= mVelX;
@@ -256,7 +256,7 @@ void Dot::move( Tile *tiles[],Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLo
     mBox.y += mVelY;
 
     //If the dot went too far up or down or touched a wall
-    if( ( mBox.y < 0 ) || ( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT )  || touchesWall( mBox, tiles ) )
+    if( ( mBox.y < 0 ) || ( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT )  || touchesWall( mBox, tiles1 ,tiles2)   )
     {
         //move back
         mBox.y -= mVelY;
@@ -298,7 +298,7 @@ void Dot::render( SDL_Rect& camera,LTexture TextTexture,TTF_Font *gFont ,SDL_Ren
     SDL_Rect myClip ={ Spritewidth*myState.second , Spriteheight*myState.first, Spritewidth,Spriteheight};
     //Show the dot
 	gDotTexture.render( gRenderer, mBox.x - camera.x, mBox.y - camera.y,Renderwidth,Renderheight,&myClip );
-	score_text="Money: "+double2String(money);
+	score_text="Money: "+std :: to_string((int)money);
 	SDL_Color textColor = { 0, 96, 255 };
     
 	TextTexture.loadFromRenderedText( score_text,textColor,gFont,gRenderer);
@@ -329,7 +329,7 @@ void Dot :: renderPlayer2( SDL_Rect &camera,LTexture TextTexture,TTF_Font *gFont
     SDL_Rect myClip ={ Spritewidth*myState.second , Spriteheight*myState.first, Spritewidth,Spriteheight};
     //Show the dot
 	gDotTexture.render( gRenderer, mBox.x - camera.x, mBox.y - camera.y,Renderwidth,Renderheight,&myClip );
-	score_text="Money: "+double2String(money);
+	score_text="Money: "+std :: to_string((int)money);
 	SDL_Color textColor = { 0, 96, 255 };
     
 	TextTexture.loadFromRenderedText( score_text,textColor,gFont,gRenderer);
@@ -371,4 +371,15 @@ void Dot::displayMyText( std::string sentence,  int sentenceX, int sentenceY,TTF
      myTexture.render(gRenderer, sentenceX,sentenceY);
 
     myTexture.free();
+}
+
+
+void Dot::NetworkUpdate(int myStateFirst, int myStateSecond, int myXcoord , int myYcoord ,int Health , int CG, int Money){
+    myState.first=myStateFirst;
+    myState.second = myStateSecond;
+    mBox.x = myXcoord ; 
+    mBox.y = myYcoord ; 
+    health =Health;
+    CG =CG;
+    money = Money;
 }

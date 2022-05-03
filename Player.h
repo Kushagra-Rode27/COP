@@ -46,7 +46,7 @@ class Dot
 		void handle(const Uint8* currentKeyStates);
 
 		//Moves the dot and check collision against tiles
-		void move( Tile *tiles[],Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLow);
+		void move( Tile *tiles1[],Tile *tiles2[],Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLow );
 
 		//Centers the camera over the dot
 		void setCamera( SDL_Rect& camera );
@@ -57,10 +57,13 @@ class Dot
 		void renderPlayer2( SDL_Rect &camera,LTexture TextTexture,TTF_Font *gFont, SDL_Renderer* gRenderer );
 
 		void displayMyText( std::string sentence,  int sentenceX, int sentenceY,TTF_Font *gFont,SDL_Renderer* gRenderer);
+		
+		void NetworkUpdate(int myStateFirst, int myStateSecond, int myXcoord , int myYcoord ,int Health , int CG, int Money);
 		// touchesWall check
-		bool touchesWall( SDL_Rect box, Tile* tiles[] );
+		bool touchesWall( SDL_Rect box, Tile* tiles1[] , Tile* tiles2[] );
 
 		string double2String(double a);
+		
 		LTexture gDotTexture;
 		string Sprite;
 		int Xcycle;

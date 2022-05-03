@@ -1209,7 +1209,7 @@ int main( int argc, char* argv[] )
 
 				//Move the dot
 				
-				dot.move( tileSet2,gHigh,gMedium,gLow );
+				dot.move( tileSet2,tileSet3,gHigh,gMedium,gLow );
 				dot.setCamera( camera );
 
 
