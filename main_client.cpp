@@ -303,7 +303,7 @@ bool init()
 
 
 		//Create window
-		gWindow = SDL_CreateWindow( "IITD Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		gWindow = SDL_CreateWindow( "IITD Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE );
 		if( gWindow == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -1288,6 +1288,50 @@ int main( int argc, char* argv[] )
 					if( e.type == SDL_QUIT )
 					{
 						quit = true;
+					}
+					else if( e.type == SDL_KEYDOWN )
+                    {
+                        switch( e.key.keysym.sym )
+                        {
+							case SDLK_9:
+                            //If there is no music playing
+                            if( Mix_PlayingMusic() == 0 )
+                            {
+                                //Play the music
+                                Mix_PlayMusic( gMusic, -1 );
+                            }
+                            //If music is being played
+                            else
+                            {
+                                //If the music is paused
+                                if( Mix_PausedMusic() == 1 )
+                                {
+                                    //Resume the music
+                                    Mix_ResumeMusic();
+                                }
+                                //If the music is playing
+                                else
+                                {
+                                    //Pause the music
+                                    Mix_PauseMusic();
+                                }
+                            }
+                            break;
+                            
+                            case SDLK_0:
+                            //Stop the music
+                            Mix_HaltMusic();
+                            break;
+                        }
+                    }
+					else if (e.type== SDL_SYSWMEVENT ){
+						fullScreen = !fullScreen;
+						if(fullScreen){
+							SDL_SetWindowFullscreen(gWindow, SDL_WINDOW_FULLSCREEN);
+						}
+						else{
+							SDL_SetWindowFullscreen(gWindow, 0);
+						}
 					}
 
 					//dot.handleEvent( e );

@@ -304,7 +304,7 @@ bool init()
 
 
 		//Create window
-		gWindow = SDL_CreateWindow( "IITD Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		gWindow = SDL_CreateWindow( "IITD Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE );
 		if( gWindow == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -1019,6 +1019,8 @@ int main( int argc, char* argv[] )
 			//Event handler
 			SDL_Event e;
 
+			bool fullScreen = false;
+
 			//The dot that will be moving around on the screen
 			
 			
@@ -1370,6 +1372,15 @@ int main( int argc, char* argv[] )
                             break;
                         }
                     }
+					else if (e.type== SDL_SYSWMEVENT ){
+						fullScreen = !fullScreen;
+						if(fullScreen){
+							SDL_SetWindowFullscreen(gWindow, SDL_WINDOW_FULLSCREEN);
+						}
+						else{
+							SDL_SetWindowFullscreen(gWindow, 0);
+						}
+					}
 					//dot.handleEvent( e );
 					dot.handleEvent( e );
 					if(ti == 0){curr_state=7;}
