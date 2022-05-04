@@ -1078,13 +1078,48 @@ int main( int argc, char* argv[] )
 			
 			
 			LButton girnar; 
-			girnar.InitialiseButton(1,&gameTimer,&curr_state,0.06,0.25,0.2,0.2,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/GIRNAR.png","");
+			girnar.InitialiseButton(1,&gameTimer,&curr_state,0.05,0.25,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/GIRNAR.png","");
 			
 			LButton udaigiri; 
-			udaigiri.InitialiseButton(1,&gameTimer,&curr_state,0.4,0.25,0.2,0.2,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/UDAIGIRI.png","");
+			udaigiri.InitialiseButton(1,&gameTimer,&curr_state,0.30,0.25,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/UDAIGIRI.png","");
 			
 			LButton satpura; 
-			satpura.InitialiseButton(1,&gameTimer,&curr_state,0.74,0.25,0.2,0.2,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/SATPURA.png","");
+			satpura.InitialiseButton(1,&gameTimer,&curr_state,0.55,0.25,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/SATPURA.png","");
+			
+			LButton kumaon; 
+			kumaon.InitialiseButton(1,&gameTimer,&curr_state,0.80,0.25,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/KUMAON.png","");
+			
+			
+			
+			LButton nilgiri; 
+			nilgiri.InitialiseButton(1,&gameTimer,&curr_state,0.05,0.40,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/NILGIRI.png","");
+			
+			LButton karakoram; 
+			karakoram.InitialiseButton(1,&gameTimer,&curr_state,0.30,0.40,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/KARAKORAM.png","");
+
+			LButton himadri; 
+			himadri.InitialiseButton(1,&gameTimer,&curr_state,0.55,0.40,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/HIMADRI.png","");
+			
+			LButton kailash; 
+			kailash.InitialiseButton(1,&gameTimer,&curr_state,0.80,0.40,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/KAILASH.png","");
+			
+			
+			
+			LButton aravali; 
+			aravali.InitialiseButton(1,&gameTimer,&curr_state,0.05,0.55,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/ARAVALI.png","");
+			
+			LButton vindyanchal; 
+			vindyanchal.InitialiseButton(1,&gameTimer,&curr_state,0.30,0.55,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/VINDY.png","");
+			
+			LButton zanskar; 
+			zanskar.InitialiseButton(1,&gameTimer,&curr_state,0.55,0.55,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/ZANSKAR.png","");
+			
+			LButton shiwalik; 
+			shiwalik.InitialiseButton(1,&gameTimer,&curr_state,0.80,0.55,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/SHIWALIK.png","");
+			
+			
+			LButton jwalamukhi; 
+			jwalamukhi.InitialiseButton(1,&gameTimer,&curr_state,0.05,0.70,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/JWALA.png","");
 			
 			
 			//int lastTime = 0,currentTime;
@@ -1191,11 +1226,34 @@ int main( int argc, char* argv[] )
 					}
 					//Handle key press
                     girnar.handleEvent(&e,2);
-					if(curr_state==2){dot.mBox.x=32*8;dot.mBox.y = 0;curr_state = 5;};
+					if(curr_state==2){dot.mBox.x=32*75;dot.mBox.y = 32*12;curr_state = 5;};
 					udaigiri.handleEvent(&e,3);
-					if(curr_state==3){dot.mBox.x=1600;dot.mBox.y = 30;curr_state=5;};
+					if(curr_state==3){dot.mBox.x=32*78;dot.mBox.y = 32*5;curr_state=5;};
 					satpura.handleEvent(&e,4);
-					if(curr_state==4){dot.mBox.x=1600;dot.mBox.y = 30;curr_state=5;};
+					if(curr_state==4){dot.mBox.x=32*63;dot.mBox.y = 32*5;curr_state=5;};
+					kumaon.handleEvent(&e,9);
+					if(curr_state==9){dot.mBox.x=32*23;dot.mBox.y = 32*6;curr_state = 5;};
+					nilgiri.handleEvent(&e,10);
+					if(curr_state==10){dot.mBox.x=32*11;dot.mBox.y = 32*27;curr_state=5;};
+					karakoram.handleEvent(&e,11);
+					if(curr_state==11){dot.mBox.x=32*11;dot.mBox.y = 32*37;curr_state=5;};
+
+					himadri.handleEvent(&e,12);
+					if(curr_state==12){dot.mBox.x=32*120;dot.mBox.y = 32*12;curr_state=5;};
+					kailash.handleEvent(&e,13);
+					if(curr_state==13){dot.mBox.x=32*125;dot.mBox.y = 32*8;curr_state=5;};
+
+					shiwalik.handleEvent(&e,14);
+					if(curr_state==14){dot.mBox.x=32*8;dot.mBox.y = 32*0;curr_state=5;};
+					zanskar.handleEvent(&e,15);
+					if(curr_state==15){dot.mBox.x=32*8;dot.mBox.y = 32*0;curr_state=5;};
+					aravali.handleEvent(&e,16);
+					if(curr_state==16){dot.mBox.x=32*11;dot.mBox.y = 32*20;curr_state=5;};
+					vindyanchal.handleEvent(&e,17);
+					if(curr_state==17){dot.mBox.x=32*42;dot.mBox.y = 32*6;curr_state=5;};
+
+					jwalamukhi.handleEvent(&e,18);
+					if(curr_state==18){dot.mBox.x=32*11;dot.mBox.y = 32*12;curr_state=5;};
 				}
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0xFF, 0xFF);
             	SDL_RenderClear(gRenderer);
@@ -1204,6 +1262,19 @@ int main( int argc, char* argv[] )
 				girnar.render();
 				udaigiri.render();
 				satpura.render();
+				kumaon.render();
+
+				nilgiri.render();
+				karakoram.render();
+				himadri.render();
+				kailash.render();
+
+				shiwalik.render();
+				aravali.render();
+				zanskar.render();
+				vindyanchal.render();
+
+				jwalamukhi.render();
 				SDL_RenderPresent(gRenderer);
 
 					
@@ -1450,6 +1521,18 @@ int main( int argc, char* argv[] )
 				girnar.close();
 				udaigiri.close();
 				satpura.close();
+				kumaon.close();
+				nilgiri.close();
+				karakoram.close();
+				himadri.close();
+				kailash.close();
+
+				shiwalik.close();
+				aravali.close();
+				zanskar.close();
+				vindyanchal.close();
+
+				jwalamukhi.close();
 				InfoButton.close();
 				ResumeButton.close();
 				RetryButton.close();
