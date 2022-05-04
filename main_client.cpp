@@ -198,7 +198,6 @@ Tile* tileSet3[ TOTAL_TILES ];
 Tile* tileSet4[ TOTAL_TILES ];
 Dot dot(6,2,78,127,32,32,1);
 Dot dot2(6,2,78,127,32,32,1);
-
 enemyDot enemy1(16);
 enemyDot enemy2(42);
 enemyDot enemy3(81);
@@ -315,7 +314,8 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 	bool success = true;
 
 	//Load dot texture
-	if( !dot.gDotTexture.loadFromFile( "assets/Player1Sprite.png",gRenderer) )
+    
+	if( !dot.gDotTexture.loadFromFile( "assets/Player2Sprite1",gRenderer) )
 	{
 		printf( "Failed to load dot texture!\n" );
 		success = false;
@@ -336,7 +336,7 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		success = false;
 	}
 
-	if( !dot2.gDotTexture.loadFromFile( "assets/Player2Sprite1.png" ,gRenderer) )
+	if( !dot2.gDotTexture.loadFromFile( "assets/Player1Sprite.png" ,gRenderer) )
 	{
 		printf( "Failed to load dot texture!\n" );
 		success = false;
@@ -879,76 +879,63 @@ Point TilePLace(Tile* tiles[]){
 
 int main( int argc, char* argv[] )
 {
-	//starting sockets
-	int serv_fd, newserv_fd, bytes_sent, bytes_recvd;
-    int port_no = PORT;
-    char in_buffer[32], out_buffer[32], sname[64], cname[64];
-    struct Info indata;
-    struct Info mydata = {42, 5, 6, 7, 8, 9, 1, 4};
-    bool validate_data;
+	//starting sockets for client
+	//  Client connecting to server
 
-    char cli_ip[INET_ADDRSTRLEN];
-    // IP address of server
-    char serv_ip[INET_ADDRSTRLEN] = "192.168.43.53";
+	int cli_fd, bytes_sent, bytes_recvd;
+	int port_no = PORT;
+	char in_buffer[32], out_buffer[32], sname[16], cname[16];
 
-    struct sockaddr_in serv_addr, cli_addr;
+	struct Info indata;
+	struct Info mydata = {42, 5, 6, 7, 8, 9, 1, 4};
+	bool validate_data;
 
-    // creating sever side socket
-    if ((serv_fd = socket(AF_INET, SOCK_STREAM, 0)) < -1)
-    {
-        perror("Server side listening Socket could not be created!");
-        return 1;
-    }
+	// IP address of server
+	char serv_ip[INET_ADDRSTRLEN] = "192.168.43.53";
+	// char serv_ip[INET_ADDRSTRLEN]= "127.0.0.1";
 
-    int opt = 1;
+	struct sockaddr_in serv_addr;
 
-    if (setsockopt(serv_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
-    {
-        perror("setsockopt");
-        exit(EXIT_FAILURE);
-    }
+	// if (argc != 2)
+	//{
+	//	perror("Incomplete arguments!");
+	//	return 1;
+	// }
 
-    memset(&serv_addr, 0, sizeof(serv_addr));
+	if ((cli_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+	{
+		perror("Sorry. Socket could not be created!");
+		return 1;
+	}
+	int opt = 1;
 
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(port_no);
+	if (setsockopt(cli_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
+	{
+		perror("setsockopt");
+		exit(EXIT_FAILURE);
+	}
 
-    // serv_addr.sin_addr.s_addr = INADDR_ANY;
+	memset(&serv_addr, 0, sizeof(serv_addr));
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_port = htons(port_no);
 
-    // Convert IPv4 addresses from text to binary form
-    if (inet_pton(AF_INET, serv_ip, &serv_addr.sin_addr) <= 0)
-    {
-        printf(
-            "\nInvalid address/ Address not supported \n");
-        return -1;
-    }
+	// Convert IPv4 addresses from text to binary form
+	if (inet_pton(AF_INET, serv_ip, &serv_addr.sin_addr) <= 0)
+	{
+		printf(
+			"\nInvalid address/ Address not supported \n");
+		return -1;
+	}
+	cout << "Socket created and trying to connect\n";
 
-    // binding socket
-    if (bind(serv_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-    {
-        perror("Failed to bind!");
-        return 1;
-    }
+	if (connect(cli_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+	{
+		perror("Sorry. Could not connect to server.");
+		return 1;
+	}
+	//fcntl(cli_fd, F_SETFL, fcntl(cli_fd, F_GETFL, 0) | O_NONBLOCK);
 
-    if (listen(serv_fd, 5) == -1)
-    {
-        perror("Failed to listen!");
-        return 1;
-    }
-
-    memset(&cli_addr, 0, sizeof(cli_addr));
-
-    socklen_t cli_size = sizeof(cli_addr);
-
-    if ((newserv_fd = accept(serv_fd, (struct sockaddr *)&cli_addr, &cli_size)) == -1)
-    {
-        perror("Failed to accept from client!");
-        return 1;
-    }
-    //fcntl(newserv_fd, F_SETFL, fcntl(newserv_fd, F_GETFL, 0) | O_NONBLOCK);
-
-    inet_ntop(AF_INET, &cli_addr.sin_addr, cli_ip, INET_ADDRSTRLEN);
-    cout << "Server received connections from " << cli_ip << "\n";
+	cout << "Connected (hopefully)\n";
 
 
 
