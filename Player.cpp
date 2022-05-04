@@ -16,7 +16,7 @@ bool Dot :: touchesWall( SDL_Rect box, Tile* tiles1[] , Tile* tiles2[] )
     {
         //If the tile is a wall type tile
 		//( tiles[ i ]->getType() >= TILE_ROAD ) && ( tiles[ i ]->getType() <= TILE_STORE )
-        if( tiles1[ i ]->getType() == 0 || tiles2[i]->getType() == 0)
+        if( tiles1[ i ]->getType() == 0 && tiles2[i]->getType() == 0)
         {
             //If the collision box touches the wall tile
             if( myfunctions.checkCollision( box, tiles1[ i ]->getBox() ) )

@@ -59,7 +59,7 @@ SDL_Renderer* rende;
 SDL_Texture* tex;
 //Screen dimension constants
 
-const int SCREEN_FPS = 30;
+const int SCREEN_FPS = 10;
 const int SCREEN_TICK_PER_FRAME = 1000 / SCREEN_FPS;
 
 
@@ -123,14 +123,59 @@ struct Info
 {
     int stateFirst;
     int stateSecond;
-    int Xcoord;
-    int Ycoord;
+    int X;
+    int Y;
     int myState;
-    double health;
-    double CG;
+    int health;
+    int CG;
     int money;
-	Point* pointarr;
+	//Point* pointarr;
 };
+
+void toNetwork(char *buffer, struct Info *mydata)
+{
+    // 32 byte buffer required
+    // test bit
+    buffer[0] = '*';
+    // storing X of player
+    std::sprintf(buffer + 1, "%02d", mydata->stateFirst);
+    std::sprintf(buffer + 4, "%02d", mydata->stateSecond);
+    std::sprintf(buffer + 7, "%04d", mydata->X);
+    std::sprintf(buffer + 12, "%04d", mydata->Y);
+    std::sprintf(buffer + 17, "%01d", mydata->myState);
+    std::sprintf(buffer + 19, "%03d", mydata->health);
+    std::sprintf(buffer + 23, "%03d", mydata->CG);
+    std::sprintf(buffer + 27, "%03d", mydata->money);
+    buffer[31] = '#';
+}
+
+bool fromNetwork(char *buffer, struct Info *indata)
+{
+    if (buffer[0] != '*' || buffer[31] != '#')
+        return false;
+    indata->stateFirst = atoi(buffer + 1);
+    indata->stateSecond = atoi(buffer + 4);
+    indata->X = atoi(buffer + 7);
+    indata->Y = atoi(buffer + 12);
+    indata->myState = atoi(buffer + 17);
+    indata->health = atoi(buffer + 19);
+    indata->CG = atoi(buffer + 23);
+    indata->money = atoi(buffer + 27);
+    return true;
+}
+
+void print_data(struct Info *indata)
+{
+
+    cout << indata->stateFirst << "\n";
+    cout << indata->stateSecond << "\n";
+    cout << indata->X << "\n";
+    cout << indata->Y << "\n";
+    cout << indata->myState << "\n";
+    cout << indata->health << "\n";
+    cout << indata->CG << "\n";
+    cout << indata->money << "\n";
+}
 
 //Starts up SDL and creates window
 bool init();
@@ -889,7 +934,7 @@ int main( int argc, char* argv[] )
 
     char cli_ip[INET_ADDRSTRLEN];
     // IP address of server
-    char serv_ip[INET_ADDRSTRLEN] = "192.168.43.53";
+    char serv_ip[INET_ADDRSTRLEN] = "127.0.0.1";
 
     struct sockaddr_in serv_addr, cli_addr;
 
@@ -1177,6 +1222,36 @@ int main( int argc, char* argv[] )
 					
 			}
 			else if(curr_state == 5){
+
+				// do
+				// {
+				// 	static int flag = 0;
+				// 	memset(&cname, 0, sizeof(cname));
+				// 	bytes_recvd = recv(newserv_fd, &cname, sizeof(cname), 0);
+				// 	if (bytes_recvd == -1 && flag == 0)
+				// 	{
+				// 		memset(&cname, 0, sizeof(cname));
+				// 		cout << "Could not ACQUIRE Player Information!"
+				// 				<< "\n"
+				// 				<< "Trying again..."
+				// 				<< "\n";
+				// 		continue;
+				// 	}
+				// 	else
+				// 	{
+				// 		flag = 1;
+				// 		bytes_sent = send(newserv_fd, &sname, sizeof(sname), 0);
+				// 		if (bytes_sent == -1)
+				// 			cout << "Could not SEND Player Data!"
+				// 					<< "Trying Again..."
+				// 					<< "\n";
+				// 		else
+				// 			cout << " has joined the game."
+				// 					<< "\n";
+				// 	}
+				// } while (bytes_recvd == -1 || bytes_sent == -1);
+				// fcntl(newserv_fd, F_SETFL, fcntl(newserv_fd, F_GETFL, 0) | O_NONBLOCK);
+                
 				
 				while( SDL_PollEvent( &e ) != 0 )
 				{
@@ -1238,10 +1313,49 @@ int main( int argc, char* argv[] )
 				// Render Names
 				SDL_Color textColor = { 0, 0, 0 };
 				gTextTexture.loadFromRenderedText("Tennis",textColor,gFont,gRenderer);
-				gTextTexture.render(gRenderer,1120-camera.x,480-camera.y,0,0);
+				gTextTexture.render(gRenderer,1100-camera.x,480-camera.y,0,0);
 				gTextTexture.loadFromRenderedText("SAC",textColor,gFont,gRenderer);
 				gTextTexture.render(gRenderer,1280-camera.x,1280-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Main",textColor,gFont,gRenderer); //98,14
+				gTextTexture.render(gRenderer,3136-camera.x,448-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("LHC",textColor,gFont,gRenderer);//110,34
+				gTextTexture.render(gRenderer,3520-camera.x,1088-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Library",textColor,gFont,gRenderer);//102,27
+				gTextTexture.render(gRenderer,3264-camera.x,864-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Bharti",textColor,gFont,gRenderer);//76,26
+				gTextTexture.render(gRenderer,2432-camera.x,842-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Himadri",textColor,gFont,gRenderer);//119,15
+				gTextTexture.render(gRenderer,3808-camera.x,480-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Kailash",textColor,gFont,gRenderer);//124,6
+				gTextTexture.render(gRenderer,3968-camera.x,192-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Udaigiri",textColor,gFont,gRenderer);//77,4
+				gTextTexture.render(gRenderer,2464-camera.x,128-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Girnar",textColor,gFont,gRenderer);//74,11
+				gTextTexture.render(gRenderer,2368-camera.x,352-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Satpura",textColor,gFont,gRenderer);//64,4
+				gTextTexture.render(gRenderer,2048-camera.x,128-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Kumaon",textColor,gFont,gRenderer);//22,4
+				gTextTexture.render(gRenderer,704-camera.x,128-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Hospital",textColor,gFont,gRenderer);//65,25
+				gTextTexture.render(gRenderer,2080-camera.x,800-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Jwala",textColor,gFont,gRenderer);//10,10
+				gTextTexture.render(gRenderer,320-camera.x,320-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Aravali",textColor,gFont,gRenderer);//64,4
+				gTextTexture.render(gRenderer,2048-camera.x,128-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Food",textColor,gFont,gRenderer);//69,15
+				gTextTexture.render(gRenderer,2208-camera.x,480-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Recidency",textColor,gFont,gRenderer);//32,66
+				gTextTexture.render(gRenderer,1024-camera.x,2112-camera.y,0,0);
 				
+				// YULU
+				// 54,35
+				// 63,14
+				// 102,32
+				//145,44
+				//145,15
+				//12,51
+				//6,10
+
 				MinimapTexture.render(gRenderer,1500,0,0,0);
 				dot2.renderPlayer2(camera,gTextTexture,myFont,gRenderer);
 
@@ -1360,6 +1474,48 @@ int main( int argc, char* argv[] )
 				ExitButton.render();
 				SDL_RenderPresent( gRenderer );
 			}
+
+			if ((curr_state != 0) )
+                {
+                    // receiving
+                    bytes_recvd = recv(newserv_fd, &in_buffer, sizeof(in_buffer), 0);
+                    if (bytes_recvd == -1);
+                        // cout << "Frame data not received!"
+                        //      << "\n";
+
+                    else if (bytes_recvd != 32)
+                        cout << "complete data not received \n";
+
+                    else
+                    {
+                        validate_data = fromNetwork(in_buffer, &indata);
+                        if (!validate_data)
+                            cout << "Wrong data received\n";
+
+                        else
+                        {
+                            dot2.myState.first = indata.stateFirst;
+                            dot2.myState.second = indata.stateSecond;
+                            dot2.mBox.x = indata.X;
+                            dot2.mBox.y = indata.Y;
+                            curr_stateP2 = indata.myState;
+                            dot2.health = indata.health;
+                            dot2.CG = indata.CG;
+                            dot2.money = indata.money;
+                        }
+                    }
+
+
+                    // sending
+                    mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money};
+
+                    toNetwork(out_buffer, &mydata);
+                    bytes_sent = send(newserv_fd, &out_buffer, sizeof(out_buffer), 0);
+                    if (bytes_sent == -1)
+                        cout << "Frame data not sent" << "\n"; 
+                    else if (bytes_sent != 32)
+                        cout << "complete data not sent, what is going on???????\n";
+                }
 
 			// If frame finished early
             	int frameTicks = Timerframe.getTicks();
