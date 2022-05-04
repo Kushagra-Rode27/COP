@@ -10,8 +10,10 @@
 Tasks::Tasks(){
 }
 
-Tasks::Tasks(Tile* tile)
+Tasks::Tasks(Tile* tile,string message,int taskType)
 {
+	msg = message;
+	type = taskType;
 	currTile = tile;
 
 	if (currTile != NULL) {

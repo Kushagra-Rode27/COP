@@ -26,7 +26,7 @@ public:
 
 	// Point();
 	Tasks();
-	Tasks(Tile* tile);
+	Tasks(Tile* tile,string message,int taskType);
 	~Tasks();
 
 	// Loads texture and sets up animation clips

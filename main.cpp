@@ -1038,16 +1038,59 @@ int main( int argc, char* argv[] )
 			// Powerup arr1[6] = {p1,p2,p3,p4,p5,p6};
 
 			//hostel tasks
-			Tasks t1(tileSet3[150*12 + 12]);
-			Tasks t2(tileSet3[150*20 + 12]);
-			Tasks t3(tileSet3[150*27 + 12]);
-			Tasks t4(tileSet3[150*37 + 12]);
-			Tasks t5(tileSet3[150*6 + 23]);
-			Tasks t6(tileSet3[150*5 + 78]);
-			Tasks t7(tileSet3[150*6 + 42]);
-			Tasks t8(tileSet3[150*5 + 54]);
-			Tasks t9(tileSet3[150*12 + 76]);
+			Tasks t1(tileSet3[150*12 + 12],"Do debating in jwala",0); // jwala
+			Tasks t2(tileSet3[150*20 + 12],"Take part in dance competition in Aravali",0); // aravali
+			Tasks t3(tileSet3[150*27 + 12],"Take part in PFC Workshop in Nilgiri",0); // nilgiri
+ 			Tasks t4(tileSet3[150*37 + 12],"Play snooker in Karakoram",0); //kara
+			Tasks t5(tileSet3[150*6 + 23],"Take part in Drama Workshop in Kumaon",0); //kumaon
+			Tasks t6(tileSet3[150*5 + 78],"Do Quizzing in Udaigiri",0); //Udai
+			Tasks t7(tileSet3[150*6 + 42],"Play BasketBall with your friends in Vindy",0); //vindy
+			Tasks t8(tileSet3[150*5 + 54],"Participate in Kavi Sammelan in Satpura",0); //satpura
+			Tasks t9(tileSet3[150*12 + 76],"Participate in a hackathon in Girnar",0); // girnar
+			Tasks t10(tileSet3[150*12 + 121],"Take part in Singing Competition",0); //himadri
+			Tasks t11(tileSet3[150*8 + 126],"Attend a painting workshop in Kailash",0); //kailash
+			// ta
 
+
+			//money tasks
+			Tasks t12(tileSet3[150*48 + 148],"Do an off-campus internship",1); // main gate
+
+			Tasks t13(tileSet3[150*19 + 148],"Do a research internship with a Professor",1); // gate 6
+			Tasks t14(tileSet3[150*1 + 16],"Do an off-campus internship",1); //gate 3
+			// task regarding OCS pending
+
+			//cg
+			Tasks t15(tileSet3[150*15 + 98],"Go to CSC and complete your assignment",2); //main building
+			Tasks t16(tileSet3[150*37 + 105],"Attend a Class in LHC",2); //lhc
+			Tasks t17(tileSet3[150*26 + 78],"Meet Prof. Riju and discuss regarding a project idea",2);  // bharti
+			Tasks t18(tileSet3[150*23 + 102],"Issue a book on Computer Vision and read it",2); // library
+
+			//health
+			Tasks t19(tileSet3[150*43 + 71],"Play Cricket Match or do practice",3); //cricket
+			Tasks t20(tileSet3[150*43 + 95],"Play Football Match or do practice",3); //football
+			Tasks t21(tileSet3[150*15 + 36],"Play a Lawn-Tennis Match or do practice",3); //tennis
+			Tasks t22(tileSet3[150*24 + 36],"Play a VolleyBall Match or do practice",3); //volleyball
+			Tasks t23(tileSet3[150*44 + 41],"Play a Table-Tennis Match or do practice",3); //table tennis
+
+			Tasks t24(tileSet3[150*43 + 47],"Take part in Group Dance Competition",3); //OAT
+
+
+			Tasks t25(tileSet3[150*23 + 18],"Have food at Delhi 16",4); //delhi 16
+			Tasks t26(tileSet3[150*26 + 48],"Have food at Rajdhani",4); //rajdhani
+			Tasks t27(tileSet3[150*29 + 55],"Have food at Masala Mix",4); //masala mix
+			Tasks t28(tileSet3[150*16 + 69],"Have food at Night Mess",4); // night mess
+			Tasks t29(tileSet3[150*19 + 91],"Have Ice-Cream at Amul",4); //amul
+			Tasks t30(tileSet3[150*23 + 96],"Have a juice at Shiru Cafe",4); //shiru
+
+			Tasks t31(tileSet3[150*69 + 28],"Get a CheckUp done at the IITD Hospital",5); //hospital
+
+
+
+
+
+
+
+			
 
 			// // int location[9] = {100*24 + 38,100*22 + 47,100*23 + 64,100*4 + 8,100*16 + 49};
 			Tasks task[9] = {t1,t2,t3,t4,t5,t6,t7,t8,t9};
@@ -1297,8 +1340,8 @@ int main( int argc, char* argv[] )
 
 					
 			}
-			else if(curr_state == 5){
-
+			else if(curr_state == 5 && curr_stateP2==5){
+				
 				// do
 				// {
 				// 	static int flag = 0;
