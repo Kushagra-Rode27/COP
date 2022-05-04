@@ -1471,21 +1471,43 @@ int main( int argc, char* argv[] )
 
 			toNetwork(out_buffer, &mydata);
 			bytes_sent = send(cli_fd, &out_buffer, sizeof(out_buffer), 0);
-			if (bytes_sent == -1) ;
+			if (bytes_sent == -1) 
 				// cout << "Frame data not sent"
 				// 	 << "\n";
+				cout<<"hello"<<"\n";
 			else if (bytes_sent != 32)
 				cout << "complete data not sent, what is going on???????\n";
 
 			// receiving
 			bytes_recvd = recv(cli_fd, &in_buffer, sizeof(in_buffer), 0);
-			if (bytes_recvd == -1)
+			if (bytes_recvd == -1){
+				curr_state=7;
 				cout << "Frame data not received!"
 					 << "\n";
+			    dot2.myState.first = 0;
+				dot2.myState.second = 1;
+				dot2.mBox.x = 0;
+				dot2.mBox.y = 0;
+				curr_stateP2 = curr_state;
+				dot2.health = 0;
+				dot2.CG = 0;
+				dot2.money = 0;
+				curr_state=7;
+			}
 
-			else if (bytes_recvd != 32)
+			else if (bytes_recvd != 32){
+				curr_state=7;
 				cout << "complete data not received, what is going on!!!\n";
-
+				dot2.myState.first = 0;
+				dot2.myState.second = 1;
+				dot2.mBox.x = 0;
+				dot2.mBox.y = 0;
+				curr_stateP2 = curr_state;
+				dot2.health = 0;
+				dot2.CG = 0;
+				dot2.money = 0;
+				curr_state=7;
+			}
 			else
 			{
 				validate_data = fromNetwork(in_buffer, &indata);

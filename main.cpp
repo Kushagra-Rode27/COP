@@ -489,7 +489,7 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
  
 
     //Load music
-    gMusic = Mix_LoadMUS( "sounds/beat.wav" );
+    gMusic = Mix_LoadMUS( "sounds/The-Beginning-w-Caturday.wav" );
     if( gMusic == NULL )
     {
         printf( "Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError() );
@@ -1036,15 +1036,15 @@ int main( int argc, char* argv[] )
 			// Powerup arr1[6] = {p1,p2,p3,p4,p5,p6};
 
 			//hostel tasks
-			Tasks t1(tileSet4[150*12 + 12]);
-			Tasks t2(tileSet4[150*20 + 12]);
-			Tasks t3(tileSet4[150*27 + 12]);
-			Tasks t4(tileSet4[150*37 + 12]);
-			Tasks t5(tileSet4[150*6 + 23]);
-			Tasks t6(tileSet4[150*5 + 78]);
-			Tasks t7(tileSet4[150*6 + 42]);
-			Tasks t8(tileSet4[150*5 + 54]);
-			Tasks t9(tileSet4[150*12 + 76]);
+			Tasks t1(tileSet3[150*12 + 12]);
+			Tasks t2(tileSet3[150*20 + 12]);
+			Tasks t3(tileSet3[150*27 + 12]);
+			Tasks t4(tileSet3[150*37 + 12]);
+			Tasks t5(tileSet3[150*6 + 23]);
+			Tasks t6(tileSet3[150*5 + 78]);
+			Tasks t7(tileSet3[150*6 + 42]);
+			Tasks t8(tileSet3[150*5 + 54]);
+			Tasks t9(tileSet3[150*12 + 76]);
 
 
 			// // int location[9] = {100*24 + 38,100*22 + 47,100*23 + 64,100*4 + 8,100*16 + 49};
@@ -1335,7 +1335,41 @@ int main( int argc, char* argv[] )
 					{
 						quit = true;
 					}
-
+					else if( e.type == SDL_KEYDOWN )
+                    {
+                        switch( e.key.keysym.sym )
+                        {
+							case SDLK_9:
+                            //If there is no music playing
+                            if( Mix_PlayingMusic() == 0 )
+                            {
+                                //Play the music
+                                Mix_PlayMusic( gMusic, -1 );
+                            }
+                            //If music is being played
+                            else
+                            {
+                                //If the music is paused
+                                if( Mix_PausedMusic() == 1 )
+                                {
+                                    //Resume the music
+                                    Mix_ResumeMusic();
+                                }
+                                //If the music is playing
+                                else
+                                {
+                                    //Pause the music
+                                    Mix_PauseMusic();
+                                }
+                            }
+                            break;
+                            
+                            case SDLK_0:
+                            //Stop the music
+                            Mix_HaltMusic();
+                            break;
+                        }
+                    }
 					//dot.handleEvent( e );
 					dot.handleEvent( e );
 					if(ti == 0){curr_state=7;}
@@ -1414,12 +1448,32 @@ int main( int argc, char* argv[] )
 				gTextTexture.render(gRenderer,2080-camera.x,800-camera.y,0,0);
 				gTextTexture.loadFromRenderedText("Jwala",textColor,gFont,gRenderer);//10,10
 				gTextTexture.render(gRenderer,320-camera.x,320-camera.y,0,0);
-				gTextTexture.loadFromRenderedText("Aravali",textColor,gFont,gRenderer);//64,4
-				gTextTexture.render(gRenderer,2048-camera.x,128-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Aravali",textColor,gFont,gRenderer);//10,20
+				gTextTexture.render(gRenderer,320-camera.x,640-camera.y,0,0);
 				gTextTexture.loadFromRenderedText("Food",textColor,gFont,gRenderer);//69,15
 				gTextTexture.render(gRenderer,2208-camera.x,480-camera.y,0,0);
 				gTextTexture.loadFromRenderedText("Recidency",textColor,gFont,gRenderer);//32,66
 				gTextTexture.render(gRenderer,1024-camera.x,2112-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Nalanda",textColor,gFont,gRenderer);//20,34
+				gTextTexture.render(gRenderer,640-camera.x,1088-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Nilgiri",textColor,gFont,gRenderer);//10,25
+				gTextTexture.render(gRenderer,320-camera.x,800-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Karakoram",textColor,gFont,gRenderer);//9,35
+				gTextTexture.render(gRenderer,288-camera.x,1120-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Cricket",textColor,gFont,gRenderer);//68,38
+				gTextTexture.render(gRenderer,2176-camera.x,1216-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Football",textColor,gFont,gRenderer);//88,38
+				gTextTexture.render(gRenderer,2816-camera.x,1216-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Amul",textColor,gFont,gRenderer);//90,18
+				gTextTexture.render(gRenderer,2880-camera.x,576-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Visitor",textColor,gFont,gRenderer);//133,25
+				gTextTexture.render(gRenderer,4256-camera.x,800-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("OAT",textColor,gFont,gRenderer);//46,42
+				gTextTexture.render(gRenderer,1472-camera.x,1344-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Delhi16",textColor,gFont,gRenderer);//17,19
+				gTextTexture.render(gRenderer,544-camera.x,608-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Vindy",textColor,gFont,gRenderer);//41,4
+				gTextTexture.render(gRenderer,41*32-camera.x,4*32-camera.y,0,0);
 				
 				// YULU
 				// 54,35
@@ -1557,9 +1611,17 @@ int main( int argc, char* argv[] )
                         // cout << "Frame data not received!"
                         //      << "\n";
 
-                    else if (bytes_recvd != 32)
+                    else if (bytes_recvd != 32){
                         cout << "complete data not received \n";
-
+						dot2.myState.first = 0;
+						dot2.myState.second = 1;
+						dot2.mBox.x = 0;
+						dot2.mBox.y = 0;
+						curr_stateP2 = 0;
+						dot2.health = 0;
+						dot2.CG = 0;
+						dot2.money = 0;
+					}
                     else
                     {
                         validate_data = fromNetwork(in_buffer, &indata);
