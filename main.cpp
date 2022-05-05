@@ -1884,9 +1884,13 @@ int main( int argc, char* argv[] )
 				
 				for (int i = 0; i < taskLeft.size() - 1; i++)
 				{
-					
 					gTextTexture.loadFromRenderedText(taskLeft[i].msg,textcolor1,myFont,gRenderer);//41,4
-					gTextTexture.render(gRenderer,40,70 + 25*i,0,0);
+					if(i < 15){
+						gTextTexture.render(gRenderer,100,150 + 40*i,0,0);
+					}
+					else {
+						gTextTexture.render(gRenderer,1000,150 + 40*(i-15),0,0);
+					}
 					
 				}
 				
