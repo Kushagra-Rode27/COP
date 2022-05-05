@@ -38,6 +38,9 @@
 #include "Ball.h"
 #include "AiPaddle.h"
 #include <vector>
+#include "Board.h"
+#include "Bot.h"
+
 using namespace std;
 
 int GameManager::screenH = 850;
@@ -47,6 +50,8 @@ static int playerSpeed = 300;
 static int aiSpeed = 350;
 static int initialBallXSpeed = 250;
 static int initialBallYSpeed = 40;
+
+enum BOARD_PIECE {PIECE_EMPTY, PIECE_X, PIECE_O};
 
 // when set to true, two a.i. player will play
 // when set to false, the player can control the left paddle
@@ -973,6 +978,88 @@ void mainLoop(GameManager &manager)
 	} while (!quit);
 }
 
+void renderBoard()
+{
+    // vertical lines
+    SDL_RenderDrawLine( gRenderer,
+         SCREEN_WIDTH/3, 0,
+         SCREEN_WIDTH/3,  SCREEN_HEIGHT);
+
+    SDL_RenderDrawLine( gRenderer,
+         SCREEN_WIDTH/3*2, 0,
+         SCREEN_WIDTH/3*2,  SCREEN_HEIGHT);
+
+    // horizontal lines
+    SDL_RenderDrawLine( gRenderer,
+        0,  SCREEN_HEIGHT/3,
+         SCREEN_WIDTH,  SCREEN_HEIGHT/3);
+
+    SDL_RenderDrawLine( gRenderer,
+        0,  SCREEN_HEIGHT/3*2,
+         SCREEN_WIDTH,  SCREEN_HEIGHT/3*2);
+}
+
+void drawCross(int row, int col)
+{
+    int fieldW =  SCREEN_WIDTH/3;
+    int fieldH =  SCREEN_HEIGHT/3;
+
+    // top left to bottom right
+    SDL_RenderDrawLine( gRenderer,
+        col*fieldW, row*fieldH,
+        col*fieldW+fieldW, row*fieldH+fieldH);
+
+    // top right to bottom left
+    SDL_RenderDrawLine( gRenderer,
+        col*fieldW, row*fieldH+fieldH,
+        col*fieldW+fieldW, row*fieldH);
+}
+
+// render circle on board field (boardX, boardY)
+void drawCircle(int row, int col)
+{
+    int fieldW =  SCREEN_WIDTH/3;
+    int fieldH =  SCREEN_HEIGHT/3;
+
+    // calculate circle center
+    int centerX = col*fieldW+(fieldW/2);
+    int centerY = row*fieldH+(fieldH/2);
+
+    int r = fieldW/2;
+
+    double step = 2*M_PI/30;
+    int endX = centerX + r;
+    int endY = centerY;
+
+    // draw circle.. Multiple straight lines between consecutive
+    // points of the desired circle
+    for(double angle=0; angle<2*M_PI; angle+=step)
+    {
+        int startX = endX;
+        int startY = endY;
+        endX = r * cos(angle) + centerX;
+        endY = r * sin(angle) + centerY;
+        SDL_RenderDrawLine( gRenderer, startX, startY, endX, endY);
+    }
+}
+
+void renderPieces(Board board)
+{
+    for(int i=0; i<3; i++)
+        for(int j=0; j<3; j++)
+        {
+            switch(board.m[i][j])
+            {
+                case PIECE_X:
+                    drawCross(i, j); break;
+                case PIECE_O:
+                    drawCircle(i, j); break;
+                default:
+                    break;
+            }
+        }
+}
+
 int main( int argc, char* argv[] )
 {
 	//starting sockets for client
@@ -1253,6 +1340,11 @@ int main( int argc, char* argv[] )
 
 			// set initial positions
 			manager.restartRound();
+
+			int state=1;
+			bool humanTurn=true;
+			Bot bot=Bot();
+    		Board board=Board();
 
 			while( !quit )
 			{
@@ -1723,6 +1815,66 @@ int main( int argc, char* argv[] )
 				mainLoop(manager);
 				cout<<"hao\n";
 				quit=true;
+			}
+			else if (curr_state==9){
+				while(SDL_PollEvent(&e))
+				{
+					if(e.type == SDL_QUIT)
+						quit = true;
+				}
+				if(state == 0)
+					curr_state=7;
+				else
+				{
+					bool successfulPlay = false; // to handle change of player turn
+
+					// process human or pc turn
+					if(!humanTurn)
+					{
+						bot.play(board);
+						successfulPlay = true;
+					}
+					else
+					{
+						// did the human play?
+						if(e.type == SDL_MOUSEBUTTONDOWN)
+						{
+							// get mouse coordinates and normalize to row/col
+							int x, y;
+							SDL_GetMouseState(&x, &y);
+							int row = y/(SCREEN_HEIGHT/3);
+							int col = x/(SCREEN_WIDTH/3);
+
+							// try to validate the move
+							if(board.isFieldEmpty(row,col))
+							{
+								board.place(row,col);
+								successfulPlay = true;
+							}
+						}
+					}
+
+					// change turns
+					if(successfulPlay)
+					{
+						humanTurn = !humanTurn;
+						SDL_Delay(100); // delay between turns
+					}
+				}
+				// bg
+				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+				SDL_RenderClear(gRenderer);
+
+				// game objects
+				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
+
+				renderBoard();
+				renderPieces(board);
+
+				// render
+				SDL_RenderPresent(gRenderer);
+				if(board.hasWinner() || board.isDraw())
+        			state = 0; // so the game loop knows the end of the current game
 			}
 
 			if ((curr_state != 0 && curr_state!=7 &&curr_state!=8) )
