@@ -209,7 +209,7 @@ void Dot::handle(const Uint8* currentKeyStates)
 
 void Dot::move( Tile *tiles1[],Tile *tiles2[],Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLow )
 {
-
+    if (lastTask!=0) lastTask=0;
 	for (int k=0;k<TOTAL_TILES;k++){
 		if (tiles1[k]->SetPoint){
 			if (myfunctions.checkCollision(tiles1[k]->getBox(),mBox)){
@@ -228,7 +228,7 @@ void Dot::move( Tile *tiles1[],Tile *tiles2[],Mix_Chunk *gHigh,Mix_Chunk *gMediu
 
 		if (tiles2[k]->SetTask){
 			if (myfunctions.checkCollision(tiles2[k]->getBox(),mBox)){
-
+                lastTask=tiles2[k]->Tasknum;
                 if((tiles2[k]->Tasktype) == 0){
                     if(health < 98){
                         health+=3;

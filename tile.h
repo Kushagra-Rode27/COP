@@ -37,6 +37,7 @@ class Tile
 		bool SetTask = false;
 
 		int Tasktype;
+		int Tasknum;
         functions myfunctions  ;
     private:
 		//The attributes of the tile

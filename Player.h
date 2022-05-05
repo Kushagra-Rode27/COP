@@ -37,6 +37,8 @@ class Dot
 		int DOT_VEL = 16;
 		int waitime=0;
 
+		int lastTask;
+
 		//Initializes the variables
 		Dot(int XCycle,int YCycle, int PlayerSpriteWidth , int PlayerSpriteHeight , int PlayerRenderHeight , int PlayerRenderWidth ,int bestState);
 		//Dot(LTexture gDotTexture,LTexture gTextTexture,TTF_Font *gFont,SDL_Renderer* gRenderer,Mix_Chunk *gHigh,Mix_Chunk *gMedium,Mix_Chunk *gLow);

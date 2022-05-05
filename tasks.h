@@ -26,7 +26,7 @@ public:
 
 	// Point();
 	Tasks();
-	Tasks(Tile* tile,string message,int taskType);
+	Tasks(Tile* tile,string message,int taskType,int Tasknum);
 	~Tasks();
 
 	// Loads texture and sets up animation clips
@@ -34,7 +34,7 @@ public:
 
 	// Sets the tile of the wall
 	void SetTile(Tile* newTile);
-
+	int Tasknum;
 	// Renders pacman
 	void Render(SDL_Rect& camera,SDL_Renderer* gRenderer);
 

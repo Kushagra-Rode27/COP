@@ -10,7 +10,7 @@
 Tasks::Tasks(){
 }
 
-Tasks::Tasks(Tile* tile,string message,int taskType)
+Tasks::Tasks(Tile* tile,string message,int taskType,int Tasknum)
 {
 	msg = message;
 	type = taskType;
@@ -19,6 +19,7 @@ Tasks::Tasks(Tile* tile,string message,int taskType)
 	if (currTile != NULL) {
 		currTile->SetTask=true;
 		currTile->Tasktype = taskType;
+		currTile->Tasknum=Tasknum;
 
 		position.x = currTile->getBox().x ;
 		position.y = currTile->getBox().y ;

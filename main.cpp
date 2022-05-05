@@ -208,6 +208,7 @@ struct Info
     int health;
     int CG;
     int money;
+	int tusk;
 	//Point* pointarr;
 };
 
@@ -225,12 +226,13 @@ void toNetwork(char *buffer, struct Info *mydata)
     std::sprintf(buffer + 19, "%03d", mydata->health);
     std::sprintf(buffer + 23, "%03d", mydata->CG);
     std::sprintf(buffer + 27, "%03d", mydata->money);
-    buffer[31] = '#';
+	std::sprintf(buffer+31,"%05d",mydata->tusk);
+    buffer[37] = '#';
 }
 
 bool fromNetwork(char *buffer, struct Info *indata)
 {
-    if (buffer[0] != '*' || buffer[31] != '#')
+    if (buffer[0] != '*' || buffer[37] != '#')
         return false;
     indata->stateFirst = atoi(buffer + 1);
     indata->stateSecond = atoi(buffer + 4);
@@ -240,6 +242,7 @@ bool fromNetwork(char *buffer, struct Info *indata)
     indata->health = atoi(buffer + 19);
     indata->CG = atoi(buffer + 23);
     indata->money = atoi(buffer + 27);
+	indata->tusk=atoi(buffer+31);
     return true;
 }
 
@@ -1118,9 +1121,9 @@ int main( int argc, char* argv[] )
 	//starting sockets
 	int serv_fd, newserv_fd, bytes_sent, bytes_recvd;
     int port_no = PORT;
-    char in_buffer[32], out_buffer[32], sname[64], cname[64];
+    char in_buffer[38], out_buffer[38], sname[64], cname[64];
     struct Info indata;
-    struct Info mydata = {42, 5, 6, 7, 8, 9, 1, 4};
+    struct Info mydata = {42, 5, 6, 7, 8, 9, 1, 4,0};
     bool validate_data;
 
     char cli_ip[INET_ADDRSTRLEN];
@@ -1237,51 +1240,51 @@ int main( int argc, char* argv[] )
 			Powerup arr1[7] = {p1,p2,p3,p4,p5,p6,p7};
 
 			//hostel tasks
-			Tasks t1(tileSet3[150*12 + 12],"Do debating in jwala",0); // jwala
-			Tasks t2(tileSet3[150*20 + 12],"Take part in dance competition in Aravali",0); // aravali
-			Tasks t3(tileSet3[150*27 + 12],"Take part in PFC Workshop in Nilgiri",0); // nilgiri
- 			Tasks t4(tileSet3[150*37 + 12],"Play snooker in Karakoram",0); //kara
-			Tasks t5(tileSet3[150*6 + 23],"Take part in Drama Workshop in Kumaon",0); //kumaon
-			Tasks t6(tileSet3[150*5 + 78],"Do Quizzing in Udaigiri",0); //Udai
-			Tasks t7(tileSet3[150*6 + 42],"Play BasketBall with your friends in Vindy",0); //vindy
-			Tasks t8(tileSet3[150*5 + 54],"Participate in Kavi Sammelan in Satpura",0); //satpura
-			Tasks t9(tileSet3[150*12 + 76],"Participate in a hackathon in Girnar",0); // girnar
-			Tasks t10(tileSet3[150*12 + 121],"Take part in Singing Competition",0); //himadri
-			Tasks t11(tileSet3[150*8 + 126],"Attend a painting workshop in Kailash",0); //kailash
+			Tasks t1(tileSet3[150*12 + 12],"Do debating in jwala",0,1); // jwala
+			Tasks t2(tileSet3[150*20 + 12],"Take part in dance competition in Aravali",0,2); // aravali
+			Tasks t3(tileSet3[150*27 + 12],"Take part in PFC Workshop in Nilgiri",0,3); // nilgiri
+ 			Tasks t4(tileSet3[150*37 + 12],"Play snooker in Karakoram",0,4); //kara
+			Tasks t5(tileSet3[150*6 + 23],"Take part in Drama Workshop in Kumaon",0,5); //kumaon
+			Tasks t6(tileSet3[150*5 + 78],"Do Quizzing in Udaigiri",0,6); //Udai
+			Tasks t7(tileSet3[150*6 + 42],"Play BasketBall with your friends in Vindy",0,7); //vindy
+			Tasks t8(tileSet3[150*5 + 54],"Participate in Kavi Sammelan in Satpura",0,8); //satpura
+			Tasks t9(tileSet3[150*12 + 76],"Participate in a hackathon in Girnar",0,9); // girnar
+			Tasks t10(tileSet3[150*12 + 121],"Take part in Singing Competition",0,10); //himadri
+			Tasks t11(tileSet3[150*8 + 126],"Attend a painting workshop in Kailash",0,11); //kailash
 			// ta
 
 
 			//money tasks
-			Tasks t12(tileSet3[150*48 + 148],"Do an off-campus internship",1); // main gate
+			Tasks t12(tileSet3[150*48 + 148],"Do an off-campus internship",1,12); // main gate
 
-			Tasks t13(tileSet3[150*19 + 148],"Do a research internship with a Professor",1); // gate 6
-			Tasks t14(tileSet3[150*1 + 16],"Do an off-campus internship",1); //gate 3
+			Tasks t13(tileSet3[150*19 + 148],"Do a research internship with a Professor",1,13); // gate 6
+			Tasks t14(tileSet3[150*1 + 16],"Do an off-campus internship",1,14); //gate 3
 			// task regarding OCS pending
 
 			//cg
-			Tasks t15(tileSet3[150*15 + 98],"Go to CSC and complete your assignment",2); //main building
-			Tasks t16(tileSet3[150*37 + 105],"Attend a Class in LHC",2); //lhc
-			Tasks t17(tileSet3[150*26 + 78],"Meet Prof. Rijurekha and discuss regarding a project idea",2);  // bharti
-			Tasks t18(tileSet3[150*23 + 102],"Issue a book on Computer Vision and read it",2); // library
+			Tasks t15(tileSet3[150*15 + 98],"Go to CSC and complete your assignment",2,15); //main building
+			Tasks t16(tileSet3[150*37 + 105],"Attend a Class in LHC",2,16); //lhc
+			Tasks t17(tileSet3[150*26 + 78],"Meet Prof. Rijurekha and discuss regarding a project idea",2,17);  // bharti
+			Tasks t18(tileSet3[150*23 + 102],"Issue a book on Computer Vision and read it",2,18); // library
 
 			//health
-			Tasks t19(tileSet3[150*43 + 71],"Play Cricket Match or do practice",3); //cricket
-			Tasks t20(tileSet3[150*43 + 95],"Play Football Match or do practice",3); //football
-			Tasks t21(tileSet3[150*15 + 36],"Play a Lawn-Tennis Match or do practice",3); //tennis
-			Tasks t22(tileSet3[150*24 + 36],"Play a VolleyBall Match or do practice",3); //volleyball
-			Tasks t23(tileSet3[150*44 + 41],"Play a Table-Tennis Match or do practice",3); //table tennis
+			Tasks t19(tileSet3[150*43 + 71],"Play Cricket Match or do practice",3,19); //cricket
+			Tasks t20(tileSet3[150*43 + 95],"Play Football Match or do practice",3,20); //football
+			Tasks t21(tileSet3[150*15 + 36],"Play a Lawn-Tennis Match or do practice",3,21); //tennis
+			Tasks t22(tileSet3[150*24 + 36],"Play a VolleyBall Match or do practice",3,22); //volleyball
+			Tasks t23(tileSet3[150*44 + 41],"Play a Table-Tennis Match or do practice",3,23); //table tennis
 
-			Tasks t24(tileSet3[150*43 + 47],"Take part in Group Dance Competition",3); //OAT
+			Tasks t24(tileSet3[150*43 + 47],"Take part in Group Dance Competition",3,24); //OAT
 
 
-			Tasks t25(tileSet3[150*23 + 18],"Have food at Delhi 16",4); //delhi 16
-			Tasks t26(tileSet3[150*26 + 48],"Have food at Rajdhani",4); //rajdhani
-			Tasks t27(tileSet3[150*29 + 55],"Have food at Masala Mix",4); //masala mix
-			Tasks t28(tileSet3[150*16 + 69],"Have food at Night Mess",4); // night mess
-			Tasks t29(tileSet3[150*19 + 91],"Have Ice-Cream at Amul",4); //amul
-			Tasks t30(tileSet3[150*23 + 96],"Have a juice at Shiru Cafe",4); //shiru
+			Tasks t25(tileSet3[150*23 + 18],"Have food at Delhi 16",4,25); //delhi 16
+			Tasks t26(tileSet3[150*26 + 48],"Have food at Rajdhani",4,26); //rajdhani
+			Tasks t27(tileSet3[150*29 + 55],"Have food at Masala Mix",4,27); //masala mix
+			Tasks t28(tileSet3[150*16 + 69],"Have food at Night Mess",4,28); // night mess
+			Tasks t29(tileSet3[150*19 + 91],"Have Ice-Cream at Amul",4,29); //amul
+			Tasks t30(tileSet3[150*23 + 96],"Have a juice at Shiru Cafe",4,30); //shiru
 
-			Tasks t31(tileSet3[150*69 + 28],"Get a CheckUp done at the IITD Hospital",5); //hospital
+			Tasks t31(tileSet3[150*69 + 28],"Get a CheckUp done at the IITD Hospital",5,31); //hospital
 
 
 
@@ -1792,6 +1795,12 @@ int main( int argc, char* argv[] )
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy3.mBox)) quit=true;
 				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy3.mBox)) quit=true;
 
+				for (int i=0;i<TOTAL_TILES;i++){
+					if (dot2.myfunctions.checkCollision(dot2.mBox,tileSet3[i]->getBox())){
+						tileSet3[i]->SetTask=NULL;
+					}
+				}
+
 				currentTime1 = SDL_GetTicks();
 				if(currentTime1 > lastTime1 + 1000) //ms to wait before change angle
 				{
@@ -1848,7 +1857,7 @@ int main( int argc, char* argv[] )
 				 	if (arr1[k].GetTile()->SetPowerUp==true) arr1[k].Render(camera,gRenderer);
 				}
 
-				for (int k=0;k<30;k++){
+				for (int k=0;k<31;k++){
 					if (task[k].GetTile()->SetTask==true) task[k].Render(camera,gRenderer);
 				}
 				//Update screen
@@ -1875,7 +1884,7 @@ int main( int argc, char* argv[] )
 				InfoScreenTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
 				SDL_Color textcolor1 = {255,255,255};
 				vector<Tasks> taskLeft;
-				for (int i = 0; i < 30; i++)
+				for (int i = 0; i < 31; i++)
 				{
 					if(task[i].GetTile()->SetTask){
 						taskLeft.push_back(task[i]);
@@ -1916,8 +1925,8 @@ int main( int argc, char* argv[] )
 				EndScreenTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
 				RetryButton.render();
 				ExitButton.render();
-				double calc1=(double)dot.CG/10+(double)dot.health/100+(double)dot.money/170;
-				double calc2=(double)dot2.CG/10+(double)dot2.health/100+(double)dot2.money/170;
+				double calc1=(double)log(dot.CG/10)+log((double)dot.health/100)+log((double)dot.money/170);
+				double calc2=(double)log(dot2.CG/10)+log((double)dot2.health/100)+log((double)dot2.money/170);
 				SDL_Color textColor = { 0, 0, 0 };
 				if (calc1>calc2+0.0005){
 					gTextTexture.loadFromRenderedText("You won the game",textColor,gFont,gRenderer);//41,4
@@ -2010,7 +2019,7 @@ int main( int argc, char* argv[] )
                              << "\n";
 							 curr_state=7;
 					}
-                    else if (bytes_recvd != 32){
+                    else if (bytes_recvd != 38){
                         cout << "complete data not received \n";
 						curr_state=7;
 						dot2.myState.first = 0;
@@ -2038,18 +2047,23 @@ int main( int argc, char* argv[] )
                             dot2.health = indata.health;
                             dot2.CG = indata.CG;
                             dot2.money = indata.money;
+							if (indata.tusk!=0){
+								for (int i=0;i<31;i++){
+									if (task[i].Tasknum==indata.tusk) task[i].GetTile()->SetTask=false;
+								}
+							}
                         }
                     }
 
 
                     // sending
-                    mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money};
+                    mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money, dot.lastTask};
 
                     toNetwork(out_buffer, &mydata);
                     bytes_sent = send(newserv_fd, &out_buffer, sizeof(out_buffer), 0);
                     if (bytes_sent == -1)
                         cout << "Frame data not sent" << "\n"; 
-                    else if (bytes_sent != 32)
+                    else if (bytes_sent != 38)
                         cout << "complete data not sent, what is going on???????\n";
                 }
 
