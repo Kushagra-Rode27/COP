@@ -324,7 +324,7 @@ bool init()
 
 
 		//Create window
-		gWindow = SDL_CreateWindow( "IITD Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE );
+		gWindow = SDL_CreateWindow( "IITD Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE| SDL_WINDOW_MINIMIZED );
 		if( gWindow == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -1518,9 +1518,59 @@ int main( int argc, char* argv[] )
 				enemy3.move(tileSet2);
 				// Render Names
 				gTextTexture.loadFromRenderedText("Tennis",textColor,gFont,gRenderer);
-				gTextTexture.render(gRenderer,1120-camera.x,480-camera.y,0,0);
+				gTextTexture.render(gRenderer,1100-camera.x,480-camera.y,0,0);
 				gTextTexture.loadFromRenderedText("SAC",textColor,gFont,gRenderer);
 				gTextTexture.render(gRenderer,1280-camera.x,1280-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Main",textColor,gFont,gRenderer); //98,14
+				gTextTexture.render(gRenderer,3136-camera.x,448-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("LHC",textColor,gFont,gRenderer);//110,34
+				gTextTexture.render(gRenderer,3520-camera.x,1088-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Library",textColor,gFont,gRenderer);//102,27
+				gTextTexture.render(gRenderer,3264-camera.x,864-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Bharti",textColor,gFont,gRenderer);//76,26
+				gTextTexture.render(gRenderer,2432-camera.x,842-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Himadri",textColor,gFont,gRenderer);//119,15
+				gTextTexture.render(gRenderer,3808-camera.x,480-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Kailash",textColor,gFont,gRenderer);//124,6
+				gTextTexture.render(gRenderer,3968-camera.x,192-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Udaigiri",textColor,gFont,gRenderer);//77,4
+				gTextTexture.render(gRenderer,2464-camera.x,128-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Girnar",textColor,gFont,gRenderer);//74,11
+				gTextTexture.render(gRenderer,2368-camera.x,352-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Satpura",textColor,gFont,gRenderer);//64,4
+				gTextTexture.render(gRenderer,2048-camera.x,128-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Kumaon",textColor,gFont,gRenderer);//22,4
+				gTextTexture.render(gRenderer,704-camera.x,128-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Hospital",textColor,gFont,gRenderer);//65,25
+				gTextTexture.render(gRenderer,2080-camera.x,800-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Jwala",textColor,gFont,gRenderer);//10,10
+				gTextTexture.render(gRenderer,320-camera.x,320-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Aravali",textColor,gFont,gRenderer);//10,20
+				gTextTexture.render(gRenderer,320-camera.x,640-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Food",textColor,gFont,gRenderer);//69,15
+				gTextTexture.render(gRenderer,2208-camera.x,480-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Recidency",textColor,gFont,gRenderer);//32,66
+				gTextTexture.render(gRenderer,1024-camera.x,2112-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Nalanda",textColor,gFont,gRenderer);//20,34
+				gTextTexture.render(gRenderer,640-camera.x,1088-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Nilgiri",textColor,gFont,gRenderer);//10,25
+				gTextTexture.render(gRenderer,320-camera.x,800-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Karakoram",textColor,gFont,gRenderer);//9,35
+				gTextTexture.render(gRenderer,288-camera.x,1120-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Cricket",textColor,gFont,gRenderer);//68,38
+				gTextTexture.render(gRenderer,2176-camera.x,1216-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Football",textColor,gFont,gRenderer);//88,38
+				gTextTexture.render(gRenderer,2816-camera.x,1216-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Amul",textColor,gFont,gRenderer);//90,18
+				gTextTexture.render(gRenderer,2880-camera.x,576-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Visitor",textColor,gFont,gRenderer);//133,25
+				gTextTexture.render(gRenderer,4256-camera.x,800-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("OAT",textColor,gFont,gRenderer);//46,42
+				gTextTexture.render(gRenderer,1472-camera.x,1344-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Delhi16",textColor,gFont,gRenderer);//17,19
+				gTextTexture.render(gRenderer,544-camera.x,608-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Vindy",textColor,gFont,gRenderer);//41,4
+				gTextTexture.render(gRenderer,41*32-camera.x,4*32-camera.y,0,0);
 				
 				MinimapTexture.render(gRenderer,1500,0,0,0);
 				dot2.renderPlayer2(camera,gTextTexture,myFont,gRenderer);
@@ -1659,7 +1709,7 @@ int main( int argc, char* argv[] )
 				quit=true;
 			}
 
-			if ((curr_state != 0 && curr_state!=6 &&curr_state!=8) )
+			if ((curr_state != 0 && curr_state!=7 &&curr_state!=8) )
 		{
 			// sending
 			mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money};
@@ -1670,17 +1720,17 @@ int main( int argc, char* argv[] )
 				// cout << "Frame data not sent"
 				// 	 << "\n";
 				cout<<"hello"<<"\n";
-				curr_state=8;
+				curr_state=7;
 			}
 			else if (bytes_sent != 32){
 				cout << "complete data not sent, what is going on???????\n";
-				curr_state=8;
+				curr_state=7;
 			}
 
 			// receiving
 			bytes_recvd = recv(cli_fd, &in_buffer, sizeof(in_buffer), 0);
 			if (bytes_recvd == -1){
-				curr_state=8;
+				curr_state=7;
 				cout << "Frame data not received!"
 					 << "\n";
 			    dot2.myState.first = 0;
@@ -1691,11 +1741,10 @@ int main( int argc, char* argv[] )
 				dot2.health = 0;
 				dot2.CG = 0;
 				dot2.money = 0;
-				curr_state=7;
 			}
 
 			else if (bytes_recvd != 32){
-				curr_state=8;
+				curr_state=7;
 				cout << "complete data not received, what is going on!!!\n";
 				dot2.myState.first = 0;
 				dot2.myState.second = 1;
@@ -1705,7 +1754,6 @@ int main( int argc, char* argv[] )
 				dot2.health = 0;
 				dot2.CG = 0;
 				dot2.money = 0;
-				curr_state=7;
 			}
 			else
 			{
