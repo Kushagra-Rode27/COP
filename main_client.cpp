@@ -33,6 +33,27 @@
 #include <stdlib.h>
 #include <sstream>
 #define PORT 8080
+#include "GameManager.h"
+#include "PlayerPaddle.h"
+#include "Ball.h"
+#include "AiPaddle.h"
+
+using namespace std;
+
+int GameManager::screenH = 850;
+int GameManager::screenW = 1700;
+
+static int playerSpeed = 300;
+static int aiSpeed = 350;
+static int initialBallXSpeed = 250;
+static int initialBallYSpeed = 40;
+
+// when set to true, two a.i. player will play
+// when set to false, the player can control the left paddle
+static bool playerDisabled = false;
+SDL_Texture *gBall;
+
+void print_init_flags(int flags);
 //sudo apt install libsdl2-mixer-dev
 
 //38,25
@@ -922,6 +943,36 @@ Point TilePLace(Tile* tiles[]){
 	return Point(tiles[0]);
 }
 
+void mainLoop(GameManager &manager)
+{
+	// main loop
+	bool quit = false;
+	Uint32 lastFrame = SDL_GetTicks();
+	do
+	{
+		Uint32 current = SDL_GetTicks();
+		Uint32 tpf = current - lastFrame;
+		lastFrame = current;
+
+		// check for key presses / exit
+		quit = manager.handleInput();
+
+		// update player paddle position
+		manager.update(tpf);
+
+		// render scene
+		manager.render();
+
+		while (tpf < 10) {
+			// limit to max 100 fps
+			SDL_Delay(10);
+			current = SDL_GetTicks();
+			tpf = current - lastFrame;
+		}
+
+	} while (!quit);
+}
+
 int main( int argc, char* argv[] )
 {
 	//starting sockets for client
@@ -1163,6 +1214,36 @@ int main( int argc, char* argv[] )
 			//While application is running
 			int countedFrames = 0;
 
+			// random seed
+			srand(time(NULL));
+
+			// create entities
+			PlayerPaddle pp(gRenderer, "res/paddle_r.png", 20, GameManager::screenH/2, playerSpeed);
+			pp.init();
+			pp.setDisabled(playerDisabled);
+
+			// left ai
+			AiPaddle aiLeft(gRenderer, "res/paddle_r.png", 20, GameManager::screenH/2, aiSpeed, true,
+				GameManager::screenW/2);
+			aiLeft.init();
+			aiLeft.setDisabled(!playerDisabled);
+
+			// right ai
+			AiPaddle aiRight(gRenderer, "res/paddle_r.png", GameManager::screenW-20, GameManager::screenH/2, aiSpeed, false,
+				GameManager::screenW/2);
+			aiRight.init();
+
+			// ball
+			Ball ball(gRenderer, "res/ball.png", GameManager::screenW/2, GameManager::screenH/2,
+					initialBallXSpeed, initialBallYSpeed);
+			ball.init();
+
+			GameManager manager(gRenderer, ball, pp, aiLeft, aiRight);
+			manager.init(GameManager::screenW, GameManager::screenH);
+
+			// set initial positions
+			manager.restartRound();
+
 			while( !quit )
 			{
 
@@ -1324,7 +1405,8 @@ int main( int argc, char* argv[] )
 
 					if( e.type == SDL_QUIT )
 					{
-						quit = true;
+						//quit = true;
+						curr_state=8;
 					}
 					else if( e.type == SDL_KEYDOWN )
                     {
@@ -1531,21 +1613,27 @@ int main( int argc, char* argv[] )
 
 					if( e.type == SDL_QUIT )
 					{
-						quit = true;
+						curr_state=8;
+						//quit = true;
 					}
 
 					//dot.handleEvent( e );
 					RetryButton.handleEvent(&e,0);
 					ExitButton.handleEvent(&e,8);
-					if(curr_state==8){quit = true;}
 				}
 				EndScreenTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
 				RetryButton.render();
 				ExitButton.render();
 				SDL_RenderPresent( gRenderer );
 			}
+			else if (curr_state==8){
+				// game logic
+				mainLoop(manager);
+				cout<<"hao\n";
+				quit=true;
+			}
 
-			if ((curr_state != 0 && curr_state!=6) )
+			if ((curr_state != 0 && curr_state!=6 &&curr_state!=8) )
 		{
 			// sending
 			mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money};
