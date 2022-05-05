@@ -32,6 +32,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include <sstream>
+#include<vector>
 #define PORT 8080
 //sudo apt install libsdl2-mixer-dev
 
@@ -1581,8 +1582,8 @@ int main( int argc, char* argv[] )
 				//Move the dot
 				if (dot.waitime==0) dot.move( tileSet2,tileSet3,gHigh,gMedium,gLow );
 				else {
-					gTextTexture.loadFromRenderedText("Wait for "+to_string(dot.waitime),textColor,gFont,gRenderer);
-					gTextTexture.render(gRenderer,0-camera.x,100-camera.y,0,0);
+					gTextTexture.loadFromRenderedText("Wait for : "+to_string(dot.waitime),textColor,myFont,gRenderer);
+					gTextTexture.render(gRenderer,SCREEN_WIDTH/2,0,0,0);
 				}
 				dot.setCamera( camera );
 
@@ -1707,13 +1708,13 @@ int main( int argc, char* argv[] )
 					if (ti>0){
 						ti -= 1;
 						if (dot.waitime!=0) dot.waitime-=1;
-						if(ti%3 == 0){
+						if(ti%3 == 0 && dot.money > 0){
 							dot.money-=1;
 						}
-						else if(ti%2 == 0){
+						else if(ti%2 == 0 && dot.health > 0 ){
 							dot.health-=1;
 						}
-						else if(ti%60 == 0){
+						else if(ti%60 == 0 && dot.CG > 0){
 							dot.CG -= 1;
 						}
 						lastTime1 = currentTime1;
@@ -1780,8 +1781,25 @@ int main( int argc, char* argv[] )
 					ResumeButton.handleEvent(&e,5);
 					
 				}
-
+				
 				InfoScreenTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+				SDL_Color textcolor1 = {255,255,255};
+				vector<Tasks> taskLeft;
+				for (int i = 0; i < 30; i++)
+				{
+					if(task[i].GetTile()->SetTask){
+						taskLeft.push_back(task[i]);
+					}
+				}
+				
+				for (int i = 0; i < taskLeft.size() - 1; i++)
+				{
+					
+					gTextTexture.loadFromRenderedText(taskLeft[i].msg,textcolor1,myFont,gRenderer);//41,4
+					gTextTexture.render(gRenderer,40,70 + 25*i,0,0);
+					
+				}
+				
 				ResumeButton.render();
 				SDL_RenderPresent( gRenderer );
 			}

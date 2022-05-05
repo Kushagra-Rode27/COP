@@ -246,13 +246,20 @@ void Dot::move( Tile *tiles1[],Tile *tiles2[],Mix_Chunk *gHigh,Mix_Chunk *gMediu
                     tasksComp+=1;
                     Mix_PlayChannel( -1, gMedium, 0 );
 				    tiles2[k]->SetTask=NULL;
-                    waitime=4;
+                    waitime=7;
                 }
                 else if((tiles2[k]->Tasktype) == 2){
-                    CG+= 0.25;
+                    if(CG <= 9.75){
+                        CG+= 0.25;
+                    }
+                    else {
+                        CG = 10;
+                    }
+                    
                     tasksComp+=1;
                     Mix_PlayChannel( -1, gMedium, 0 );
 				    tiles2[k]->SetTask=NULL;
+                    waitime = 4;
                 }
                 else if((tiles2[k]->Tasktype)== 3){
                     if(health < 98){
@@ -264,6 +271,7 @@ void Dot::move( Tile *tiles1[],Tile *tiles2[],Mix_Chunk *gHigh,Mix_Chunk *gMediu
                     tasksComp+=1;
                     Mix_PlayChannel( -1, gMedium, 0 );
 				    tiles2[k]->SetTask=NULL;
+                    waitime = 5;
                 }
                 else if ((tiles2[k]->Tasktype) == 4) {
                     if(health < 98){
@@ -275,10 +283,18 @@ void Dot::move( Tile *tiles1[],Tile *tiles2[],Mix_Chunk *gHigh,Mix_Chunk *gMediu
                     tasksComp+=1;
                     Mix_PlayChannel( -1, gMedium, 0 );
 				    tiles2[k]->SetTask=NULL;
+                    waitime = 4;
                 }
                 else if((tiles2[k]->Tasktype) == 5){
-                    health = 100;
-                    money -= 10;
+                    if(money >= 16){
+                        health = 100;
+                        money -= 10;
+                        waitime = 20;
+                        tasksComp+=1;
+                        Mix_PlayChannel( -1, gMedium, 0 );
+                        tiles2[k]->SetTask=NULL;
+                    }
+                    
                 }
 				
 				
