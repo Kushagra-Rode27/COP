@@ -1,2 +1,19 @@
-have seperated all the classes into different files but havent yet combined all of them 
-check if only one player class is required or not after this can use the various .h and .cpp files in main part
+money - intitial -> 50, points(10) inc money by 5
+OCS -> money += CG*5 (one time)
+Gate -> money+=CG*2(one time)
+
+rate of decrease of money = money reduces by 1 after 3 secs
+rate of decrease of health = health reduces by 1 after 2 secs
+hospital -> 30 secs wait and health is completely regained, money-= 10
+hostel -> health inc by 3
+food -> health inc by 3
+sports -> health inc by 3
+
+
+rate of decrease of CG = CG reduces by 1 every 60 secs
+CG -> 0.25 inc after every task, refreshes after 20 secs
+
+health - intitial = 100, CG intitial = 5
+
+
+

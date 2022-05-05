@@ -18,6 +18,7 @@ Tasks::Tasks(Tile* tile,string message,int taskType)
 
 	if (currTile != NULL) {
 		currTile->SetTask=true;
+		currTile->Tasktype = taskType;
 
 		position.x = currTile->getBox().x ;
 		position.y = currTile->getBox().y ;

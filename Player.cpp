@@ -218,20 +218,68 @@ void Dot::move( Tile *tiles1[],Tile *tiles2[],Mix_Chunk *gHigh,Mix_Chunk *gMediu
 				tiles1[k]->SetPoint=NULL;
 			}
 		}
-		if (tiles1[k]->SetPowerUp){
-			if (myfunctions.checkCollision(tiles1[k]->getBox(),mBox)){
-				score+=5;
+		if (tiles2[k]->SetPowerUp){
+			if (myfunctions.checkCollision(tiles2[k]->getBox(),mBox) && !isPowerUpEnabled){
+				isPowerUpEnabled = true;
 				Mix_PlayChannel( -1, gMedium, 0 );
-				tiles1[k]->SetPowerUp=NULL;
+				tiles2[k]->SetPowerUp=NULL;
 			}
 		}
 
 		if (tiles2[k]->SetTask){
 			if (myfunctions.checkCollision(tiles2[k]->getBox(),mBox)){
-				tasksComp+=1;
-				Mix_PlayChannel( -1, gMedium, 0 );
-				tiles2[k]->SetTask=NULL;
-				speed1=true;
+
+                if((tiles2[k]->Tasktype) == 0){
+                    if(health < 98){
+                        health+=3;
+                    }
+                    else {
+                        health = 100;
+                    }
+                    tasksComp+=1;
+                    Mix_PlayChannel( -1, gMedium, 0 );
+				    tiles2[k]->SetTask=NULL;
+                }
+                else if((tiles2[k]->Tasktype) == 1){
+                    money += CG*2;
+                    tasksComp+=1;
+                    Mix_PlayChannel( -1, gMedium, 0 );
+				    tiles2[k]->SetTask=NULL;
+                }
+                else if((tiles2[k]->Tasktype) == 2){
+                    CG+= 0.25;
+                    tasksComp+=1;
+                    Mix_PlayChannel( -1, gMedium, 0 );
+				    tiles2[k]->SetTask=NULL;
+                }
+                else if((tiles2[k]->Tasktype)== 3){
+                    if(health < 98){
+                        health+=3;
+                    }
+                    else {
+                        health = 100;
+                    }
+                    tasksComp+=1;
+                    Mix_PlayChannel( -1, gMedium, 0 );
+				    tiles2[k]->SetTask=NULL;
+                }
+                else if ((tiles2[k]->Tasktype) == 4) {
+                    if(health < 98){
+                        health+=3;
+                    }
+                    else {
+                        health = 100;
+                    }
+                    tasksComp+=1;
+                    Mix_PlayChannel( -1, gMedium, 0 );
+				    tiles2[k]->SetTask=NULL;
+                }
+                else if((tiles2[k]->Tasktype) == 5){
+                    health = 100;
+                    money -= 10;
+                }
+				
+				
 			}
 		}
 	}

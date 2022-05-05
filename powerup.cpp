@@ -55,8 +55,9 @@ void Powerup::SetTile(Tile* newTile)
 	}
 }
 
-void Powerup::Render(SDL_Rect& camera,LTexture powerUpTexture,SDL_Renderer* gRenderer)
+void Powerup::Render(SDL_Rect& camera,SDL_Renderer* gRenderer)
 {
+	powerUpTexture.loadFromFile("assets/powerup.png",gRenderer);
 	powerUpTexture.render(gRenderer,position.x- camera.x, position.y- camera.y,0,0);
 }
 

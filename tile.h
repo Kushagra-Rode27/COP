@@ -36,6 +36,7 @@ class Tile
 		bool SetPowerUp=false;
 		bool SetTask = false;
 
+		int Tasktype;
         functions myfunctions  ;
     private:
 		//The attributes of the tile

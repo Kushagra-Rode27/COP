@@ -1065,14 +1065,24 @@ int main( int argc, char* argv[] )
 			 	arr[k]=TilePLace(tileSet2);
 			}
 
-			// Powerup p1(tileSet[100*4 + 5]);
-			// Powerup p2(tileSet[100*5 + 14]);
-			// Powerup p3(tileSet[100*10 + 5]);
-			// Powerup p4(tileSet[100*17 + 5]);
-			// Powerup p5(tileSet[100*8 + 24]);
-			// Powerup p6(tileSet[100*20 + 22]);
+			// YULU
+			// 54,35
+			// 63,14
+			// 102,32
+			//145,44
+			//145,15
+			//12,51
+			//6,10
 
-			// Powerup arr1[6] = {p1,p2,p3,p4,p5,p6};
+			Powerup p1(tileSet3[150*35 + 54]);
+			Powerup p2(tileSet3[150*14 + 63]);
+			Powerup p3(tileSet3[150*32 + 102]);
+			Powerup p4(tileSet3[150*44 + 145]);
+			Powerup p5(tileSet3[150*15 + 145]);
+			Powerup p6(tileSet3[150*51 + 12]);
+			Powerup p7(tileSet3[150*10 + 6]);
+
+			Powerup arr1[7] = {p1,p2,p3,p4,p5,p6,p7};
 
 			//hostel tasks
 			Tasks t1(tileSet3[150*12 + 12],"Do debating in jwala",0); // jwala
@@ -1099,7 +1109,7 @@ int main( int argc, char* argv[] )
 			//cg
 			Tasks t15(tileSet3[150*15 + 98],"Go to CSC and complete your assignment",2); //main building
 			Tasks t16(tileSet3[150*37 + 105],"Attend a Class in LHC",2); //lhc
-			Tasks t17(tileSet3[150*26 + 78],"Meet Prof. Riju and discuss regarding a project idea",2);  // bharti
+			Tasks t17(tileSet3[150*26 + 78],"Meet Prof. Rijurekha and discuss regarding a project idea",2);  // bharti
 			Tasks t18(tileSet3[150*23 + 102],"Issue a book on Computer Vision and read it",2); // library
 
 			//health
@@ -1123,20 +1133,20 @@ int main( int argc, char* argv[] )
 
 
 			// // int location[9] = {100*24 + 38,100*22 + 47,100*23 + 64,100*4 + 8,100*16 + 49};
-			Tasks task[9] = {t1,t2,t3,t4,t5,t6,t7,t8,t9};
-			for (int i=0;i<9;i++){
-				task[i].type=0; //hostel
-				task[i].msg="hostel task";
-			}
+			Tasks task[31] = {t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,t16,t17,t18,t19,t20,t21,t22,t23,t24,t25,t26,t27,t28,t29,t30,t31};
+			// for (int i=0;i<9;i++){
+			// 	task[i].type=0; //hostel
+			// 	task[i].msg="hostel task";
+			// }
 
-			Tasks finaltask[4];
-			srand(time(0));
-			for (int i = 0; i < 4; i++)
-			{
-				int k = rand() % 9;
-				finaltask[i] = task[k];
+			// Tasks finaltask[4];
+			// srand(time(0));
+			// for (int i = 0; i < 4; i++)
+			// {
+			// 	int k = rand() % 9;
+			// 	finaltask[i] = task[k];
 				
-			}	
+			// }	
 			// Point p2(tileSet[1]);
 
 			//Level camera
@@ -1525,6 +1535,8 @@ int main( int argc, char* argv[] )
 				
 
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) curr_state = 7;
+				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && dot.isPowerUpEnabled && !dot2.isPowerUpEnabled) dot2.health-= 30;
+				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && !dot.isPowerUpEnabled && dot2.isPowerUpEnabled) dot.health-= 30;
 				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy1.mBox)) quit=true;
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy2.mBox)) quit=true;
 				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy2.mBox)) quit=true;
@@ -1536,6 +1548,15 @@ int main( int argc, char* argv[] )
 				{
 					if (ti>0){
 						ti -= 1;
+						if(ti%3 == 0){
+							dot.money-=1;
+						}
+						else if(ti%2 == 0){
+							dot.health-=1;
+						}
+						else if(ti%60 == 0){
+							dot.CG -= 1;
+						}
 						lastTime1 = currentTime1;
 					}
 					else {
@@ -1573,12 +1594,12 @@ int main( int argc, char* argv[] )
 				}
 
 
-				// for (int k=0;k<5;k++){
-				// 	if (arr1[k].GetTile()->SetPowerUp==true) arr1[k].Render(camera,powerUpTexture,gRenderer);
-				// }
+				for (int k=0;k<6;k++){
+				 	if (arr1[k].GetTile()->SetPowerUp==true) arr1[k].Render(camera,gRenderer);
+				}
 
-				for (int k=0;k<4;k++){
-					if (finaltask[k].GetTile()->SetTask==true) finaltask[k].Render(camera,gRenderer);
+				for (int k=0;k<31;k++){
+					if (task[k].GetTile()->SetTask==true) task[k].Render(camera,gRenderer);
 				}
 				//Update screen
 				InfoButton.render();
