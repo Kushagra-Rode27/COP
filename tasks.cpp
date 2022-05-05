@@ -58,7 +58,22 @@ void Tasks::SetTile(Tile* newTile)
 
 void Tasks::Render(SDL_Rect& camera,SDL_Renderer* gRenderer)
 {
-	tasksTexture.loadFromFile("assets/task.png",gRenderer);
+	if (type== 1){
+		tasksTexture.loadFromFile("assets/money1.png",gRenderer);
+	}
+	else if(type == 2){
+		tasksTexture.loadFromFile("assets/CG1.png",gRenderer);
+	}
+	else if(type == 4){
+		tasksTexture.loadFromFile("assets/powerup.png",gRenderer);
+	}
+	else if(type == 5){
+		tasksTexture.loadFromFile("assets/hospital1.png",gRenderer);
+	}
+	else {
+		tasksTexture.loadFromFile("assets/task.png",gRenderer);
+	}
+	
 	tasksTexture.render(gRenderer,position.x- camera.x, position.y- camera.y,0,0);
 }
 
