@@ -1476,7 +1476,13 @@ int main( int argc, char* argv[] )
 
 				//Move the dot
 				
+				SDL_Color textColor = { 0, 0, 0 };
+				//Move the dot
 				if (dot.waitime==0) dot.move( tileSet2,tileSet3,gHigh,gMedium,gLow );
+				else {
+					gTextTexture.loadFromRenderedText("Wait for "+to_string(dot.waitime),textColor,gFont,gRenderer);
+					gTextTexture.render(gRenderer,0-camera.x,100-camera.y,0,0);
+				}
 				dot.setCamera( camera );
 
 
@@ -1511,7 +1517,6 @@ int main( int argc, char* argv[] )
 				enemy2.move(tileSet2);
 				enemy3.move(tileSet2);
 				// Render Names
-				SDL_Color textColor = { 0, 0, 0 };
 				gTextTexture.loadFromRenderedText("Tennis",textColor,gFont,gRenderer);
 				gTextTexture.render(gRenderer,1120-camera.x,480-camera.y,0,0);
 				gTextTexture.loadFromRenderedText("SAC",textColor,gFont,gRenderer);
