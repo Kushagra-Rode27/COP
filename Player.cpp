@@ -296,6 +296,13 @@ void Dot::move( Tile *tiles1[],Tile *tiles2[],Mix_Chunk *gHigh,Mix_Chunk *gMediu
                     }
                     
                 }
+                else if((tiles2[k]->Tasktype) == 6){
+                    money+= CG*5;
+                    tasksComp+=1;
+                    waitime = 15;
+                    Mix_PlayChannel( -1, gMedium, 0 );
+                    tiles2[k]->SetTask=NULL;
+                }
 				
 				
 			}

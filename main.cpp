@@ -300,6 +300,9 @@ LTexture InfoScreenTexture;
 LTexture StartScreenTexture;
 LTexture EndScreenTexture;
 LTexture HostelTexture;
+
+LTexture Win;
+LTexture Lose;
 //SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
 
 //The music that will be played
@@ -386,7 +389,7 @@ bool init()
 
 
 		//Create window
-		gWindow = SDL_CreateWindow( "IITD Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE );
+		gWindow = SDL_CreateWindow( "IITD Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
 		if( gWindow == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -543,6 +546,14 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		printf("Failed to load mini map texture\n");
 		success = false;
 	}
+	if(!Win.loadFromFile("assets/winning.png",gRenderer)){
+		printf("Failed to load winner texture\n");
+		success = false;
+	}
+	if(!Lose.loadFromFile("assets/loser.png",gRenderer)){
+		printf("Failed to load loser texture\n");
+		success = false;
+	}
 	
 	score_text="score: "+std::to_string(scorep1);
 	gFont = TTF_OpenFont( "metal lord.ttf", 28 );
@@ -678,6 +689,8 @@ void close( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* ti
 	HostelTexture.free();
 	InfoScreenTexture.free();
 	EndScreenTexture.free();
+	Win.free();
+	Lose.free();
     //Free global font
     TTF_CloseFont( gFont );
     gFont = NULL;
@@ -1229,13 +1242,17 @@ int main( int argc, char* argv[] )
 			//12,51
 			//6,10
 
-			Powerup p1(tileSet3[150*35 + 54]);
-			Powerup p2(tileSet3[150*14 + 63]);
-			Powerup p3(tileSet3[150*32 + 102]);
-			Powerup p4(tileSet3[150*44 + 145]);
-			Powerup p5(tileSet3[150*15 + 145]);
-			Powerup p6(tileSet3[150*51 + 12]);
-			Powerup p7(tileSet3[150*10 + 6]);
+			// Zanskar -> 34,18
+			//Shiwalik -> 35,25
+			// OCS -> 121,34
+			//
+			Powerup p1(tileSet3[150*34 + 55]);
+			Powerup p2(tileSet3[150*15 + 64]);
+			Powerup p3(tileSet3[150*33 + 105]);
+			Powerup p4(tileSet3[150*46 + 146]);
+			Powerup p5(tileSet3[150*18 + 146]);
+			Powerup p6(tileSet3[150*50 + 14]);
+			Powerup p7(tileSet3[150*11 + 7]);
 
 			Powerup arr1[7] = {p1,p2,p3,p4,p5,p6,p7};
 
@@ -1245,7 +1262,7 @@ int main( int argc, char* argv[] )
 			Tasks t3(tileSet3[150*27 + 12],"Take part in PFC Workshop in Nilgiri",0,3); // nilgiri
  			Tasks t4(tileSet3[150*37 + 12],"Play snooker in Karakoram",0,4); //kara
 			Tasks t5(tileSet3[150*6 + 23],"Take part in Drama Workshop in Kumaon",0,5); //kumaon
-			Tasks t6(tileSet3[150*5 + 78],"Do Quizzing in Udaigiri",0,6); //Udai
+			Tasks t6(tileSet3[150*8 + 79],"Do Quizzing in Udaigiri",0,6); //Udai
 			Tasks t7(tileSet3[150*6 + 42],"Play BasketBall with your friends in Vindy",0,7); //vindy
 			Tasks t8(tileSet3[150*5 + 54],"Participate in Kavi Sammelan in Satpura",0,8); //satpura
 			Tasks t9(tileSet3[150*12 + 76],"Participate in a hackathon in Girnar",0,9); // girnar
@@ -1286,7 +1303,9 @@ int main( int argc, char* argv[] )
 
 			Tasks t31(tileSet3[150*69 + 28],"Get a CheckUp done at the IITD Hospital",5,31); //hospital
 
-
+			Tasks t32(tileSet3[150*34 + 121],"Do an On-campus Internship through OCS",1,32); //OCS
+			Tasks t33(tileSet3[150*18 + 34],"Meet your friends in Zanskar and have a chat with them",0,33); //Zanskar
+			Tasks t34(tileSet3[150*25 + 35],"Do gymming in Shivalik",0,34); //hospital
 
 
 
@@ -1295,7 +1314,7 @@ int main( int argc, char* argv[] )
 			
 
 			// // int location[9] = {100*24 + 38,100*22 + 47,100*23 + 64,100*4 + 8,100*16 + 49};
-			Tasks task[31] = {t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,t16,t17,t18,t19,t20,t21,t22,t23,t24,t25,t26,t27,t28,t29,t30,t31};
+			Tasks task[34] = {t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,t16,t17,t18,t19,t20,t21,t22,t23,t24,t25,t26,t27,t28,t29,t30,t31,t32,t33,t34};
 			// for (int i=0;i<9;i++){
 			// 	task[i].type=0; //hostel
 			// 	task[i].msg="hostel task";
@@ -1745,7 +1764,7 @@ int main( int argc, char* argv[] )
 				gTextTexture.render(gRenderer,320-camera.x,640-camera.y,0,0);
 				gTextTexture.loadFromRenderedText("Food",textColor,gFont,gRenderer);//69,15
 				gTextTexture.render(gRenderer,2208-camera.x,480-camera.y,0,0);
-				gTextTexture.loadFromRenderedText("Recidency",textColor,gFont,gRenderer);//32,66
+				gTextTexture.loadFromRenderedText("Residency",textColor,gFont,gRenderer);//32,66
 				gTextTexture.render(gRenderer,1024-camera.x,2112-camera.y,0,0);
 				gTextTexture.loadFromRenderedText("Nalanda",textColor,gFont,gRenderer);//20,34
 				gTextTexture.render(gRenderer,640-camera.x,1088-camera.y,0,0);
@@ -1853,11 +1872,11 @@ int main( int argc, char* argv[] )
 				}
 
 
-				for (int k=0;k<6;k++){
+				for (int k=0;k<7;k++){
 				 	if (arr1[k].GetTile()->SetPowerUp==true) arr1[k].Render(camera,gRenderer);
 				}
 
-				for (int k=0;k<31;k++){
+				for (int k=0;k<34;k++){
 					if (task[k].GetTile()->SetTask==true) task[k].Render(camera,gRenderer);
 				}
 				//Update screen
@@ -1884,7 +1903,7 @@ int main( int argc, char* argv[] )
 				InfoScreenTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
 				SDL_Color textcolor1 = {255,255,255};
 				vector<Tasks> taskLeft;
-				for (int i = 0; i < 31; i++)
+				for (int i = 0; i < 34; i++)
 				{
 					if(task[i].GetTile()->SetTask){
 						taskLeft.push_back(task[i]);
@@ -1894,11 +1913,11 @@ int main( int argc, char* argv[] )
 				for (int i = 0; i < taskLeft.size() - 1; i++)
 				{
 					gTextTexture.loadFromRenderedText(taskLeft[i].msg,textcolor1,myFont,gRenderer);//41,4
-					if(i < 15){
-						gTextTexture.render(gRenderer,100,150 + 40*i,0,0);
+					if(i < 17){
+						gTextTexture.render(gRenderer,100,150 + 35*i,0,0);
 					}
 					else {
-						gTextTexture.render(gRenderer,1000,150 + 40*(i-15),0,0);
+						gTextTexture.render(gRenderer,1000,150 + 35*(i-17),0,0);
 					}
 					
 				}
@@ -1906,7 +1925,7 @@ int main( int argc, char* argv[] )
 				ResumeButton.render();
 				SDL_RenderPresent( gRenderer );
 			}
-			else if (curr_state == 7)
+			else if (curr_state == 7 || curr_stateP2 == 7)
 			{
 				while( SDL_PollEvent( &e ) != 0 )
 				{
@@ -1929,16 +1948,18 @@ int main( int argc, char* argv[] )
 				double calc2=(double)log(dot2.CG/10)+log((double)dot2.health/100)+log((double)dot2.money/170);
 				SDL_Color textColor = { 0, 0, 0 };
 				if (calc1>calc2+0.0005){
-					gTextTexture.loadFromRenderedText("You won the game",textColor,gFont,gRenderer);//41,4
-					gTextTexture.render(gRenderer,30*32,4*32,0,0);
+					Win.render(gRenderer,SCREEN_WIDTH/2 - 125,100);
+					gTextTexture.loadFromRenderedText("Hurray! You won the game",textColor,gFont,gRenderer);//41,4
+					gTextTexture.render(gRenderer,SCREEN_WIDTH/2-100,375,0,0);
 				}
 				else if (calc2>calc1+0.0005){
-					gTextTexture.loadFromRenderedText("You lost the game",textColor,gFont,gRenderer);//41,4
-					gTextTexture.render(gRenderer,30*32,4*32,0,0);
+					Lose.render(gRenderer,SCREEN_WIDTH/2 - 125,100);
+					gTextTexture.loadFromRenderedText("You lost the game, Better Luck Next Time",textColor,gFont,gRenderer);//41,4
+					gTextTexture.render(gRenderer,SCREEN_WIDTH/2-125,375,0,0);
 				}
 				else{
-					gTextTexture.loadFromRenderedText("Stalemate",textColor,gFont,gRenderer);//41,4
-					gTextTexture.render(gRenderer,30*32,4*32,0,0);
+					gTextTexture.loadFromRenderedText("Looks like you and your opponent played with the same skill, It's a Stalemate!!!",textColor,gFont,gRenderer);//41,4
+					gTextTexture.render(gRenderer,SCREEN_WIDTH/2-150,375,0,0);
 				}
 				SDL_RenderPresent( gRenderer );
 				SDL_Delay(10);

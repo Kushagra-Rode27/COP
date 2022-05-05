@@ -17,3 +17,5 @@ health - intitial = 100, CG intitial = 5
 
 
 
+BUG Bounty
+curr_state 7 timer complete reaching end screen
