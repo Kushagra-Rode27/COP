@@ -1657,16 +1657,18 @@ int main( int argc, char* argv[] )
 				SDL_RenderPresent( gRenderer );
 			}
 
-			if ((curr_state != 0) )
+			if ((curr_state != 0 && curr_state!=6) )
                 {
                     // receiving
                     bytes_recvd = recv(newserv_fd, &in_buffer, sizeof(in_buffer), 0);
-                    if (bytes_recvd == -1);
-                        // cout << "Frame data not received!"
-                        //      << "\n";
-
+                    if (bytes_recvd == -1){
+                        cout << "Frame data not received!"
+                             << "\n";
+							 curr_state=6;
+					}
                     else if (bytes_recvd != 32){
                         cout << "complete data not received \n";
+						curr_state=6;
 						dot2.myState.first = 0;
 						dot2.myState.second = 1;
 						dot2.mBox.x = 0;

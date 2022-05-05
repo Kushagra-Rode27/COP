@@ -1545,24 +1545,26 @@ int main( int argc, char* argv[] )
 				SDL_RenderPresent( gRenderer );
 			}
 
-			if ((curr_state != 0) )
+			if ((curr_state != 0 && curr_state!=6) )
 		{
 			// sending
 			mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money};
 
 			toNetwork(out_buffer, &mydata);
 			bytes_sent = send(cli_fd, &out_buffer, sizeof(out_buffer), 0);
-			if (bytes_sent == -1) 
+			if (bytes_sent == -1) {
 				// cout << "Frame data not sent"
 				// 	 << "\n";
 				cout<<"hello"<<"\n";
+				curr_state=6;
+			}
 			else if (bytes_sent != 32)
 				cout << "complete data not sent, what is going on???????\n";
 
 			// receiving
 			bytes_recvd = recv(cli_fd, &in_buffer, sizeof(in_buffer), 0);
 			if (bytes_recvd == -1){
-				curr_state=7;
+				curr_state=6;
 				cout << "Frame data not received!"
 					 << "\n";
 			    dot2.myState.first = 0;
@@ -1577,7 +1579,7 @@ int main( int argc, char* argv[] )
 			}
 
 			else if (bytes_recvd != 32){
-				curr_state=7;
+				curr_state=6;
 				cout << "complete data not received, what is going on!!!\n";
 				dot2.myState.first = 0;
 				dot2.myState.second = 1;
