@@ -1415,8 +1415,7 @@ int main( int argc, char* argv[] )
 
 					if( e.type == SDL_QUIT )
 					{
-						//quit = true;
-						curr_state=8;
+						quit = true;
 					}
 					else if( e.type == SDL_KEYDOWN )
                     {
@@ -1477,7 +1476,7 @@ int main( int argc, char* argv[] )
 
 				//Move the dot
 				
-				dot.move( tileSet2,tileSet3,gHigh,gMedium,gLow );
+				if (dot.waitime==0) dot.move( tileSet2,tileSet3,gHigh,gMedium,gLow );
 				dot.setCamera( camera );
 
 
@@ -1548,6 +1547,7 @@ int main( int argc, char* argv[] )
 				{
 					if (ti>0){
 						ti -= 1;
+						if (dot.waitime!=0) dot.waitime-=1;
 						if(ti%3 == 0){
 							dot.money-=1;
 						}
@@ -1665,15 +1665,17 @@ int main( int argc, char* argv[] )
 				// cout << "Frame data not sent"
 				// 	 << "\n";
 				cout<<"hello"<<"\n";
-				curr_state=6;
+				curr_state=8;
 			}
-			else if (bytes_sent != 32)
+			else if (bytes_sent != 32){
 				cout << "complete data not sent, what is going on???????\n";
+				curr_state=8;
+			}
 
 			// receiving
 			bytes_recvd = recv(cli_fd, &in_buffer, sizeof(in_buffer), 0);
 			if (bytes_recvd == -1){
-				curr_state=6;
+				curr_state=8;
 				cout << "Frame data not received!"
 					 << "\n";
 			    dot2.myState.first = 0;
@@ -1688,7 +1690,7 @@ int main( int argc, char* argv[] )
 			}
 
 			else if (bytes_recvd != 32){
-				curr_state=6;
+				curr_state=8;
 				cout << "complete data not received, what is going on!!!\n";
 				dot2.myState.first = 0;
 				dot2.myState.second = 1;

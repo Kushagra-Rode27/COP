@@ -35,6 +35,7 @@ class Dot
 
 		//Maximum axis velocity of the dot
 		int DOT_VEL = 16;
+		int waitime=0;
 
 		//Initializes the variables
 		Dot(int XCycle,int YCycle, int PlayerSpriteWidth , int PlayerSpriteHeight , int PlayerRenderHeight , int PlayerRenderWidth ,int bestState);

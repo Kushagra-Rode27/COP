@@ -239,12 +239,14 @@ void Dot::move( Tile *tiles1[],Tile *tiles2[],Mix_Chunk *gHigh,Mix_Chunk *gMediu
                     tasksComp+=1;
                     Mix_PlayChannel( -1, gMedium, 0 );
 				    tiles2[k]->SetTask=NULL;
+                    waitime=3;
                 }
                 else if((tiles2[k]->Tasktype) == 1){
                     money += CG*2;
                     tasksComp+=1;
                     Mix_PlayChannel( -1, gMedium, 0 );
 				    tiles2[k]->SetTask=NULL;
+                    waitime=4;
                 }
                 else if((tiles2[k]->Tasktype) == 2){
                     CG+= 0.25;

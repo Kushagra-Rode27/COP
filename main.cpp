@@ -1520,7 +1520,7 @@ int main( int argc, char* argv[] )
 
 					if( e.type == SDL_QUIT )
 					{
-						curr_state=8;
+						quit=true;
 					}
 					else if( e.type == SDL_KEYDOWN )
                     {
@@ -1579,8 +1579,7 @@ int main( int argc, char* argv[] )
 				// dot2.handle(currentKeyStates);
 
 				//Move the dot
-				
-				dot.move( tileSet2,tileSet3,gHigh,gMedium,gLow );
+				if (dot.waitime==0) dot.move( tileSet2,tileSet3,gHigh,gMedium,gLow );
 				dot.setCamera( camera );
 
 
@@ -1690,8 +1689,8 @@ int main( int argc, char* argv[] )
 				
 
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) curr_state = 7;
-				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && dot.isPowerUpEnabled && !dot2.isPowerUpEnabled) dot2.health-= 30;
-				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && !dot.isPowerUpEnabled && dot2.isPowerUpEnabled) dot.health-= 30;
+				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && dot.isPowerUpEnabled && !dot2.isPowerUpEnabled) dot2.health-= 50;
+				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && !dot.isPowerUpEnabled && dot2.isPowerUpEnabled) dot.health-= 50;
 				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy1.mBox)) quit=true;
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy2.mBox)) quit=true;
 				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy2.mBox)) quit=true;
@@ -1703,6 +1702,7 @@ int main( int argc, char* argv[] )
 				{
 					if (ti>0){
 						ti -= 1;
+						if (dot.waitime!=0) dot.waitime-=1;
 						if(ti%3 == 0){
 							dot.money-=1;
 						}
@@ -1816,11 +1816,11 @@ int main( int argc, char* argv[] )
                     if (bytes_recvd == -1){
                         cout << "Frame data not received!"
                              << "\n";
-							 curr_state=6;
+							 curr_state=8;
 					}
                     else if (bytes_recvd != 32){
                         cout << "complete data not received \n";
-						curr_state=6;
+						curr_state=8;
 						dot2.myState.first = 0;
 						dot2.myState.second = 1;
 						dot2.mBox.x = 0;
