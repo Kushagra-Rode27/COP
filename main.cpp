@@ -1916,7 +1916,23 @@ int main( int argc, char* argv[] )
 				EndScreenTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
 				RetryButton.render();
 				ExitButton.render();
+				double calc1=(double)dot.CG/10+(double)dot.health/100+(double)dot.money/170;
+				double calc2=(double)dot2.CG/10+(double)dot2.health/100+(double)dot2.money/170;
+				SDL_Color textColor = { 0, 0, 0 };
+				if (calc1>calc2+0.0005){
+					gTextTexture.loadFromRenderedText("You won the game",textColor,gFont,gRenderer);//41,4
+					gTextTexture.render(gRenderer,30*32,4*32,0,0);
+				}
+				else if (calc2>calc1+0.0005){
+					gTextTexture.loadFromRenderedText("You lost the game",textColor,gFont,gRenderer);//41,4
+					gTextTexture.render(gRenderer,30*32,4*32,0,0);
+				}
+				else{
+					gTextTexture.loadFromRenderedText("Stalemate",textColor,gFont,gRenderer);//41,4
+					gTextTexture.render(gRenderer,30*32,4*32,0,0);
+				}
 				SDL_RenderPresent( gRenderer );
+				SDL_Delay(10);
 			}
 			else if (curr_state==8){
 				// game logic
