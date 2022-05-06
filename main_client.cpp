@@ -302,7 +302,7 @@ enemyDot enemy3(81);
 
 
 
-int ti = 10;
+int ti = 180;
 int lastTime1 = 0,currentTime1;
 void timerRender(){
 	SDL_Color textColor = { 0, 0, 0 };
@@ -1340,7 +1340,19 @@ int main( int argc, char* argv[] )
 			LButton jwalamukhi; 
 			jwalamukhi.InitialiseButton(1,&gameTimer,&curr_state,0.05,0.70,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/JWALA.png","");
 			
+			LButton laughEmote; 
+			laughEmote.InitialiseButton(1,&gameTimer,&curr_state,0.1,0.01,0.04,0.06,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/laughing emote.png","");
 			
+
+			LButton angryEmote; 
+			angryEmote.InitialiseButton(1,&gameTimer,&curr_state,0.15,0.01,0.04,0.05,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/angry_emote1.png","");
+			
+			
+			LButton coolEmote; 
+			coolEmote.InitialiseButton(1,&gameTimer,&curr_state,0.20,0.01,0.04,0.06,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/cool emoji1.png","");
+
+			LButton teaseEmote; 
+			teaseEmote.InitialiseButton(1,&gameTimer,&curr_state,0.25,0.01,0.04,0.06,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/tease1.png","");
 			//int lastTime = 0,currentTime;
 			//While application is running
 			int countedFrames = 0;
@@ -1592,6 +1604,14 @@ int main( int argc, char* argv[] )
 					dot.handleEvent( e );
 					//if(ti == 0){curr_state=7;}
 					//dot2.handleEvent( e );
+					laughEmote.handleEvent(&e,25);
+					if(curr_state ==25){emote = 1; curr_state = 5;}
+					angryEmote.handleEvent(&e,26);
+					if(curr_state ==26){emote = 2;curr_state = 5;}
+					coolEmote.handleEvent(&e,27);
+					if(curr_state ==27){emote = 3;curr_state = 5;}
+					teaseEmote.handleEvent(&e,28);
+					if(curr_state ==28){emote = 4;curr_state = 5;}
 					InfoButton.handleEvent(&e , 6); 
 					//dot2.handleEvent( e );
 					
@@ -1795,6 +1815,10 @@ int main( int argc, char* argv[] )
 				}
 				//Update screen
 				InfoButton.render();
+				laughEmote.render();
+				angryEmote.render();
+				coolEmote.render();
+				teaseEmote.render();
 				SDL_RenderPresent( gRenderer );
 			}
 			else if (curr_state==6)
