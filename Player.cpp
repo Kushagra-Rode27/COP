@@ -223,6 +223,7 @@ void Dot::move( Tile *tiles1[],Tile *tiles2[],Mix_Chunk *gHigh,Mix_Chunk *gMediu
 				isPowerUpEnabled = true;
 				Mix_PlayChannel( -1, gMedium, 0 );
 				tiles2[k]->SetPowerUp=NULL;
+                powertime=20;
 			}
 		}
 

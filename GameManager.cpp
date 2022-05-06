@@ -141,7 +141,7 @@ void GameManager::checkCollision() {
 	}
 
 	// check collision with left ai
-	if (SDL_IntersectRect(&ballRect, &aiLeftRect, &result) == SDL_TRUE) {
+	if (player.isDisabled()==true && SDL_IntersectRect(&ballRect, &aiLeftRect, &result) == SDL_TRUE) {
 		// ball hit ai paddle
 		// reset ball to paddle edge
 		// bounce to the right

@@ -38,6 +38,7 @@ class Dot
 		int waitime=0;
 
 		int lastTask;
+		int powertime;
 
 		//Initializes the variables
 		Dot(int XCycle,int YCycle, int PlayerSpriteWidth , int PlayerSpriteHeight , int PlayerRenderHeight , int PlayerRenderWidth ,int bestState);

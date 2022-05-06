@@ -62,6 +62,7 @@ static int initialBallYSpeed = 40;
 // when set to false, the player can control the left paddle
 static bool playerDisabled = false;
 SDL_Texture *gBall;
+SDL_Event e;
 
 void print_init_flags(int flags);
 
@@ -1561,7 +1562,7 @@ int main( int argc, char* argv[] )
 			bool quit = false;
 
 			//Event handler
-			SDL_Event e;
+			//SDL_Event e;
 
 			bool fullScreen = false;
 
@@ -2106,7 +2107,9 @@ int main( int argc, char* argv[] )
 				{
 				 	if (tileSet4[i]->getType()!=0) tileSet4[ i ]->render( gRenderer,camera,&gTileTexture4);
 				}
-
+				if (dot.powertime==0){
+					dot.isPowerUpEnabled=false;
+				}
 				dot.render(camera,gTextTexture,myFont,gRenderer);
 				
 				enemy1.move(tileSet2);
@@ -2384,6 +2387,10 @@ int main( int argc, char* argv[] )
 				double calc1=((int)dot.CG/10+1)+((double)dot.health/100+1)+((double)dot.money/170+1);
 				double calc2=((int)dot2.CG/10+1)+((double)dot2.health/100+1)+((double)dot2.money/170+1);
 				SDL_Color textColor = { 255,255, 255 };
+				// if (win){
+				// 	if (win==false) Lose.render(gRenderer,SCREEN_WIDTH/2 - 125,100);
+				// 	else Win.render(gRenderer,SCREEN_WIDTH/2 - 125,100);
+				// }
 				if (calc1>calc2+0.0005){
 					Win.render(gRenderer,SCREEN_WIDTH/2 - 125,100);
 					gTextTexture.loadFromRenderedText("Hurray! You won the game",textColor,gFont,gRenderer);//41,4
@@ -2473,14 +2480,14 @@ int main( int argc, char* argv[] )
 					gamestart=false;
 				}
 				
-				while (SDL_PollEvent(&event)){
+				while (SDL_PollEvent(&e)){
 
-					if (event.type == SDL_QUIT){
+					if (e.type == SDL_QUIT){
 						curr_state=5;
 					}
-					if (event.type == SDL_KEYDOWN){
+					if (e.type == SDL_KEYDOWN){
 
-						keypressed = event.key.keysym.scancode;
+						keypressed = e.key.keysym.scancode;
 
 						switch (keypressed){
 							case SDL_SCANCODE_P: pauseGame = !pauseGame; break;
@@ -2540,6 +2547,7 @@ int main( int argc, char* argv[] )
 						ti -= 1;
 						if (emotetimer!=0) emotetimer-=1;
 						if (dot.waitime!=0) dot.waitime-=1;
+						if (dot.powertime!=0) dot.powertime-=1;
 						if (ti%30==0) {
 							for (int i=0;i<34;i++){
 								if(task[i].type==2) task[i].GetTile()->SetTask=true;
@@ -2618,7 +2626,12 @@ int main( int argc, char* argv[] )
 						var2=emote;
 					}
 					else var2=0;
+					// if (win==false){
+					// 	curr_state=7;
+					// }
+
                     mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money, dot.tasksComp,var,var2};
+
 
                     toNetwork(out_buffer, &mydata);
                     bytes_sent = send(newserv_fd, &out_buffer, sizeof(out_buffer), 0);
