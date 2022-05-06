@@ -47,6 +47,8 @@ using namespace std;
 int GameManager::screenH = 850;
 int GameManager::screenW = 1700;
 
+bool gamestart=true;
+
 static int playerSpeed = 300;
 static int aiSpeed = 350;
 static int initialBallXSpeed = 250;
@@ -1715,7 +1717,7 @@ int main( int argc, char* argv[] )
 			Bot bot=Bot();
     		Board board=Board();
 
-			Mix_ResumeMusic();
+			Mix_PlayMusic( gMusic, -1 );
 
 			while( !quit )
 			{
@@ -1881,7 +1883,7 @@ int main( int argc, char* argv[] )
 
 					
 			}
-			else if(curr_state == 5 && (curr_stateP2==5 || curr_stateP2==10)){
+			else if(curr_state == 5 && (curr_stateP2==5 || curr_stateP2==10 || curr_stateP2==9)){
 				//if (emotetimer==0) emote=0;
 				
 				while( SDL_PollEvent( &e ) != 0 )
@@ -1926,13 +1928,14 @@ int main( int argc, char* argv[] )
                             Mix_HaltMusic();
 
 							case SDLK_1:
-							if (dot.mBox.x<44 && dot.mBox.x>36 && dot.mBox.y>37 && dot.mBox.y<45)
+							if (dot.mBox.x<44*32 && dot.mBox.x>36*32 && dot.mBox.y>37*32 && dot.mBox.y<45*32)
 							curr_state=10;
                             break;
 
 							case SDLK_2:
-							if (dot.mBox.x<44 && dot.mBox.x>36 && dot.mBox.y>37 && dot.mBox.y<45)
+							if (dot.mBox.x<44*32 && dot.mBox.x>36*32 && dot.mBox.y>37*32 && dot.mBox.y<45*32)
 							curr_state=9;
+							break;
                         }
                     }
 					else if (e.type== SDL_SYSWMEVENT ){
@@ -2138,33 +2141,33 @@ int main( int argc, char* argv[] )
 					}
 				}
 
-				currentTime1 = SDL_GetTicks();
-				if(currentTime1 > lastTime1 + 1000) //ms to wait before change angle
-				{
-					if (ti>0){
-						ti -= 1;
-						if (emotetimer!=0) emotetimer-=1;
-						if (dot.waitime!=0) dot.waitime-=1;
-						if (ti%30==0) {
-							for (int i=0;i<34;i++){
-								if(task[i].type==2) task[i].GetTile()->SetTask=true;
-							}
-						}
-						if(ti%6 == 0 && dot.money > 0){
-							dot.money-=1;
-						}
-						else if(ti%2 == 0 && dot.health > 0 ){
-							dot.health-=1;
-						}
-						else if(ti%60 == 0 && dot.CG > 0){
-							dot.CG -= 1;
-						}
-						lastTime1 = currentTime1;
-					}
-					else {
-						currentTime1 = 0;
-					}
-				}
+				// currentTime1 = SDL_GetTicks();
+				// if(currentTime1 > lastTime1 + 1000) //ms to wait before change angle
+				// {
+				// 	if (ti>0){
+				// 		ti -= 1;
+				// 		if (emotetimer!=0) emotetimer-=1;
+				// 		if (dot.waitime!=0) dot.waitime-=1;
+				// 		if (ti%30==0) {
+				// 			for (int i=0;i<34;i++){
+				// 				if(task[i].type==2) task[i].GetTile()->SetTask=true;
+				// 			}
+				// 		}
+				// 		if(ti%6 == 0 && dot.money > 0){
+				// 			dot.money-=1;
+				// 		}
+				// 		else if(ti%2 == 0 && dot.health > 0 ){
+				// 			dot.health-=1;
+				// 		}
+				// 		else if(ti%60 == 0 && dot.CG > 0){
+				// 			dot.CG -= 1;
+				// 		}
+				// 		lastTime1 = currentTime1;
+				// 	}
+				// 	else {
+				// 		currentTime1 = 0;
+				// 	}
+				// }
 				timerRender();
 				// currentTime = SDL_GetTicks();
 
@@ -2361,89 +2364,183 @@ int main( int argc, char* argv[] )
 				if(board.hasWinner() || board.isDraw())
         			state = 0; // so the game loop knows the end of the current game
 			}
+			// else if (curr_state==10){
+			// 	NewRound();
+			// 	while(!quit){
+			// 		GameLoop(quit);
+			// 		cout<<"hello";
+			// 		int var=0;
+			// 		if (ti==0) {
+			// 			var=1;
+			// 			curr_state=7;
+			// 		}
+			// 		int var2=0;
+			// 				if (emotetimer>1){
+			// 					var2=emote;
+			// 				}
+			// 				else var2=0;
+			// 		mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money,dot.tasksComp,var,var2};
+
+			// 		toNetwork(out_buffer, &mydata);
+			// 		bytes_sent = send(cli_fd, &out_buffer, sizeof(out_buffer), 0);
+			// 		if (bytes_sent == -1) {
+			// 			// cout << "Frame data not sent"
+			// 			// 	 << "\n";
+			// 			cout<<"hello"<<"\n";
+			// 			curr_state=7;
+			// 		}
+			// 		else if (bytes_sent != 45){
+			// 			cout << "complete data not sent, what is going on???????\n";
+			// 			curr_state=7;
+			// 		}
+
+			// 		// receiving
+			// 		bytes_recvd = recv(cli_fd, &in_buffer, sizeof(in_buffer), 0);
+			// 		if (bytes_recvd == -1){
+			// 			curr_state=7;
+			// 			cout << "Frame data not received!"
+			// 				<< "\n";
+			// 			dot2.myState.first = 0;
+			// 			dot2.myState.second = 1;
+			// 			dot2.mBox.x = 0;
+			// 			dot2.mBox.y = 0;
+			// 			curr_stateP2 = curr_state;
+			// 			dot2.health = 0;
+			// 			dot2.CG = 0;
+			// 			dot2.money = 0;
+			// 		}
+
+			// 		else if (bytes_recvd != 45){
+			// 			curr_state=7;
+			// 			cout << "complete data not received, what is going on!!!\n"<<bytes_recvd<<"\n";
+			// 			dot2.myState.first = 0;
+			// 			dot2.myState.second = 1;
+			// 			dot2.mBox.x = 0;
+			// 			dot2.mBox.y = 0;
+			// 			curr_stateP2 = curr_state;
+			// 			dot2.health = 0;
+			// 			dot2.CG = 0;
+			// 			dot2.money = 0;
+			// 		}
+			// 		else
+			// 		{
+			// 			validate_data = fromNetwork(in_buffer, &indata);
+			// 			if (!validate_data)
+			// 				cout << "Wrong data received\n";
+
+			// 			else
+			// 			{
+			// 				dot2.myState.first = indata.stateFirst;
+			// 				dot2.myState.second = indata.stateSecond;
+			// 				dot2.mBox.x = indata.X;
+			// 				dot2.mBox.y = indata.Y;
+			// 				curr_stateP2 = indata.myState;
+			// 				dot2.health = indata.health;
+			// 				dot2.CG = indata.CG;
+			// 				dot2.money = indata.money;
+			// 				dot2.tasksComp=indata.tusk;
+			// 				if (indata.time==1) curr_state=7;
+			// 				if (emote!=indata.emoji && indata.emoji!=0) emotetimer=5;
+			// 				emote=indata.emoji;
+			// 			}
+			// 		}
+			// 	}
+			// 	quit=false;
+			// 	curr_state=5;
+			// }
 			else if (curr_state==10){
-				NewRound();
-				while(!quit){
-					GameLoop(quit);
-					cout<<"hello";
-					int var=0;
-					if (ti==0) {
-						var=1;
-						curr_state=7;
-					}
-					int var2=0;
-							if (emotetimer>1){
-								var2=emote;
-							}
-							else var2=0;
-					mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money,dot.tasksComp,var,var2};
+				if (gamestart){
+					NewRound();
+					gamestart=false;
+				}
+				
+				while (SDL_PollEvent(&event)){
 
-					toNetwork(out_buffer, &mydata);
-					bytes_sent = send(cli_fd, &out_buffer, sizeof(out_buffer), 0);
-					if (bytes_sent == -1) {
-						// cout << "Frame data not sent"
-						// 	 << "\n";
-						cout<<"hello"<<"\n";
-						curr_state=7;
+					if (event.type == SDL_QUIT){
+						curr_state=5;
 					}
-					else if (bytes_sent != 45){
-						cout << "complete data not sent, what is going on???????\n";
-						curr_state=7;
-					}
+					if (event.type == SDL_KEYDOWN){
 
-					// receiving
-					bytes_recvd = recv(cli_fd, &in_buffer, sizeof(in_buffer), 0);
-					if (bytes_recvd == -1){
-						curr_state=7;
-						cout << "Frame data not received!"
-							<< "\n";
-						dot2.myState.first = 0;
-						dot2.myState.second = 1;
-						dot2.mBox.x = 0;
-						dot2.mBox.y = 0;
-						curr_stateP2 = curr_state;
-						dot2.health = 0;
-						dot2.CG = 0;
-						dot2.money = 0;
-					}
+						keypressed = event.key.keysym.scancode;
 
-					else if (bytes_recvd != 45){
-						curr_state=7;
-						cout << "complete data not received, what is going on!!!\n"<<bytes_recvd<<"\n";
-						dot2.myState.first = 0;
-						dot2.myState.second = 1;
-						dot2.mBox.x = 0;
-						dot2.mBox.y = 0;
-						curr_stateP2 = curr_state;
-						dot2.health = 0;
-						dot2.CG = 0;
-						dot2.money = 0;
-					}
-					else
-					{
-						validate_data = fromNetwork(in_buffer, &indata);
-						if (!validate_data)
-							cout << "Wrong data received\n";
-
-						else
-						{
-							dot2.myState.first = indata.stateFirst;
-							dot2.myState.second = indata.stateSecond;
-							dot2.mBox.x = indata.X;
-							dot2.mBox.y = indata.Y;
-							curr_stateP2 = indata.myState;
-							dot2.health = indata.health;
-							dot2.CG = indata.CG;
-							dot2.money = indata.money;
-							dot2.tasksComp=indata.tusk;
-							if (indata.time==1) curr_state=7;
-							if (emote!=indata.emoji && indata.emoji!=0) emotetimer=5;
-							emote=indata.emoji;
+						switch (keypressed){
+							case SDL_SCANCODE_P: pauseGame = !pauseGame; break;
+							case SDL_SCANCODE_ESCAPE: curr_state=5;
 						}
 					}
 				}
-				quit=false;
-				curr_state=5;
+
+				if (!pauseGame){
+
+					if (Pressed(SDL_SCANCODE_UP) || Pressed(SDL_SCANCODE_W)){
+						if (snake.dir != 'D')
+							snake.dir = 'U';
+					}
+					if (Pressed(SDL_SCANCODE_DOWN) || Pressed(SDL_SCANCODE_S)){
+						if (snake.dir != 'U')
+							snake.dir = 'D';
+					}
+					if (Pressed(SDL_SCANCODE_LEFT) || Pressed(SDL_SCANCODE_A)){
+						if (snake.dir != 'R')
+							snake.dir = 'L';
+					}
+					if (Pressed(SDL_SCANCODE_RIGHT) || Pressed(SDL_SCANCODE_D)){
+						if (snake.dir != 'L')
+							snake.dir = 'R'; 
+					}
+					if (Pressed(SDL_SCANCODE_R)){
+						
+					}
+
+				}
+
+				SDL_RenderClear(gRenderer);
+
+				SDL_RenderCopy(gRenderer, background, NULL, NULL);
+
+				if (!pauseGame)
+					if (!MoveSnake()){
+						curr_state=5;
+					}
+				else
+					PauseScreen();
+
+				PrintSnake();
+
+				SDL_RenderCopy(gRenderer, food.foodTexture, NULL, &food.foodPos);
+
+				SDL_RenderPresent(gRenderer);
+				SDL_Delay(SCREEN_FPS);
+			}
+
+			if (curr_state==5 || curr_state==9 || curr_state==10){
+				currentTime1 = SDL_GetTicks();
+				if(currentTime1 > lastTime1 + 1000) //ms to wait before change angle
+				{
+					if (ti>0){
+						ti -= 1;
+						if (emotetimer!=0) emotetimer-=1;
+						if (dot.waitime!=0) dot.waitime-=1;
+						if (ti%30==0) {
+							for (int i=0;i<34;i++){
+								if(task[i].type==2) task[i].GetTile()->SetTask=true;
+							}
+						}
+						if(ti%6 == 0 && dot.money > 0){
+							dot.money-=1;
+						}
+						else if(ti%2 == 0 && dot.health > 0 ){
+							dot.health-=1;
+						}
+						else if(ti%60 == 0 && dot.CG > 0){
+							dot.CG -= 1;
+						}
+						lastTime1 = currentTime1;
+					}
+					else {
+						currentTime1 = 0;
+					}
+				}
 			}
 
 			if ((curr_state != 0 && curr_state!=7 &&curr_state!=8) )
