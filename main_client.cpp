@@ -59,6 +59,8 @@ enum BOARD_PIECE {PIECE_EMPTY, PIECE_X, PIECE_O};
 static bool playerDisabled = false;
 SDL_Texture *gBall;
 
+bool win;
+
 void print_init_flags(int flags);
 //sudo apt install libsdl2-mixer-dev
 
@@ -96,7 +98,7 @@ SDL_Renderer* rende;
 SDL_Texture* tex;
 //Screen dimension constants
 
-const int SCREEN_FPS = 10;
+const int SCREEN_FPS = 30;
 const int SCREEN_TICK_PER_FRAME = 1000 / SCREEN_FPS;
 
 
@@ -299,8 +301,8 @@ Tile* tileSet4[ TOTAL_TILES ];
 Dot dot(6,2,78,127,32,32,1);
 Dot dot2(6,2,78,127,32,32,1);
 enemyDot enemy1(16);
-enemyDot enemy2(42);
-enemyDot enemy3(81);
+enemyDot enemy2(106);
+enemyDot enemy3(148);
 
 
 typedef struct{
@@ -1699,6 +1701,7 @@ int main( int argc, char* argv[] )
 			Bot bot=Bot();
     		Board board=Board();
 
+			Mix_ResumeMusic();
 
 			while( !quit )
 			{
@@ -1853,7 +1856,7 @@ int main( int argc, char* argv[] )
 
 					
 			}
-			else if(curr_state == 5 && curr_stateP2==5){
+			else if(curr_state == 5 && curr_stateP2==5 ){
 				//if (emotetimer==0) emote=0;
 				
 				while( SDL_PollEvent( &e ) != 0 )
@@ -1896,6 +1899,9 @@ int main( int argc, char* argv[] )
                             case SDLK_0:
                             //Stop the music
                             Mix_HaltMusic();
+
+							case SDLK_1:
+							curr_state=10;
                             break;
                         }
                     }
@@ -1977,7 +1983,7 @@ int main( int argc, char* argv[] )
 				SDL_Color textColor = { 0, 0, 0 };
 				// Render Names
 				gTextTexture.loadFromRenderedText("Tennis",textColor,gFont,gRenderer);
-				gTextTexture.render(gRenderer,1100-camera.x,480-camera.y,0,0);
+				gTextTexture.render(gRenderer,25*32-camera.x,14*32-camera.y,0,0);
 				gTextTexture.loadFromRenderedText("SAC",textColor,gFont,gRenderer);
 				gTextTexture.render(gRenderer,1280-camera.x,1280-camera.y,0,0);
 				gTextTexture.loadFromRenderedText("Main",textColor,gFont,gRenderer); //98,14
@@ -2030,6 +2036,12 @@ int main( int argc, char* argv[] )
 				gTextTexture.render(gRenderer,544-camera.x,608-camera.y,0,0);
 				gTextTexture.loadFromRenderedText("Vindy",textColor,gFont,gRenderer);//41,4
 				gTextTexture.render(gRenderer,41*32-camera.x,4*32-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("OCS",textColor,gFont,gRenderer);//41,4
+				gTextTexture.render(gRenderer,120*32-camera.x,36*32-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Zanskar",textColor,gFont,gRenderer);//41,4
+				gTextTexture.render(gRenderer,32*32-camera.x,26*32-camera.y,0,0);
+				gTextTexture.loadFromRenderedText("Shivalik",textColor,gFont,gRenderer);//41,4
+				gTextTexture.render(gRenderer,32*32-camera.x,13*32-camera.y,0,0);
 				
 				//MinimapTexture.render(gRenderer,1500,0,0,0);
 				dot2.renderPlayer2(camera,gTextTexture,myFont,gRenderer);
@@ -2058,6 +2070,10 @@ int main( int argc, char* argv[] )
 				enemy2.render(camera,gRenderer);
 				enemy3.render(camera,gRenderer);
 
+				if (dot.health<=0 || dot.money<=0){
+					win=false;
+				}
+
 				
 
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) {
@@ -2068,11 +2084,18 @@ int main( int argc, char* argv[] )
 				}
 				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && !dot.isPowerUpEnabled && dot2.isPowerUpEnabled) {dot.health-= 50;dot2.isPowerUpEnabled=false;}
 				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && dot.isPowerUpEnabled && !dot2.isPowerUpEnabled) {dot.isPowerUpEnabled=false;}
-				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy1.mBox)) quit=true;
-				if (dot.myfunctions.checkCollision(dot.mBox,enemy2.mBox)) quit=true;
-				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy2.mBox)) quit=true;
-				if (dot.myfunctions.checkCollision(dot.mBox,enemy3.mBox)) quit=true;
-				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy3.mBox)) quit=true;
+				if (dot.myfunctions.checkCollision(dot.mBox,enemy2.mBox)) {
+					dot.waitime=20;
+					dot.mBox.x=66*32;
+					dot.mBox.y=29*32;
+				}
+				//if (dot2.myfunctions.checkCollision(dot2.mBox,enemy2.mBox)) quit=true;
+				if (dot.myfunctions.checkCollision(dot.mBox,enemy3.mBox)){
+					dot.waitime=20;
+					dot.mBox.x=66*32;
+					dot.mBox.y=29*32;
+				}
+				//if (dot2.myfunctions.checkCollision(dot2.mBox,enemy3.mBox)) quit=true;
 
 				for (int i=0;i<TOTAL_TILES;i++){
 					if (dot2.myfunctions.checkCollision(dot2.mBox,tileSet3[i]->getBox())){
@@ -2092,6 +2115,11 @@ int main( int argc, char* argv[] )
 						ti -= 1;
 						if (emotetimer!=0) emotetimer-=1;
 						if (dot.waitime!=0) dot.waitime-=1;
+						if (ti%30==0) {
+							for (int i=0;i<34;i++){
+								if(task[i].type==2) task[i].GetTile()->SetTask=true;
+							}
+						}
 						if(ti%6 == 0 && dot.money > 0){
 							dot.money-=1;
 						}
@@ -2192,6 +2220,8 @@ int main( int argc, char* argv[] )
 					
 				}
 				MinimapTexture.render(gRenderer,1200,SCREEN_HEIGHT/2 - 125);
+				minidot1.render(gRenderer,1200 + ((dot.mBox.x*500)/4800),(SCREEN_HEIGHT/2 - 125) + (dot.mBox.y*250)/2400);
+				minidot2.render(gRenderer,1200 + ((dot2.mBox.x*500)/4800),(SCREEN_HEIGHT/2 - 125) + (dot2.mBox.y*250)/2400);
 
 				ResumeButton.render();
 				SDL_RenderPresent( gRenderer );
@@ -2215,8 +2245,8 @@ int main( int argc, char* argv[] )
 				EndScreenTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
 				RetryButton.render();
 				ExitButton.render();
-				double calc1=(double)log((int)dot.CG/10+1)+log((double)dot.health/100+1)+log((double)dot.money/170+1);
-				double calc2=(double)log((int)dot2.CG/10+1)+log((double)dot2.health/100+1)+log((double)dot2.money/170+1);
+				double calc1=((int)dot.CG/10+1)+((double)dot.health/100+1)+((double)dot.money/170+1);
+				double calc2=((int)dot2.CG/10+1)+((double)dot2.health/100+1)+((double)dot2.money/170+1);
 				SDL_Color textColor = { 255,255, 255 };
 				if (calc1>calc2+0.0005){
 					Win.render(gRenderer,SCREEN_WIDTH/2 - 125,100);
