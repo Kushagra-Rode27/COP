@@ -522,7 +522,7 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
-	if(!StartScreenTexture.loadFromFile("assets/start screen.png",gRenderer)){
+	if(!StartScreenTexture.loadFromFile("assets/start screen1.png",gRenderer)){
 		printf("Failed to load start screen texture\n");
 		success = false;
 	}
@@ -2084,7 +2084,7 @@ int main( int argc, char* argv[] )
 						ti -= 1;
 						if (emotetimer!=0) emotetimer-=1;
 						if (dot.waitime!=0) dot.waitime-=1;
-						if(ti%3 == 0 && dot.money > 0){
+						if(ti%6 == 0 && dot.money > 0){
 							dot.money-=1;
 						}
 						else if(ti%2 == 0 && dot.health > 0 ){

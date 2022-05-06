@@ -575,7 +575,7 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
-	if(!StartScreenTexture.loadFromFile("assets/start screen.png",gRenderer)){
+	if(!StartScreenTexture.loadFromFile("assets/start screen1.png",gRenderer)){
 		printf("Failed to load start screen texture\n");
 		success = false;
 	}
@@ -2173,7 +2173,7 @@ int main( int argc, char* argv[] )
 						ti -= 1;
 						if (emotetimer!=0) emotetimer-=1;
 						if (dot.waitime!=0) dot.waitime-=1;
-						if(ti%3 == 0 && dot.money > 0){
+						if(ti%6 == 0 && dot.money > 0){
 							dot.money-=1;
 						}
 						else if(ti%2 == 0 && dot.health > 0 ){
@@ -2257,6 +2257,7 @@ int main( int argc, char* argv[] )
 				for (int i = 0; i < 34; i++)
 				{
 					if(task[i].GetTile()->SetTask){
+						//task[i].tasksTexture.render(gRenderer,250,150 + 35*i,0,0);
 						taskLeft.push_back(task[i]);
 					}
 				}
@@ -2266,9 +2267,12 @@ int main( int argc, char* argv[] )
 					gTextTexture.loadFromRenderedText(taskLeft[i].msg,textcolor1,myFont,gRenderer);//41,4
 					if(i < 17){
 						gTextTexture.render(gRenderer,100,150 + 35*i,0,0);
+						
+						//taskLeft[i].tasksTexture.render(gRenderer,250,150 + 35*i,0,0);
 					}
 					else {
 						gTextTexture.render(gRenderer,1000,150 + 35*(i-17),0,0);
+						//taskLeft[i].tasksTexture.render(gRenderer,1250,150 + 35*(i-17),0,0);
 					}
 					
 				}
