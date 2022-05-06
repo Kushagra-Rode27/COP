@@ -69,7 +69,7 @@ void Tasks::Render(SDL_Rect& camera,SDL_Renderer* gRenderer)
 		tasksTexture.loadFromFile("assets/powerup.png",gRenderer);
 	}
 	else if(type == 5){
-		tasksTexture.loadFromFile("assets/hospital1.png",gRenderer);
+		tasksTexture.loadFromFile("assets/plus2.png",gRenderer);
 	}
 	else {
 		tasksTexture.loadFromFile("assets/task.png",gRenderer);

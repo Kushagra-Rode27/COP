@@ -1398,8 +1398,8 @@ int main( int argc, char* argv[] )
 	bool validate_data;
 
 	// IP address of server
-	char serv_ip[INET_ADDRSTRLEN] = "127.0.0.1";
-	// char serv_ip[INET_ADDRSTRLEN]= "127.0.0.1";
+	//char serv_ip[INET_ADDRSTRLEN] = "192.168.43.130";
+	char serv_ip[INET_ADDRSTRLEN]= "127.0.0.1";
 
 	struct sockaddr_in serv_addr;
 
@@ -1544,7 +1544,7 @@ int main( int argc, char* argv[] )
 			Tasks t29(tileSet3[150*19 + 91],"Have Ice-Cream at Amul",4,29); //amul
 			Tasks t30(tileSet3[150*23 + 96],"Have a juice at Shiru Cafe",4,30); //shiru
 
-			Tasks t31(tileSet3[150*69 + 28],"Get a CheckUp done at the IITD Hospital",5,31); //hospital
+			Tasks t31(tileSet3[150*28 + 69],"Get a CheckUp done at the IITD Hospital",5,31); //hospital
 			
 			Tasks t32(tileSet3[150*34 + 121],"Do an On-campus Internship through OCS",6,32); //OCS
 			Tasks t33(tileSet3[150*18 + 34],"Meet your friends in Zanskar and have a chat with them",0,33); //Zanskar
@@ -2058,8 +2058,8 @@ int main( int argc, char* argv[] )
 					}
 					else {}
 				}
-				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && dot.isPowerUpEnabled && !dot2.isPowerUpEnabled) dot2.health-= 30;
-				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && !dot.isPowerUpEnabled && dot2.isPowerUpEnabled) dot.health-= 30;
+				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && !dot.isPowerUpEnabled && dot2.isPowerUpEnabled) {dot.health-= 50;dot2.isPowerUpEnabled=false;}
+				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && dot.isPowerUpEnabled && !dot2.isPowerUpEnabled) {dot.isPowerUpEnabled=false;}
 				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy1.mBox)) quit=true;
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy2.mBox)) quit=true;
 				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy2.mBox)) quit=true;
@@ -2069,6 +2069,11 @@ int main( int argc, char* argv[] )
 				for (int i=0;i<TOTAL_TILES;i++){
 					if (dot2.myfunctions.checkCollision(dot2.mBox,tileSet3[i]->getBox())){
 						tileSet3[i]->SetTask=NULL;
+					}
+					if (dot2.myfunctions.checkCollision(dot2.mBox,tileSet3[i]->getBox())){
+						if (tileSet3[i]->SetPowerUp==true){
+							dot2.isPowerUpEnabled=true;
+						}
 					}
 				}
 
@@ -2200,8 +2205,8 @@ int main( int argc, char* argv[] )
 				EndScreenTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
 				RetryButton.render();
 				ExitButton.render();
-				double calc1=(double)log((int)dot.CG/10)+log((double)dot.health/100)+log((double)dot.money/170);
-				double calc2=(double)log((int)dot2.CG/10)+log((double)dot2.health/100)+log((double)dot2.money/170);
+				double calc1=(double)log((int)dot.CG/10+1)+log((double)dot.health/100+1)+log((double)dot.money/170+1);
+				double calc2=(double)log((int)dot2.CG/10+1)+log((double)dot2.health/100+1)+log((double)dot2.money/170+1);
 				SDL_Color textColor = { 0, 0, 0 };
 				if (calc1>calc2+0.0005){
 					Win.render(gRenderer,SCREEN_WIDTH/2 - 125,100);
