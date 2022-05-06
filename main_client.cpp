@@ -40,6 +40,7 @@
 #include <vector>
 #include "Board.h"
 #include "Bot.h"
+#include "Vector2D.h"
 
 using namespace std;
 
@@ -97,6 +98,12 @@ const int SCREEN_TICK_PER_FRAME = 1000 / SCREEN_FPS;
 
 const int SCREEN_WIDTH = 1700;
 const int SCREEN_HEIGHT = 850;
+const int AREA=SCREEN_HEIGHT*SCREEN_WIDTH;
+const int SIZE = 11;
+
+SDL_Scancode keypressed = SDL_SCANCODE_UNKNOWN;
+bool pauseGame;
+SDL_Event event;
 
 // const int SCREEN_WIDTH = 3200;
 // const int SCREEN_HEIGHT = 1600;
@@ -291,6 +298,40 @@ enemyDot enemy1(16);
 enemyDot enemy2(42);
 enemyDot enemy3(81);
 
+
+typedef struct{
+
+	SDL_Texture *segmentTexture;
+	SDL_Surface *segmentImage;
+	SDL_Rect segmento[AREA];
+	SDL_Rect sprite[2];
+	int frame;
+	
+	char dir;
+	int totalSegmento;
+	int dimensao;
+
+} Snake;
+
+typedef struct{
+
+	SDL_Texture *foodTexture;
+	SDL_Surface *foodImage;
+	SDL_Rect foodPos;
+
+} Food;
+SDL_Texture *background = NULL;
+SDL_Texture *pauses = NULL;
+SDL_Surface *backgroundImage = NULL;
+SDL_Surface *pauseImage = NULL;
+
+Snake snake;
+Food food;
+
+bool InitWindow();
+void Close();
+void InitSnake();
+void NewRound();
 //from here texture.cpp
 
 // LTexture in texture.cpp some change has been done in function definition of loadfromfile. grenderer has been passed as parameter
@@ -529,6 +570,17 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		printf("Failed to load loser texture\n");
 		success = false;
 	}
+	if ((backgroundImage = SDL_LoadBMP("assets/start screen.png")) == NULL) printf("ERRO %s", SDL_GetError());
+	background = SDL_CreateTextureFromSurface(gRenderer, backgroundImage);
+
+	if ((snake.segmentImage = SDL_LoadBMP("assets/CG1.png")) == NULL) printf("ERRO %s", SDL_GetError());
+	snake.segmentTexture = SDL_CreateTextureFromSurface(gRenderer, snake.segmentImage);
+
+	if ((food.foodImage = SDL_LoadBMP("assets/CG1.png")) == NULL) printf("ERRO %s", SDL_GetError());
+	food.foodTexture = SDL_CreateTextureFromSurface(gRenderer, food.foodImage);
+
+	if((pauseImage = IMG_Load("assets/GIRNAR.png")) == NULL) printf("ERRO %s", IMG_GetError());
+	pauses = SDL_CreateTextureFromSurface(gRenderer, pauseImage);
 	
 	score_text="score: "+std::to_string(scorep1);
 	gFont = TTF_OpenFont( "metal lord.ttf", 28 );
@@ -668,6 +720,21 @@ void close( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* ti
 	HostelTexture.free();
 	InfoScreenTexture.free();
 	EndScreenTexture.free();
+	 HappyTexture.free();
+	AngryTexture.free();
+	CoolTexture.free();
+	TeaseTexture.free();
+	SDL_DestroyTexture(background);
+	SDL_FreeSurface(backgroundImage);
+
+	SDL_DestroyTexture(pauses);
+	SDL_FreeSurface(pauseImage);
+
+	SDL_DestroyTexture(snake.segmentTexture);
+	SDL_FreeSurface(snake.segmentImage);
+
+	SDL_DestroyTexture(food.foodTexture);
+	SDL_FreeSurface(food.foodImage);
     //Free global font
     TTF_CloseFont( gFont );
     gFont = NULL;
@@ -1106,6 +1173,217 @@ void renderPieces(Board board)
         }
 }
 
+void InitSprite(){
+
+	snake.sprite[0].x = snake.sprite[0].y = 0;
+	snake.sprite[0].h = snake.sprite[0].w = SIZE;
+
+	snake.sprite[1].x = SIZE;
+	snake.sprite[1].y = 0;
+	snake.sprite[1].w = snake.sprite[1].h = SIZE;
+
+}
+
+bool Pressed(SDL_Scancode key){
+
+	return (keypressed == key);
+
+}
+
+bool GetKeys(){
+
+	while (SDL_PollEvent(&event) != 0){
+
+		if (event.type == SDL_QUIT){
+			return 1;
+		}
+		if (event.type == SDL_KEYDOWN){
+
+			keypressed = event.key.keysym.scancode;
+
+			switch (keypressed){
+				case SDL_SCANCODE_P: pauseGame = !pauseGame; break;
+				case SDL_SCANCODE_ESCAPE: return 1;
+			}
+		}
+	}
+
+	if (!pauseGame){
+
+		if (Pressed(SDL_SCANCODE_UP) || Pressed(SDL_SCANCODE_W)){
+			if (snake.dir != 'D')
+				snake.dir = 'U';
+		}
+		if (Pressed(SDL_SCANCODE_DOWN) || Pressed(SDL_SCANCODE_S)){
+			if (snake.dir != 'U')
+				snake.dir = 'D';
+		}
+		if (Pressed(SDL_SCANCODE_LEFT) || Pressed(SDL_SCANCODE_A)){
+			if (snake.dir != 'R')
+				snake.dir = 'L';
+		}
+		if (Pressed(SDL_SCANCODE_RIGHT) || Pressed(SDL_SCANCODE_D)){
+			if (snake.dir != 'L')
+				snake.dir = 'R'; 
+		}
+		if (Pressed(SDL_SCANCODE_R)){
+			
+		}
+
+	}
+
+	return 0;
+}
+
+bool BodyCollision(int x, int y){
+
+	for (int i = 0; i < snake.totalSegmento; i++)
+		if ((snake.segmento[i].x == x) && (snake.segmento[i].y == y))
+			return true;
+
+	return false;
+}
+
+bool CheckCollision(int x, int y){
+
+	if (x >= 0 && y >= 0 && x < SCREEN_WIDTH && y < SCREEN_HEIGHT && !BodyCollision(x, y))
+		return false;
+
+	return true;
+}
+
+SDL_Rect CreateFood(){
+
+	SDL_Rect *posLivre = new SDL_Rect[AREA];
+	int posLivreCont = 0;
+	int contX, contY;
+	int posSorteada = 0;
+
+	for (contX = 0; contX < SCREEN_WIDTH; contX += SIZE){
+		for (contY = 0; contY < SCREEN_HEIGHT; contY += SIZE){
+			if (!BodyCollision(contX, contY)){
+				posLivreCont++;
+				posLivre[posLivreCont].x = contX;
+				posLivre[posLivreCont].y = contY;
+			}
+		}
+	}
+
+	srand(SDL_GetTicks());
+
+	posSorteada = rand() % posLivreCont + 1;
+
+	posLivre[posSorteada].w = posLivre[posSorteada].h = SIZE;
+
+	return posLivre[posSorteada];
+}
+
+void PrintSnake(){
+
+	SDL_RenderCopy(gRenderer, snake.segmentTexture, &snake.sprite[0], &snake.segmento[0]);
+
+	for (int i = snake.totalSegmento; i > 0; i--){
+		SDL_RenderCopy(gRenderer, snake.segmentTexture, &snake.sprite[0], &snake.segmento[i]);
+	}
+
+}
+
+void PauseScreen(){
+
+	SDL_Rect pauseRect = { SCREEN_WIDTH/3, SCREEN_HEIGHT/3, 188, 48 };
+
+	PrintSnake();
+
+	SDL_RenderCopy(gRenderer, pauses, NULL, &pauseRect);
+
+}
+const int TAXA_CRESCIMENTO = 4;
+bool MoveSnake(){
+
+	SDL_Rect newpos;
+	
+	newpos = snake.segmento[0];
+
+	switch (snake.dir){
+		case 'R': newpos.x += SIZE; break;
+		case 'L': newpos.x -= SIZE; break;
+		case 'U': newpos.y -= SIZE; break;
+		case 'D': newpos.y += SIZE; break;
+	}
+
+	if (!CheckCollision(newpos.x, newpos.y)){
+		if (snake.totalSegmento < snake.dimensao){
+			snake.totalSegmento++;
+		}
+			
+		snake.segmento[0] = newpos;
+
+		for (int i = snake.totalSegmento; i > 0; i--){
+			snake.segmento[i] = snake.segmento[i - 1];
+		}
+
+		if ((snake.segmento[0].x == food.foodPos.x) && (snake.segmento[0].y == food.foodPos.y) && (snake.totalSegmento != AREA)){
+			food.foodPos = CreateFood();
+			snake.dimensao += TAXA_CRESCIMENTO;
+		}
+
+	}
+	else{
+		
+	}
+
+	return true;
+}
+
+void InitSnake(){
+
+	snake.frame = 0;
+	snake.segmento[0] = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SIZE, SIZE };
+	snake.dir = 'R';
+	snake.dimensao = TAXA_CRESCIMENTO;
+	snake.totalSegmento = 1;
+
+}
+
+void InitFood(){
+
+	food.foodPos = CreateFood();
+	food.foodPos.h = food.foodPos.w = SIZE;
+
+}
+
+void NewRound(){
+
+	InitSprite();
+	InitSnake();
+	InitFood();
+	pauseGame = false;
+
+}
+
+void GameLoop(bool &quit){
+
+	quit = GetKeys();
+
+	SDL_RenderClear(gRenderer);
+
+	SDL_RenderCopy(gRenderer, background, NULL, NULL);
+
+	if (!pauseGame)
+		MoveSnake();
+	else
+		PauseScreen();
+
+	PrintSnake();
+
+	SDL_RenderCopy(gRenderer, food.foodTexture, NULL, &food.foodPos);
+
+	SDL_RenderPresent(gRenderer);
+
+
+}
+
+
 int main( int argc, char* argv[] )
 {
 	//starting sockets for client
@@ -1229,7 +1507,7 @@ int main( int argc, char* argv[] )
 			Tasks t5(tileSet3[150*6 + 23],"Take part in Drama Workshop in Kumaon",0,5); //kumaon
 			Tasks t6(tileSet3[150*8 + 79],"Do Quizzing in Udaigiri",0,6); //Udai
 			Tasks t7(tileSet3[150*6 + 42],"Play BasketBall with your friends in Vindy",0,7); //vindy
-			Tasks t8(tileSet3[150*5 + 54],"Participate in Kavi Sammelan in Satpura",0,8); //satpura
+			Tasks t8(tileSet3[150*5 + 64],"Participate in Kavi Sammelan in Satpura",0,8); //satpura
 			Tasks t9(tileSet3[150*12 + 76],"Participate in a hackathon in Girnar",0,9); // girnar
 			Tasks t10(tileSet3[150*12 + 121],"Take part in Singing Competition",0,10); //himadri
 			Tasks t11(tileSet3[150*8 + 126],"Attend a painting workshop in Kailash",0,11); //kailash
@@ -1252,8 +1530,8 @@ int main( int argc, char* argv[] )
 			//health
 			Tasks t19(tileSet3[150*43 + 71],"Play Cricket Match or do practice",3,19); //cricket
 			Tasks t20(tileSet3[150*43 + 95],"Play Football Match or do practice",3,20); //football
-			Tasks t21(tileSet3[150*15 + 36],"Play a Lawn-Tennis Match or do practice",3,21); //tennis
-			Tasks t22(tileSet3[150*24 + 36],"Play a VolleyBall Match or do practice",3,22); //volleyball
+			Tasks t21(tileSet3[150*22 + 25],"Play a Lawn-Tennis Match or do practice",3,21); //tennis
+			Tasks t22(tileSet3[150*14 + 25],"Play a VolleyBall Match or do practice",3,22); //volleyball
 			Tasks t23(tileSet3[150*44 + 41],"Play a Table-Tennis Match or do practice",3,23); //table tennis
 
 			Tasks t24(tileSet3[150*43 + 47],"Take part in Group Dance Competition",3,24); //OAT
@@ -1416,6 +1694,10 @@ int main( int argc, char* argv[] )
 			bool humanTurn=true;
 			Bot bot=Bot();
     		Board board=Board();
+
+			Uint32 frameStart, frameTime;
+
+			NewRound();	
 
 			while( !quit )
 			{
@@ -1921,8 +2203,8 @@ int main( int argc, char* argv[] )
 				EndScreenTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
 				RetryButton.render();
 				ExitButton.render();
-				double calc1=(double)log(dot.CG/10)+log((double)dot.health/100)+log((double)dot.money/170);
-				double calc2=(double)log(dot2.CG/10)+log((double)dot2.health/100)+log((double)dot2.money/170);
+				double calc1=(double)log((int)dot.CG/10)+log((double)dot.health/100)+log((double)dot.money/170);
+				double calc2=(double)log((int)dot2.CG/10)+log((double)dot2.health/100)+log((double)dot2.money/170);
 				SDL_Color textColor = { 0, 0, 0 };
 				if (calc1>calc2+0.0005){
 					Win.render(gRenderer,SCREEN_WIDTH/2 - 125,100);
@@ -2006,6 +2288,11 @@ int main( int argc, char* argv[] )
 				SDL_RenderPresent(gRenderer);
 				if(board.hasWinner() || board.isDraw())
         			state = 0; // so the game loop knows the end of the current game
+			}
+			else if (curr_state=10){
+				GameLoop(quit);
+
+				
 			}
 
 			if ((curr_state != 0 && curr_state!=7 &&curr_state!=8) )
