@@ -686,13 +686,13 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
         success = false;
     }
 
-	if ((backgroundImage = SDL_LoadBMP("assets/start screen.png")) == NULL) printf("ERRO %s", SDL_GetError());
+	if ((backgroundImage = IMG_Load("assets/start screen.png")) == NULL) printf("ERRO %s", SDL_GetError());
 	background = SDL_CreateTextureFromSurface(gRenderer, backgroundImage);
 
-	if ((snake.segmentImage = SDL_LoadBMP("assets/CG1.png")) == NULL) printf("ERRO %s", SDL_GetError());
+	if ((snake.segmentImage = IMG_Load("assets/CG1.png")) == NULL) printf("ERRO %s", SDL_GetError());
 	snake.segmentTexture = SDL_CreateTextureFromSurface(gRenderer, snake.segmentImage);
 
-	if ((food.foodImage = SDL_LoadBMP("assets/CG1.png")) == NULL) printf("ERRO %s", SDL_GetError());
+	if ((food.foodImage = IMG_Load("assets/CG1.png")) == NULL) printf("ERRO %s", SDL_GetError());
 	food.foodTexture = SDL_CreateTextureFromSurface(gRenderer, food.foodImage);
 
 	if((pauseImage = IMG_Load("assets/GIRNAR.png")) == NULL) printf("ERRO %s", IMG_GetError());
@@ -1759,9 +1759,6 @@ int main( int argc, char* argv[] )
 			Bot bot=Bot();
     		Board board=Board();
 
-			Uint32 frameStart, frameTime;
-
-			NewRound();
 			while( !quit )
 			{
 
@@ -2150,7 +2147,6 @@ int main( int argc, char* argv[] )
 				
 
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) curr_state = 7;
-				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && dot.isPowerUpEnabled && !dot2.isPowerUpEnabled) dot2.health-= 50;
 				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && !dot.isPowerUpEnabled && dot2.isPowerUpEnabled) dot.health-= 50;
 				if (dot2.myfunctions.checkCollision(dot2.mBox,enemy1.mBox)) quit=true;
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy2.mBox)) quit=true;
@@ -2379,8 +2375,12 @@ int main( int argc, char* argv[] )
 				if(board.hasWinner() || board.isDraw())
         			state = 0; // so the game loop knows the end of the current game
 			}
-			else if (curr_state=10){
-				GameLoop(quit);
+			else if (curr_state==10){
+
+				NewRound();
+				while(!quit){
+					GameLoop(quit);
+				}
 
 				
 			}
