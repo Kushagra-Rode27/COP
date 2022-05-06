@@ -1935,7 +1935,7 @@ int main( int argc, char* argv[] )
 
 					
 			}
-			else if(curr_state == 5 && curr_stateP2==5){
+			else if(curr_state == 5 && (curr_stateP2==5 || curr_stateP2==10 || curr_stateP2==9)){
 				//if (emotetimer==0) emote=0;
 				// do
 				// {
@@ -2008,6 +2008,16 @@ int main( int argc, char* argv[] )
                             //Stop the music
                             Mix_HaltMusic();
                             break;
+
+							case SDLK_1:
+							if (dot.mBox.x<44 && dot.mBox.x>36 && dot.mBox.y>37 && dot.mBox.y<45)
+							curr_state=10;
+                            break;
+
+							case SDLK_2:
+							if (dot.mBox.x<44 && dot.mBox.x>36 && dot.mBox.y>37 && dot.mBox.y<45)
+							curr_state=9;
+							break;
                         }
                     }
 					else if (e.type== SDL_SYSWMEVENT ){
@@ -2375,7 +2385,7 @@ int main( int argc, char* argv[] )
 						quit = true;
 				}
 				if(state == 0)
-					curr_state=7;
+					curr_state=9;
 				else
 				{
 					bool successfulPlay = false; // to handle change of player turn
@@ -2429,14 +2439,77 @@ int main( int argc, char* argv[] )
         			state = 0; // so the game loop knows the end of the current game
 			}
 			else if (curr_state==10){
-
 				NewRound();
 				while(!quit){
 					GameLoop(quit);
+					bytes_recvd = recv(newserv_fd, &in_buffer, sizeof(in_buffer), 0);
+                    if (bytes_recvd == -1){
+                        cout << "Frame data not received!"
+                             << "\n";
+							 curr_state=7;
+					}
+                    else if (bytes_recvd != 45){
+                        cout << "complete data not received \n";
+						curr_state=7;
+						dot2.myState.first = 0;
+						dot2.myState.second = 1;
+						dot2.mBox.x = 0;
+						dot2.mBox.y = 0;
+						curr_stateP2 = 0;
+						dot2.health = 0;
+						dot2.CG = 0;
+						dot2.money = 0;
+					}
+                    else
+                    {
+                        validate_data = fromNetwork(in_buffer, &indata);
+                        if (!validate_data)
+                            cout << "Wrong data received\n";
+
+                        else
+                        {
+                            dot2.myState.first = indata.stateFirst;
+                            dot2.myState.second = indata.stateSecond;
+                            dot2.mBox.x = indata.X;
+                            dot2.mBox.y = indata.Y;
+                            curr_stateP2 = indata.myState;
+                            dot2.health = indata.health;
+                            dot2.CG = indata.CG;
+                            dot2.money = indata.money;
+							dot2.tasksComp=indata.tusk;
+							if (indata.time==1) curr_state=7;
+							if (emote!=indata.emoji && indata.emoji!=0) emotetimer=5;
+							if (indata.emoji!=0) emote=indata.emoji;
+                        }
+                    }
+
+
+                    // sending
+					int var=0;
+					if (ti==0) {
+						var=1;
+						curr_state=7;
+					}
+					int var2=0;
+					if (emotetimer>1){
+						var2=emote;
+					}
+					else var2=0;
+                    mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money, dot.tasksComp,var,var2};
+
+                    toNetwork(out_buffer, &mydata);
+                    bytes_sent = send(newserv_fd, &out_buffer, sizeof(out_buffer), 0);
+                    if (bytes_sent == -1)
+                        cout << "Frame data not sent" << "\n"; 
+                    else if (bytes_sent != 45)
+                        cout << "complete data not sent, what is going on???????\n";
 				}
+				quit=false;
+				curr_state=5;
+			}
 
 				
-			}
+			
 
 			if ((curr_state != 0 && curr_state!=7 &&curr_state!=8) )
                 {
