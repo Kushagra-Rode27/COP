@@ -79,6 +79,10 @@ LTexture HappyTexture;
 LTexture AngryTexture;
 LTexture TeaseTexture;
 LTexture CoolTexture;
+
+LTexture minidot1;
+LTexture minidot2;
+
 int scorep1;
 int scorep2;
 bool speed1;
@@ -558,7 +562,7 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		printf("Failed to load mini map texture\n");
 		success = false;
 	}
-	if(!MinimapTexture.loadFromFile("assets/untitled.png",gRenderer)){
+	if(!MinimapTexture.loadFromFile("assets/minimap_large.png",gRenderer)){
 		printf("Failed to load mini map texture\n");
 		success = false;
 	}
@@ -2023,7 +2027,7 @@ int main( int argc, char* argv[] )
 				gTextTexture.loadFromRenderedText("Vindy",textColor,gFont,gRenderer);//41,4
 				gTextTexture.render(gRenderer,41*32-camera.x,4*32-camera.y,0,0);
 				
-				MinimapTexture.render(gRenderer,1500,0,0,0);
+				//MinimapTexture.render(gRenderer,1500,0,0,0);
 				dot2.renderPlayer2(camera,gTextTexture,myFont,gRenderer);
 
 				if (emotetimer!=0){
@@ -2179,10 +2183,12 @@ int main( int argc, char* argv[] )
 						gTextTexture.render(gRenderer,100,150 + 35*i,0,0);
 					}
 					else {
-						gTextTexture.render(gRenderer,1000,150 + 35*(i-17),0,0);
+						gTextTexture.render(gRenderer,SCREEN_WIDTH/2-80,150 + 35*(i-17),0,0);
 					}
 					
 				}
+				MinimapTexture.render(gRenderer,1200,SCREEN_HEIGHT/2 - 125);
+
 				ResumeButton.render();
 				SDL_RenderPresent( gRenderer );
 			}

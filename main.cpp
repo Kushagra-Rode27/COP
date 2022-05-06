@@ -68,6 +68,9 @@ LTexture HappyTexture;
 LTexture AngryTexture;
 LTexture TeaseTexture;
 LTexture CoolTexture;
+
+LTexture minidot1;
+LTexture minidot2;
 // init SDL
 // SDL_Window* initSDL(SDL_Window* window)
 // {
@@ -610,8 +613,17 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		printf("Failed to load mini map texture\n");
 		success = false;
 	}
-	if(!MinimapTexture.loadFromFile("assets/untitled.png",gRenderer)){
+	if(!MinimapTexture.loadFromFile("assets/minimap_large.png",gRenderer)){
 		printf("Failed to load mini map texture\n");
+		success = false;
+	}
+
+	if(!minidot1.loadFromFile("assets/minidot1.png",gRenderer)){
+		printf("Failed to load mini dot1 texture\n");
+		success = false;
+	}
+	if(!minidot2.loadFromFile("assets/minidot2.png",gRenderer)){
+		printf("Failed to load mini dot2 texture\n");
 		success = false;
 	}
 	if(!Win.loadFromFile("assets/winning.png",gRenderer)){
@@ -763,6 +775,8 @@ void close( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* ti
 	//Free loaded images
     gTextTexture.free();
 	MinimapTexture.free();
+	minidot1.free();
+	minidot2.free();
 	powerUpTexture.free();
 	tasksTexture.free();
 	StartScreenTexture.free();
@@ -2117,7 +2131,7 @@ int main( int argc, char* argv[] )
 				
 				
 
-				MinimapTexture.render(gRenderer,1500,0,0,0);
+				//MinimapTexture.render(gRenderer,1500,0,0,0);
 				dot2.renderPlayer2(camera,gTextTexture,myFont,gRenderer);
 				if (emotetimer!=0){
 					if (emote==1){
@@ -2271,11 +2285,14 @@ int main( int argc, char* argv[] )
 						//taskLeft[i].tasksTexture.render(gRenderer,250,150 + 35*i,0,0);
 					}
 					else {
-						gTextTexture.render(gRenderer,1000,150 + 35*(i-17),0,0);
+						gTextTexture.render(gRenderer,SCREEN_WIDTH/2-80,150 + 35*(i-17),0,0);
 						//taskLeft[i].tasksTexture.render(gRenderer,1250,150 + 35*(i-17),0,0);
 					}
 					
 				}
+				MinimapTexture.render(gRenderer,1200,SCREEN_HEIGHT/2 - 125);
+				minidot1.render(gRenderer,1200 + (dot.mBox.x*(500/4800)),(SCREEN_HEIGHT/2 - 125) + (dot.mBox.y*(250/2400)));
+				minidot2.render(gRenderer,1200 + (dot2.mBox.x*(500/4800)),(SCREEN_HEIGHT/2 - 125) + (dot2.mBox.y*(250/2400)));
 				
 				ResumeButton.render();
 				SDL_RenderPresent( gRenderer );
