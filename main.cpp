@@ -124,6 +124,7 @@ void print_init_flags(int flags);
 //lib 49,17
 //57,13
 //51,6
+int emote;
 
 int scorep1;
 int scorep2;
@@ -209,6 +210,8 @@ struct Info
     int CG;
     int money;
 	int tusk;
+	int time;
+	int emoji;
 	//Point* pointarr;
 };
 
@@ -226,13 +229,15 @@ void toNetwork(char *buffer, struct Info *mydata)
     std::sprintf(buffer + 19, "%03d", mydata->health);
     std::sprintf(buffer + 23, "%03d", mydata->CG);
     std::sprintf(buffer + 27, "%03d", mydata->money);
-	std::sprintf(buffer+31,"%05d",mydata->tusk);
-    buffer[37] = '#';
+	std::sprintf(buffer+31,"%06d",mydata->tusk);
+    std::sprintf(buffer+38,"%01d",mydata->time);
+	std::sprintf(buffer+40,"%03d",mydata->emoji);
+    buffer[44] = '#';
 }
 
 bool fromNetwork(char *buffer, struct Info *indata)
 {
-    if (buffer[0] != '*' || buffer[37] != '#')
+    if (buffer[0] != '*' || buffer[44] != '#')
         return false;
     indata->stateFirst = atoi(buffer + 1);
     indata->stateSecond = atoi(buffer + 4);
@@ -243,6 +248,8 @@ bool fromNetwork(char *buffer, struct Info *indata)
     indata->CG = atoi(buffer + 23);
     indata->money = atoi(buffer + 27);
 	indata->tusk=atoi(buffer+31);
+	indata->time=atoi(buffer+38);
+	indata->emoji=atoi(buffer+40);
     return true;
 }
 
@@ -349,7 +356,7 @@ enemyDot enemy3(81);
 
 
 
-int ti = 180;
+int ti = 10;
 int lastTime1 = 0,currentTime1;
 void timerRender(){
 	SDL_Color textColor = { 0, 0, 0 };
@@ -1134,9 +1141,9 @@ int main( int argc, char* argv[] )
 	//starting sockets
 	int serv_fd, newserv_fd, bytes_sent, bytes_recvd;
     int port_no = PORT;
-    char in_buffer[38], out_buffer[38], sname[64], cname[64];
+    char in_buffer[45], out_buffer[45], sname[64], cname[64];
     struct Info indata;
-    struct Info mydata = {42, 5, 6, 7, 8, 9, 1, 4,0};
+    struct Info mydata = {42, 5, 6, 7, 8, 9, 1, 4,0,0,0};
     bool validate_data;
 
     char cli_ip[INET_ADDRSTRLEN];
@@ -1681,7 +1688,6 @@ int main( int argc, char* argv[] )
 					}
 					//dot.handleEvent( e );
 					dot.handleEvent( e );
-					if(ti == 0){curr_state=7;}
 					//dot2.handleEvent( e );
 					InfoButton.handleEvent(&e , 6); 
 					//dot2.handleEvent( e );
@@ -1925,7 +1931,7 @@ int main( int argc, char* argv[] )
 				ResumeButton.render();
 				SDL_RenderPresent( gRenderer );
 			}
-			else if (curr_state == 7 || curr_stateP2 == 7)
+			else if (curr_state == 7 )
 			{
 				while( SDL_PollEvent( &e ) != 0 )
 				{
@@ -2040,7 +2046,7 @@ int main( int argc, char* argv[] )
                              << "\n";
 							 curr_state=7;
 					}
-                    else if (bytes_recvd != 38){
+                    else if (bytes_recvd != 45){
                         cout << "complete data not received \n";
 						curr_state=7;
 						dot2.myState.first = 0;
@@ -2068,23 +2074,26 @@ int main( int argc, char* argv[] )
                             dot2.health = indata.health;
                             dot2.CG = indata.CG;
                             dot2.money = indata.money;
-							if (indata.tusk!=0){
-								for (int i=0;i<31;i++){
-									if (task[i].Tasknum==indata.tusk) task[i].GetTile()->SetTask=false;
-								}
-							}
+							dot2.tasksComp=indata.tusk;
+							if (indata.time==1) curr_state=7;
+							emote=indata.emoji;
                         }
                     }
 
 
                     // sending
-                    mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money, dot.lastTask};
+					int var=0;
+					if (ti==0) {
+						var=1;
+						curr_state=7;
+					}
+                    mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money, dot.tasksComp,var,0};
 
                     toNetwork(out_buffer, &mydata);
                     bytes_sent = send(newserv_fd, &out_buffer, sizeof(out_buffer), 0);
                     if (bytes_sent == -1)
                         cout << "Frame data not sent" << "\n"; 
-                    else if (bytes_sent != 38)
+                    else if (bytes_sent != 45)
                         cout << "complete data not sent, what is going on???????\n";
                 }
 
