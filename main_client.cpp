@@ -84,6 +84,8 @@ LTexture CoolTexture;
 
 LTexture minidot1;
 LTexture minidot2;
+LTexture startmsg;
+LTexture hostelmsg;
 
 int scorep1;
 int scorep2;
@@ -576,6 +578,16 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		printf("Failed to load loser texture\n");
 		success = false;
 	}
+	if(!startmsg.loadFromFile("assets/start msg.png",gRenderer)){
+		printf("Failed to load loser texture\n");
+		success = false;
+	}
+
+	if(!hostelmsg.loadFromFile("assets/hostelmsg.png",gRenderer)){
+		printf("Failed to load loser texture\n");
+		success = false;
+	}
+
 	if ((backgroundImage = IMG_Load("assets/start screen.png")) == NULL) printf("ERRO %s", SDL_GetError());
 	background = SDL_CreateTextureFromSurface(gRenderer, backgroundImage);
 
@@ -730,6 +742,8 @@ void close( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* ti
 	AngryTexture.free();
 	CoolTexture.free();
 	TeaseTexture.free();
+	hostelmsg.free();
+	startmsg.free();
 	SDL_DestroyTexture(background);
 	SDL_FreeSurface(backgroundImage);
 
@@ -1778,7 +1792,12 @@ int main( int argc, char* argv[] )
 					
 					//Handle input for the dot
 					gameStartButton.handleEvent(&e , 1);
-
+					// if(curr_state == 1 && curr_stateP2 == 0 ){
+					// 	startmsg.render(gRenderer,50,50);
+					// }
+					// else if (curr_state == 1 && curr_stateP2 == 1){
+					// 	curr_state = 1;
+					// }
 					
 				}
 
@@ -1787,6 +1806,12 @@ int main( int argc, char* argv[] )
 				StartScreenTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
 
 				gameStartButton.render();
+				if(curr_state == 1 && curr_stateP2 == 0 ){
+						startmsg.render(gRenderer,50,50);
+					}
+					else if (curr_state == 1 && curr_stateP2 == 1){
+						curr_state = 1;
+				}
 				SDL_RenderPresent(gRenderer);
 			}
 			else if(curr_state==1)
