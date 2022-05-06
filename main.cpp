@@ -1891,9 +1891,9 @@ int main( int argc, char* argv[] )
 					if(curr_state==13){dot.mBox.x=32*125;dot.mBox.y = 32*8;curr_state=5;};
 
 					shiwalik.handleEvent(&e,14);
-					if(curr_state==14){dot.mBox.x=32*8;dot.mBox.y = 32*0;curr_state=5;};
+					if(curr_state==14){dot.mBox.x=32*32;dot.mBox.y = 32*15;curr_state=5;};
 					zanskar.handleEvent(&e,15);
-					if(curr_state==15){dot.mBox.x=32*8;dot.mBox.y = 32*0;curr_state=5;};
+					if(curr_state==15){dot.mBox.x=32*32;dot.mBox.y = 32*22;curr_state=5;};
 					aravali.handleEvent(&e,16);
 					if(curr_state==16){dot.mBox.x=32*11;dot.mBox.y = 32*20;curr_state=5;};
 					vindyanchal.handleEvent(&e,17);
@@ -2034,13 +2034,10 @@ int main( int argc, char* argv[] )
 				// const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
 				//dot.handle(currentKeyStates);
 				// dot2.handle(currentKeyStates);
-				SDL_Color textColor = { 0, 0, 0 };
+				
 				//Move the dot
 				if (dot.waitime==0) dot.move( tileSet2,tileSet3,gHigh,gMedium,gLow );
-				else {
-					gTextTexture.loadFromRenderedText("Wait for : "+to_string(dot.waitime),textColor,myFont,gRenderer);
-					gTextTexture.render(gRenderer,SCREEN_WIDTH/2,0,0,0);
-				}
+				
 				dot.setCamera( camera );
 
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
@@ -2073,6 +2070,12 @@ int main( int argc, char* argv[] )
 				enemy2.move(tileSet2);
 				enemy3.move(tileSet2);
 				// Render Names
+				SDL_Color textColor3 = { 255, 255, 255 };
+				if(dot.waitime!=0) {
+					gTextTexture.loadFromRenderedText("Wait for : "+std :: to_string(dot.waitime) + " seconds",textColor3,myFont,gRenderer);
+					gTextTexture.render(gRenderer,SCREEN_WIDTH/2,0,0,0);
+				}
+				SDL_Color textColor = { 0, 0, 0 };
 				
 				gTextTexture.loadFromRenderedText("Tennis",textColor,gFont,gRenderer);
 				gTextTexture.render(gRenderer,1100-camera.x,480-camera.y,0,0);
@@ -2293,7 +2296,7 @@ int main( int argc, char* argv[] )
 				MinimapTexture.render(gRenderer,1200,SCREEN_HEIGHT/2 - 125);
 				minidot1.render(gRenderer,1200 + (dot.mBox.x*(500/4800)),(SCREEN_HEIGHT/2 - 125) + (dot.mBox.y*(250/2400)));
 				minidot2.render(gRenderer,1200 + (dot2.mBox.x*(500/4800)),(SCREEN_HEIGHT/2 - 125) + (dot2.mBox.y*(250/2400)));
-				
+
 				ResumeButton.render();
 				SDL_RenderPresent( gRenderer );
 			}
@@ -2318,20 +2321,20 @@ int main( int argc, char* argv[] )
 				ExitButton.render();
 				double calc1=(double)log((int)dot.CG/10+1)+log((double)dot.health/100+1)+log((double)dot.money/170+1);
 				double calc2=(double)log((int)dot2.CG/10+1)+log((double)dot2.health/100+1)+log((double)dot2.money/170+1);
-				SDL_Color textColor = { 0, 0, 0 };
+				SDL_Color textColor = { 255,255, 255 };
 				if (calc1>calc2+0.0005){
 					Win.render(gRenderer,SCREEN_WIDTH/2 - 125,100);
 					gTextTexture.loadFromRenderedText("Hurray! You won the game",textColor,gFont,gRenderer);//41,4
-					gTextTexture.render(gRenderer,SCREEN_WIDTH/2-100,375,0,0);
+					gTextTexture.render(gRenderer,SCREEN_WIDTH/2-150,375,0,0);
 				}
 				else if (calc2>calc1+0.0005){
 					Lose.render(gRenderer,SCREEN_WIDTH/2 - 125,100);
 					gTextTexture.loadFromRenderedText("You lost the game, Better Luck Next Time",textColor,gFont,gRenderer);//41,4
-					gTextTexture.render(gRenderer,SCREEN_WIDTH/2-125,375,0,0);
+					gTextTexture.render(gRenderer,SCREEN_WIDTH/2-230,375,0,0);
 				}
 				else{
 					gTextTexture.loadFromRenderedText("Looks like you and your opponent played with the same skill, It's a Stalemate!!!",textColor,gFont,gRenderer);//41,4
-					gTextTexture.render(gRenderer,SCREEN_WIDTH/2-150,375,0,0);
+					gTextTexture.render(gRenderer,SCREEN_WIDTH/2-300,375,0,0);
 				}
 				SDL_RenderPresent( gRenderer );
 				SDL_Delay(10);
