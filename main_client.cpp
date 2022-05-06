@@ -530,7 +530,7 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
-	if(!StartScreenTexture.loadFromFile("assets/start screen1.png",gRenderer)){
+	if(!StartScreenTexture.loadFromFile("assets/start screen2.png",gRenderer)){
 		printf("Failed to load start screen texture\n");
 		success = false;
 	}
