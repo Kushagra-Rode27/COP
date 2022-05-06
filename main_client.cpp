@@ -501,19 +501,19 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		success = false;
 	}
 
-	if(!HappyTexture.loadFromFile("assets/laughing emote.png",gRenderer)){
+	if(!HappyTexture.loadFromFile("assets/laugh_small.png",gRenderer)){
 		printf("Failed to load mini map texture\n");
 		success = false;
 	}
-	if(!TeaseTexture.loadFromFile("assets/tease1.png",gRenderer)){
+	if(!TeaseTexture.loadFromFile("assets/tease_small.png",gRenderer)){
 		printf("Failed to load mini map texture\n");
 		success = false;
 	}
-	if(!AngryTexture.loadFromFile("assets/angry_emote1.png",gRenderer)){
+	if(!AngryTexture.loadFromFile("assets/angry_small.png",gRenderer)){
 		printf("Failed to load mini map texture\n");
 		success = false;
 	}
-	if(!CoolTexture.loadFromFile("assets/cool emoji1.png",gRenderer)){
+	if(!CoolTexture.loadFromFile("assets/cool_small.png",gRenderer)){
 		printf("Failed to load mini map texture\n");
 		success = false;
 	}
@@ -1749,16 +1749,16 @@ int main( int argc, char* argv[] )
 
 				if (emotetimer!=0){
 					if (emote==1){
-						HappyTexture.render(gRenderer,SCREEN_WIDTH-600,SCREEN_HEIGHT-600,0);
+						HappyTexture.render(gRenderer,SCREEN_WIDTH-150,SCREEN_HEIGHT-150,0);
 					}
 					if (emote==2){
-						AngryTexture.render(gRenderer,SCREEN_WIDTH-600,SCREEN_HEIGHT-600,0);
+						AngryTexture.render(gRenderer,SCREEN_WIDTH-150,SCREEN_HEIGHT-150,0);
 					}
 					if (emote==4){
-						TeaseTexture.render(gRenderer,SCREEN_WIDTH-600,SCREEN_HEIGHT-600,0);
+						TeaseTexture.render(gRenderer,SCREEN_WIDTH-150,SCREEN_HEIGHT-150,0);
 					}
 					if (emote==3){
-						CoolTexture.render(gRenderer,SCREEN_WIDTH-600,SCREEN_HEIGHT-600,0);
+						CoolTexture.render(gRenderer,SCREEN_WIDTH-150,SCREEN_HEIGHT-150,0);
 					}
 				}
 				//dot2.move(tileSet2,gHigh,gMedium,gLow);
