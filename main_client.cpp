@@ -72,7 +72,12 @@ void print_init_flags(int flags);
 //57,13
 //51,6
 
-int emote;
+int emote=0;
+int emotetimer=0;
+LTexture HappyTexture;
+LTexture AngryTexture;
+LTexture TeaseTexture;
+LTexture CoolTexture;
 int scorep1;
 int scorep2;
 bool speed1;
@@ -496,6 +501,22 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		success = false;
 	}
 
+	if(!HappyTexture.loadFromFile("assets/laughing emote.png",gRenderer)){
+		printf("Failed to load mini map texture\n");
+		success = false;
+	}
+	if(!TeaseTexture.loadFromFile("assets/tease1.png",gRenderer)){
+		printf("Failed to load mini map texture\n");
+		success = false;
+	}
+	if(!AngryTexture.loadFromFile("assets/angry_emote1.png",gRenderer)){
+		printf("Failed to load mini map texture\n");
+		success = false;
+	}
+	if(!CoolTexture.loadFromFile("assets/cool emoji1.png",gRenderer)){
+		printf("Failed to load mini map texture\n");
+		success = false;
+	}
 	if(!MinimapTexture.loadFromFile("assets/untitled.png",gRenderer)){
 		printf("Failed to load mini map texture\n");
 		success = false;
@@ -625,6 +646,10 @@ void close( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile* ti
 	enemy3.genemyDotTexture.free();
 	dot2.gDotTexture.free();
 	gTileTexture1.free();
+	HappyTexture.free();
+	AngryTexture.free();
+	CoolTexture.free();
+	TeaseTexture.free();
 	gTileTexture2.free();
 	gTileTexture3.free();
 	gTileTexture4.free();
@@ -1546,6 +1571,7 @@ int main( int argc, char* argv[] )
 					
 			}
 			else if(curr_state == 5 && curr_stateP2==5){
+				//if (emotetimer==0) emote=0;
 				
 				while( SDL_PollEvent( &e ) != 0 )
 				{
@@ -1605,13 +1631,13 @@ int main( int argc, char* argv[] )
 					//if(ti == 0){curr_state=7;}
 					//dot2.handleEvent( e );
 					laughEmote.handleEvent(&e,25);
-					if(curr_state ==25){emote = 1; curr_state = 5;}
+					if(curr_state ==25){emote = 1; emotetimer=5; curr_state = 5;}
 					angryEmote.handleEvent(&e,26);
-					if(curr_state ==26){emote = 2;curr_state = 5;}
+					if(curr_state ==26){emote = 2;emotetimer=5;curr_state = 5;}
 					coolEmote.handleEvent(&e,27);
-					if(curr_state ==27){emote = 3;curr_state = 5;}
+					if(curr_state ==27){emote = 3;emotetimer=5;curr_state = 5;}
 					teaseEmote.handleEvent(&e,28);
-					if(curr_state ==28){emote = 4;curr_state = 5;}
+					if(curr_state ==28){emote = 4;emotetimer=5;curr_state = 5;}
 					InfoButton.handleEvent(&e , 6); 
 					//dot2.handleEvent( e );
 					
@@ -1721,7 +1747,20 @@ int main( int argc, char* argv[] )
 				MinimapTexture.render(gRenderer,1500,0,0,0);
 				dot2.renderPlayer2(camera,gTextTexture,myFont,gRenderer);
 
-
+				if (emotetimer!=0){
+					if (emote==1){
+						HappyTexture.render(gRenderer,SCREEN_WIDTH-600,SCREEN_HEIGHT-600,0);
+					}
+					if (emote==2){
+						AngryTexture.render(gRenderer,SCREEN_WIDTH-600,SCREEN_HEIGHT-600,0);
+					}
+					if (emote==4){
+						TeaseTexture.render(gRenderer,SCREEN_WIDTH-600,SCREEN_HEIGHT-600,0);
+					}
+					if (emote==3){
+						CoolTexture.render(gRenderer,SCREEN_WIDTH-600,SCREEN_HEIGHT-600,0);
+					}
+				}
 				//dot2.move(tileSet2,gHigh,gMedium,gLow);
 				//dot2.setCamera( camera);
 				//Clear screen
@@ -1759,6 +1798,7 @@ int main( int argc, char* argv[] )
 				{
 					if (ti>0){
 						ti -= 1;
+						if (emotetimer!=0) emotetimer-=1;
 						if (dot.waitime!=0) dot.waitime-=1;
 						if(ti%3 == 0 && dot.money > 0){
 							dot.money-=1;
@@ -1976,7 +2016,12 @@ int main( int argc, char* argv[] )
 				var=1;
 				curr_state=7;
 			}
-			mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money,dot.tasksComp,var,0};
+			int var2=0;
+					if (emotetimer>1){
+						var2=emote;
+					}
+					else var2=0;
+			mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money,dot.tasksComp,var,var2};
 
 			toNetwork(out_buffer, &mydata);
 			bytes_sent = send(cli_fd, &out_buffer, sizeof(out_buffer), 0);
@@ -2037,6 +2082,7 @@ int main( int argc, char* argv[] )
 					dot2.money = indata.money;
 					dot2.tasksComp=indata.tusk;
 					if (indata.time==1) curr_state=7;
+					if (emote!=indata.emoji && indata.emoji!=0) emotetimer=5;
 					emote=indata.emoji;
 				}
 			}
