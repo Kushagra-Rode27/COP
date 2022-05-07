@@ -21,6 +21,7 @@ public:
     bool isFieldCross(int row, int col) const;
     bool isFieldCircle(int row, int col) const;
     BOARD_PIECE m[3][3];
+    int winner;
 
 private:
     int occupiedPlaces;

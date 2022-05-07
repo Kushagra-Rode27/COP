@@ -422,7 +422,8 @@ void NewRound();
 
 
 int ti = 180;
-int lastTime1 = 0,currentTime1;
+bool isdef;
+int lastTime1 ,currentTime1;
 void timerRender(){
 	SDL_Color textColor = { 0, 0, 0 };
 	gTextTexture.loadFromRenderedText(std::to_string(ti) + " seconds",textColor,gFont,gRenderer);
@@ -2656,7 +2657,11 @@ int main( int argc, char* argv[] )
 			}
 
 			//cout<<"be";
-			if (curr_state==5 || curr_state==9 || curr_state==10 || curr_state==6){
+			if ((curr_state == 5 && (curr_stateP2==5 || curr_stateP2==10 || curr_stateP2==9 || curr_stateP2==6)) || curr_state==9 || curr_state==10 || curr_state==6){
+				if (!isdef){
+					lastTime1=SDL_GetTicks();
+					isdef=true;
+				}
 				currentTime1 = SDL_GetTicks();
 				if(currentTime1 > lastTime1 + 1000) //ms to wait before change angle
 				{
