@@ -1510,7 +1510,7 @@ int main( int argc, char* argv[] )
 
     char cli_ip[INET_ADDRSTRLEN];
     // IP address of server
-    char serv_ip[INET_ADDRSTRLEN] = "127.0.0.1";
+    char serv_ip[INET_ADDRSTRLEN] = "193.168.43.130";
 
     struct sockaddr_in serv_addr, cli_addr;
 

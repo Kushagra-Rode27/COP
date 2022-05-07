@@ -1457,7 +1457,7 @@ int main( int argc, char* argv[] )
 
 	// IP address of server
 	//char serv_ip[INET_ADDRSTRLEN] = "192.168.43.130";
-	char serv_ip[INET_ADDRSTRLEN]= "127.0.0.1";
+	char serv_ip[INET_ADDRSTRLEN]= "192.168.43.130";
 
 	struct sockaddr_in serv_addr;
 
