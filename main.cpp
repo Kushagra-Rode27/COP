@@ -1502,7 +1502,7 @@ int main( int argc, char* argv[] )
 
     char cli_ip[INET_ADDRSTRLEN];
     // IP address of server
-    char serv_ip[INET_ADDRSTRLEN] = "127.0.0.1";
+    char serv_ip[INET_ADDRSTRLEN] = "192.168.43.130";
 
     struct sockaddr_in serv_addr, cli_addr;
 
@@ -1986,8 +1986,8 @@ int main( int argc, char* argv[] )
 
 					
 			}
-			else if(curr_state == 5 && (curr_stateP2==5 || curr_stateP2==10 || curr_stateP2==9)){
-				cout<<"hello";
+			else if(curr_state == 5 && (curr_stateP2==5 || curr_stateP2==10 || curr_stateP2==9 || curr_stateP2==6)){
+				//cout<<"hello";
 				//if (emotetimer==0) emote=0;
 				// do
 				// {
@@ -2362,6 +2362,37 @@ int main( int argc, char* argv[] )
 					{
 						quit = true;
 					}
+					else if (e.type == SDL_KEYDOWN)
+					{
+						// Handle backspace
+						if (e.key.keysym.sym == SDLK_BACKSPACE && inpmsg.length() > 0)
+						{
+							// lop off character
+							inpmsg.pop_back();
+							renderText = true;
+						}
+						// Handle copy
+						else if (e.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL)
+						{
+							SDL_SetClipboardText(inpmsg.c_str());
+						}
+						// Handle paste
+						else if (e.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL)
+						{
+							inpmsg = SDL_GetClipboardText();
+							renderText = true;
+						}
+					}
+					else if (e.type == SDL_TEXTINPUT)
+					{
+						// Not copy or pasting
+						if (!(SDL_GetModState() & KMOD_CTRL && (e.text.text[0] == 'c' || e.text.text[0] == 'C' || e.text.text[0] == 'v' || e.text.text[0] == 'V')))
+						{
+							// Append character
+							inpmsg += e.text.text;
+							renderText = true;
+						}
+					}
 
 					//dot.handleEvent( e );
 					ResumeButton.handleEvent(&e,5);
@@ -2396,7 +2427,21 @@ int main( int argc, char* argv[] )
 				MinimapTexture.render(gRenderer,1200,SCREEN_HEIGHT/2 - 125);
 				minidot1.render(gRenderer,1200 + ((dot.mBox.x*500)/4800),(SCREEN_HEIGHT/2 - 125) + (dot.mBox.y*250)/2400);
 				minidot2.render(gRenderer,1200 + ((dot2.mBox.x*500)/4800),(SCREEN_HEIGHT/2 - 125) + (dot2.mBox.y*250)/2400);
-
+				if (renderText)
+				{
+					// Text is not empty
+					if (inpmsg != "")
+					{
+						// Render new text
+				displayText(gRenderer,inpmsg,SCREEN_WIDTH,SCREEN_HEIGHT, 0.25,0.15,0.5,0.10,0.32,0.17);
+					}
+					// Text is empty
+					else
+					{
+						// Render space texture
+				displayText(gRenderer," ",SCREEN_WIDTH,SCREEN_HEIGHT, 0.25,0.15,0.5,0.10,0.32,0.17);
+					}
+				}
 				ResumeButton.render();
 				SDL_RenderPresent( gRenderer );
 			}
@@ -2410,53 +2455,6 @@ int main( int argc, char* argv[] )
 					{
 						//quit = true;
 						curr_state=8;
-					}
-					else if (e.type == SDL_KEYDOWN)
-					{
-						// Handle backspace
-						if (e.key.keysym.sym == SDLK_BACKSPACE && inpmsg.length() > 0)
-						{
-							// lop off character
-							inpmsg.pop_back();
-							renderText = true;
-						}
-						// Handle copy
-						else if (e.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL)
-						{
-							SDL_SetClipboardText(inpmsg.c_str());
-						}
-						// Handle paste
-						else if (e.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL)
-						{
-							inpmsg = SDL_GetClipboardText();
-							renderText = true;
-						}
-					}
-					else if (e.type == SDL_TEXTINPUT)
-					{
-						// Not copy or pasting
-						if (!(SDL_GetModState() & KMOD_CTRL && (e.text.text[0] == 'c' || e.text.text[0] == 'C' || e.text.text[0] == 'v' || e.text.text[0] == 'V')))
-						{
-							// Append character
-							inpmsg += e.text.text;
-							renderText = true;
-						}
-					}
-
-					if (renderText)
-					{
-						// Text is not empty
-						if (inpmsg != "")
-						{
-							// Render new text
-					displayText(gRenderer,inpmsg,SCREEN_WIDTH,SCREEN_HEIGHT, 0.25,0.15,0.5,0.10,0.32,0.17);
-						}
-						// Text is empty
-						else
-						{
-							// Render space texture
-					displayText(gRenderer," ",SCREEN_WIDTH,SCREEN_HEIGHT, 0.25,0.15,0.5,0.10,0.32,0.17);
-						}
 					}
 
 					//dot.handleEvent( e );
@@ -2487,6 +2485,7 @@ int main( int argc, char* argv[] )
 					gTextTexture.loadFromRenderedText("Looks like you and your opponent played with the same skill, It's a Stalemate!!!",textColor,gFont,gRenderer);//41,4
 					gTextTexture.render(gRenderer,SCREEN_WIDTH/2-300,375,0,0);
 				}
+				
 				SDL_RenderPresent( gRenderer );
 				SDL_Delay(10);
 			}
@@ -2620,8 +2619,8 @@ int main( int argc, char* argv[] )
 				SDL_RenderPresent(gRenderer);
 			}
 
-			cout<<"be";
-			if (curr_state==5 || curr_state==9 || curr_state==10){
+			//cout<<"be";
+			if (curr_state==5 || curr_state==9 || curr_state==10 || curr_state==6){
 				currentTime1 = SDL_GetTicks();
 				if(currentTime1 > lastTime1 + 1000) //ms to wait before change angle
 				{

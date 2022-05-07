@@ -573,6 +573,14 @@ bool loadMedia( Tile* tileslayer1[],Tile* tileslayer2[],Tile* tileslayer3[],Tile
 		printf("Failed to load mini map texture\n");
 		success = false;
 	}
+	if(!minidot1.loadFromFile("assets/minidot1.png",gRenderer)){
+		printf("Failed to load mini dot1 texture\n");
+		success = false;
+	}
+	if(!minidot2.loadFromFile("assets/minidot2.png",gRenderer)){
+		printf("Failed to load mini dot2 texture\n");
+		success = false;
+	}
 	if(!Win.loadFromFile("assets/winning.png",gRenderer)){
 		printf("Failed to load winner texture\n");
 		success = false;
@@ -1422,7 +1430,7 @@ int main( int argc, char* argv[] )
 
 	// IP address of server
 	//char serv_ip[INET_ADDRSTRLEN] = "192.168.43.130";
-	char serv_ip[INET_ADDRSTRLEN]= "127.0.0.1";
+	char serv_ip[INET_ADDRSTRLEN]= "192.168.43.130";
 
 	struct sockaddr_in serv_addr;
 
@@ -1882,7 +1890,7 @@ int main( int argc, char* argv[] )
 
 					
 			}
-			else if(curr_state == 5 && (curr_stateP2==5 || curr_stateP2==10 || curr_stateP2==9)){
+			else if(curr_state == 5 && (curr_stateP2==5 || curr_stateP2==10 || curr_stateP2==9 || curr_stateP2==6)){
 				//if (emotetimer==0) emote=0;
 				
 				while( SDL_PollEvent( &e ) != 0 )
@@ -2531,7 +2539,7 @@ int main( int argc, char* argv[] )
 				SDL_RenderPresent(gRenderer);
 			}
 
-			if (curr_state==5 || curr_state==9 || curr_state==10){
+			if (curr_state==5 || curr_state==9 || curr_state==10 || curr_state==6){
 				currentTime1 = SDL_GetTicks();
 				if(currentTime1 > lastTime1 + 1000) //ms to wait before change angle
 				{
