@@ -75,6 +75,8 @@ LTexture CoolTexture;
 LTexture minidot1;
 LTexture minidot2;
 
+string inpmsg;
+
 LTexture startmsg;
 LTexture hostelmsg;
 // init SDL
@@ -1469,6 +1471,25 @@ void GameLoop(bool &quit){
 	SDL_RenderPresent(gRenderer);
 }
 
+void displayText(SDL_Renderer *gRenderer, std::string sentence, int WindowWidth, int WindowHeight, double textBoxX, double textBoxY, double textBoxWidth, double textBoxHeight, double sentenceX, double sentenceY)
+{
+    LTexture myTexture;
+    SDL_Color textColor = {0, 0, 0};
+    if (!myTexture.loadFromRenderedText(sentence, textColor, gFont, gRenderer))
+    {
+        printf("Error in loading texture for string ");
+    }
+
+    SDL_Rect textbox = {(int)(((double)(WindowWidth)) * textBoxX), (int)(((double)(WindowHeight)) * textBoxY), (int)(((double)(WindowWidth)) * textBoxWidth), (int)(((double)(WindowHeight)) * textBoxHeight)};
+
+    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderFillRect(gRenderer, &textbox);
+
+    // myTexture.render(gRenderer,WindowWidth/3 , WindowHeight*9/10, WindowWidth/3 , WindowHeight/11 );
+    myTexture.render(gRenderer, (int)(((double)(WindowWidth)) * sentenceX), (int)(((double)(WindowHeight)) * sentenceY));
+    myTexture.free();
+}
+
 int main( int argc, char* argv[] )
 {
 	//starting sockets
@@ -1671,6 +1692,8 @@ int main( int argc, char* argv[] )
 			// Point p2(tileSet[1]);
 
 			//Level camera
+			bool renderText = true;
+
 			SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
 			bool done = false;
@@ -2387,6 +2410,53 @@ int main( int argc, char* argv[] )
 					{
 						//quit = true;
 						curr_state=8;
+					}
+					else if (e.type == SDL_KEYDOWN)
+					{
+						// Handle backspace
+						if (e.key.keysym.sym == SDLK_BACKSPACE && inpmsg.length() > 0)
+						{
+							// lop off character
+							inpmsg.pop_back();
+							renderText = true;
+						}
+						// Handle copy
+						else if (e.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL)
+						{
+							SDL_SetClipboardText(inpmsg.c_str());
+						}
+						// Handle paste
+						else if (e.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL)
+						{
+							inpmsg = SDL_GetClipboardText();
+							renderText = true;
+						}
+					}
+					else if (e.type == SDL_TEXTINPUT)
+					{
+						// Not copy or pasting
+						if (!(SDL_GetModState() & KMOD_CTRL && (e.text.text[0] == 'c' || e.text.text[0] == 'C' || e.text.text[0] == 'v' || e.text.text[0] == 'V')))
+						{
+							// Append character
+							inpmsg += e.text.text;
+							renderText = true;
+						}
+					}
+
+					if (renderText)
+					{
+						// Text is not empty
+						if (inpmsg != "")
+						{
+							// Render new text
+					displayText(gRenderer,inpmsg,SCREEN_WIDTH,SCREEN_HEIGHT, 0.25,0.15,0.5,0.10,0.32,0.17);
+						}
+						// Text is empty
+						else
+						{
+							// Render space texture
+					displayText(gRenderer," ",SCREEN_WIDTH,SCREEN_HEIGHT, 0.25,0.15,0.5,0.10,0.32,0.17);
+						}
 					}
 
 					//dot.handleEvent( e );
