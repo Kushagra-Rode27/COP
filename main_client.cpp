@@ -1431,7 +1431,7 @@ int main( int argc, char* argv[] )
 
 	// IP address of server
 	//char serv_ip[INET_ADDRSTRLEN] = "192.168.43.130";
-	char serv_ip[INET_ADDRSTRLEN]= "192.168.43.130";
+	char serv_ip[INET_ADDRSTRLEN]= "127.0.0.1";
 
 	struct sockaddr_in serv_addr;
 
@@ -2141,6 +2141,11 @@ int main( int argc, char* argv[] )
 				}
 				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && !dot.isPowerUpEnabled && dot2.isPowerUpEnabled) {dot.health-= 50;dot2.isPowerUpEnabled=false;}
 				if(dot.myfunctions.checkCollision(dot.mBox,dot2.mBox) && dot.isPowerUpEnabled && !dot2.isPowerUpEnabled) {dot.isPowerUpEnabled=false;}
+				if (dot.myfunctions.checkCollision(dot.mBox,enemy1.mBox)) {
+					dot.waitime=20;
+					dot.mBox.x=66*32;
+					dot.mBox.y=29*32;
+				}
 				if (dot.myfunctions.checkCollision(dot.mBox,enemy2.mBox)) {
 					dot.waitime=20;
 					dot.mBox.x=66*32;
@@ -2295,13 +2300,24 @@ int main( int argc, char* argv[] )
 
 					if( e.type == SDL_QUIT )
 					{
-						curr_state=8;
 						//quit = true;
+						quit=true;
+					}
+					else if (e.type == SDL_KEYDOWN)
+					{
+						// Handle backspace
+						if (e.key.keysym.sym == SDLK_9)
+						{
+							// lop off character
+							curr_state=8;
+						}
+						
 					}
 
 					//dot.handleEvent( e );
 					RetryButton.handleEvent(&e,0);
-					ExitButton.handleEvent(&e,8);
+					ExitButton.handleEvent(&e,12);
+					if (curr_state==12) quit=true;
 				}
 				EndScreenTexture.render(gRenderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
 				RetryButton.render();
@@ -2327,6 +2343,8 @@ int main( int argc, char* argv[] )
 					gTextTexture.loadFromRenderedText("Looks like you and your opponent played with the same skill, It's a Stalemate!!!",textColor,gFont,gRenderer);//41,4
 					gTextTexture.render(gRenderer,SCREEN_WIDTH/2-300,375,0,0);
 				}
+				gTextTexture.loadFromRenderedText("Press 9 to play ping pong",textColor,gFont,gRenderer);//41,4
+				gTextTexture.render(gRenderer,SCREEN_WIDTH/2-150,475,0,0);
 				SDL_RenderPresent( gRenderer );
 				SDL_Delay(10);
 			}
