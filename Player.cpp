@@ -313,8 +313,8 @@ void Dot::move( Tile *tiles1[],Tile *tiles2[],Mix_Chunk *gHigh,Mix_Chunk *gMediu
     //Move the dot left or right
     mBox.x += mVelX;
 
-	if (speed1) {
-		DOT_VEL=20;
+	if (isPowerUpEnabled) {
+		DOT_VEL=32;
 	}else{
 		DOT_VEL=16;
 	}

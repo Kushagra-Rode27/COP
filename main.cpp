@@ -432,7 +432,7 @@ void timerRender(){
 
 // Tasks
 
-
+int poweruptimer;
 
 bool init()
 {
@@ -2274,8 +2274,12 @@ int main( int argc, char* argv[] )
 					if (dot2.myfunctions.checkCollision(dot2.mBox,tileSet3[i]->getBox())){
 						if (tileSet3[i]->SetPowerUp==true){
 							dot2.isPowerUpEnabled=true;
+							poweruptimer=20;
 						}
 					}
+				}
+				if (poweruptimer==0){
+					dot2.isPowerUpEnabled=false;
 				}
 
 				// currentTime1 = SDL_GetTicks();
@@ -2629,6 +2633,7 @@ int main( int argc, char* argv[] )
 						if (emotetimer!=0) emotetimer-=1;
 						if (dot.waitime!=0) dot.waitime-=1;
 						if (dot.powertime!=0) dot.powertime-=1;
+						if (poweruptimer!=0) poweruptimer-=1;
 						if (ti%30==0) {
 							for (int i=0;i<34;i++){
 								if(task[i].type==2) task[i].GetTile()->SetTask=true;
