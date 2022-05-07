@@ -1718,8 +1718,6 @@ int main( int argc, char* argv[] )
 			Bot bot=Bot();
     		Board board=Board();
 
-			Mix_PlayMusic( gMusic, -1 );
-
 			while( !quit )
 			{
 
@@ -2011,6 +2009,19 @@ int main( int argc, char* argv[] )
 				enemy1.move(tileSet2);
 				enemy2.move(tileSet2);
 				enemy3.move(tileSet2);
+
+				if (dot.health<=0){
+					dot.health=50;
+					dot.waitime=30;
+					dot.mBox.x=66*32;
+					dot.mBox.y=29*32;
+				}
+				if (dot.money<=0){
+					dot.money=50;
+					dot.waitime=30;
+					dot.mBox.x=120*32;
+					dot.mBox.y=34*32;
+				}
 
 				SDL_Color textColor3 = { 255, 255, 255 };
 				if(dot.waitime!=0) {

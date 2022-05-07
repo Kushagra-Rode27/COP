@@ -1793,8 +1793,6 @@ int main( int argc, char* argv[] )
 			Bot bot=Bot();
     		Board board=Board();
 
-			Mix_PlayMusic( gMusic, -1 );
-
 			while( !quit )
 			{
 
@@ -1966,6 +1964,7 @@ int main( int argc, char* argv[] )
 					
 			}
 			else if(curr_state == 5 && (curr_stateP2==5 || curr_stateP2==10 || curr_stateP2==9)){
+				cout<<"hello";
 				//if (emotetimer==0) emote=0;
 				// do
 				// {
@@ -2111,6 +2110,19 @@ int main( int argc, char* argv[] )
 					dot.isPowerUpEnabled=false;
 				}
 				dot.render(camera,gTextTexture,myFont,gRenderer);
+
+				if (dot.health<=0){
+					dot.health=50;
+					dot.waitime=30;
+					dot.mBox.x=66*32;
+					dot.mBox.y=29*32;
+				}
+				if (dot.money<=0){
+					dot.money=50;
+					dot.waitime=30;
+					dot.mBox.x=120*32;
+					dot.mBox.y=34*32;
+				}
 				
 				enemy1.move(tileSet2);
 				enemy2.move(tileSet2);
@@ -2538,7 +2550,7 @@ int main( int argc, char* argv[] )
 				SDL_RenderPresent(gRenderer);
 			}
 
-				
+			cout<<"be";
 			if (curr_state==5 || curr_state==9 || curr_state==10){
 				currentTime1 = SDL_GetTicks();
 				if(currentTime1 > lastTime1 + 1000) //ms to wait before change angle
