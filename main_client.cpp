@@ -1748,7 +1748,7 @@ int main( int argc, char* argv[] )
 			// set initial positions
 			manager.restartRound();
 
-			int state=1;
+			int state=5;
 			bool humanTurn=true;
 			Bot bot=Bot();
     		Board board=Board();
@@ -2435,8 +2435,15 @@ int main( int argc, char* argv[] )
 					if(e.type == SDL_QUIT)
 						curr_state=5;
 				}
-				if(state == 0)
+				if(state == 2){
+					dot.money+=20;
+					dot.health+=10;
+					dot.CG+=1;
 					curr_state=5;
+				}
+				else if(state==1) {
+					curr_state=5;
+				}
 				else
 				{
 					bool successfulPlay = false; // to handle change of player turn
@@ -2486,8 +2493,10 @@ int main( int argc, char* argv[] )
 
 				// render
 				SDL_RenderPresent(gRenderer);
-				if(board.hasWinner() || board.isDraw())
-        			state = 0; // so the game loop knows the end of the current game
+				if(board.hasWinner()==1)
+        			state = 1; // so the game loop knows the end of the current game
+				if(board.hasWinner()==2 || board.isDraw())
+        			state = 2; // so the game loop knows the end of the current game
 			}
 			// else if (curr_state==10){
 			// 	NewRound();

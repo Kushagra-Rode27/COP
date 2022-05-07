@@ -14,7 +14,7 @@ public:
     Board();
 
     void restart();
-    bool hasWinner() const;
+    int hasWinner() const;
     bool isDraw() const;
     void place(int row, int col, bool humanPiece=true);
     bool isFieldEmpty(int row, int col) const;
@@ -30,6 +30,9 @@ private:
     bool checkRows() const;
     bool checkColumns() const;
     bool checkDiagonals() const;
+     bool checkRows1() const;
+    bool checkColumns1() const;
+    bool checkDiagonals1() const;
 };
 
 #endif

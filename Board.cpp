@@ -18,9 +18,13 @@ void Board::restart()
 }
 
 // check for win conditions
-bool Board::hasWinner() const
+int Board::hasWinner() const
 {
-    return (checkRows() || checkColumns() || checkDiagonals());
+    if (checkRows() || checkColumns() || checkDiagonals())
+        return 1;
+    else if (checkRows1() || checkColumns1() || checkDiagonals1())
+        return 2;
+    return 0;
 }
 
 bool Board::isDraw() const
@@ -70,11 +74,11 @@ bool Board::isFieldCircle(int row, int col) const
 // check row win conditions
 bool Board::checkRows() const
 {
-    if(m[0][0] == m[0][1] && m[0][1] == m[0][2] && !isFieldEmpty(0,2))
+    if(m[0][0] == m[0][1] && m[0][1] == m[0][2] && !isFieldEmpty(0,2) && m[0][2]==PIECE_O)
         return true;
-    else if(m[1][0] == m[1][1] && m[1][1] == m[1][2] && !isFieldEmpty(1,2))
+    else if(m[1][0] == m[1][1] && m[1][1] == m[1][2] && !isFieldEmpty(1,2) && m[1][2]==PIECE_O)
         return true;
-    else if(m[2][0] == m[2][1] && m[2][1] == m[2][2] && !isFieldEmpty(2,2))
+    else if(m[2][0] == m[2][1] && m[2][1] == m[2][2] && !isFieldEmpty(2,2)&& m[2][2]==PIECE_O )
         return true;
 
     return false;
@@ -83,11 +87,11 @@ bool Board::checkRows() const
 // check column win conditions
 bool Board::checkColumns() const
 {
-    if(m[0][0] == m[1][0] && m[1][0] == m[2][0] && !isFieldEmpty(2,0))
+    if(m[0][0] == m[1][0] && m[1][0] == m[2][0] && !isFieldEmpty(2,0)&& m[2][0]==PIECE_O)
         return true;
-    else if(m[0][1] == m[1][1] && m[1][1] == m[2][1] && !isFieldEmpty(2,1))
+    else if(m[0][1] == m[1][1] && m[1][1] == m[2][1] && !isFieldEmpty(2,1) && m[2][1]==PIECE_O)
         return true;
-    else if(m[0][2] == m[1][2] && m[1][2] == m[2][2] && !isFieldEmpty(2,2))
+    else if(m[0][2] == m[1][2] && m[1][2] == m[2][2] && !isFieldEmpty(2,2) && m[2][2]==PIECE_O)
         return true;
 
     return false;
@@ -96,9 +100,45 @@ bool Board::checkColumns() const
 // check diagonal win conditions
 bool Board::checkDiagonals() const
 {
-    if(m[0][0] == m[1][1] && m[1][1] == m[2][2] && !isFieldEmpty(2,2))
+    if(m[0][0] == m[1][1] && m[1][1] == m[2][2] && !isFieldEmpty(2,2) && m[2][2]==PIECE_O)
         return true;
-    else if(m[0][2] == m[1][1] && m[1][1] == m[2][0] && !isFieldEmpty(2,0))
+    else if(m[0][2] == m[1][1] && m[1][1] == m[2][0] && !isFieldEmpty(2,0) && m[2][0]==PIECE_O)
+        return true;
+
+    return false;
+}
+
+bool Board::checkRows1() const
+{
+    if(m[0][0] == m[0][1] && m[0][1] == m[0][2] && !isFieldEmpty(0,2) && m[0][2]==PIECE_X)
+        return true;
+    else if(m[1][0] == m[1][1] && m[1][1] == m[1][2] && !isFieldEmpty(1,2) && m[1][2]==PIECE_X)
+        return true;
+    else if(m[2][0] == m[2][1] && m[2][1] == m[2][2] && !isFieldEmpty(2,2)&& m[2][2]==PIECE_X )
+        return true;
+
+    return false;
+}
+
+// check column win conditions
+bool Board::checkColumns1() const
+{
+    if(m[0][0] == m[1][0] && m[1][0] == m[2][0] && !isFieldEmpty(2,0)&& m[2][0]==PIECE_X)
+        return true;
+    else if(m[0][1] == m[1][1] && m[1][1] == m[2][1] && !isFieldEmpty(2,1) && m[2][1]==PIECE_X)
+        return true;
+    else if(m[0][2] == m[1][2] && m[1][2] == m[2][2] && !isFieldEmpty(2,2) && m[2][2]==PIECE_X)
+        return true;
+
+    return false;
+}
+
+// check diagonal win conditions
+bool Board::checkDiagonals1() const
+{
+    if(m[0][0] == m[1][1] && m[1][1] == m[2][2] && !isFieldEmpty(2,2) && m[2][2]==PIECE_X)
+        return true;
+    else if(m[0][2] == m[1][1] && m[1][1] == m[2][0] && !isFieldEmpty(2,0) && m[2][0]==PIECE_X)
         return true;
 
     return false;
