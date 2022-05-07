@@ -2125,8 +2125,10 @@ int main( int argc, char* argv[] )
 				gTextTexture.loadFromRenderedText("Shivalik",textColor,gFont,gRenderer);//41,4
 				gTextTexture.render(gRenderer,32*32-camera.x,13*32-camera.y,0,0);
 				
-				gTextTexture.loadFromRenderedText(rece,textColor,gFont,gRenderer);//41,4
-				gTextTexture.render(gRenderer,30*32,5*32,0,0);
+				SDL_Color newcolor = {255,255,255};
+
+				gTextTexture.loadFromRenderedText("Message : " + rece,newcolor,gFont,gRenderer);//41,4
+				gTextTexture.render(gRenderer,65,190,0,0);
 
 				//MinimapTexture.render(gRenderer,1500,0,0,0);
 				dot2.renderPlayer2(camera,gTextTexture,myFont,gRenderer);
@@ -2353,13 +2355,13 @@ int main( int argc, char* argv[] )
 					if (inpmsg != "")
 					{
 						// Render new text
-				displayText(gRenderer,inpmsg,SCREEN_WIDTH,SCREEN_HEIGHT, 0.25,0.15,0.5,0.10,0.32,0.17);
+				displayText(gRenderer,inpmsg,SCREEN_WIDTH,SCREEN_HEIGHT, 0.5,0.9,0.5,0.10,0.32,0.17);
 					}
 					// Text is empty
 					else
 					{
 						// Render space texture
-				displayText(gRenderer," ",SCREEN_WIDTH,SCREEN_HEIGHT, 0.25,0.15,0.5,0.10,0.32,0.17);
+				displayText(gRenderer," ",SCREEN_WIDTH,SCREEN_HEIGHT, 0.5,0.9,0.5,0.10,0.32,0.17);
 					}
 				}
 				ResumeButton.render();
