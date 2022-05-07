@@ -2457,13 +2457,13 @@ int main( int argc, char* argv[] )
 					if (inpmsg != "")
 					{
 						// Render new text
-				displayText(gRenderer,inpmsg,SCREEN_WIDTH,SCREEN_HEIGHT, 0.5,0.9,0.5,0.10,0.32,0.17);
+				displayText(gRenderer,inpmsg,SCREEN_WIDTH,SCREEN_HEIGHT, 0.5,0.9,0.5,0.10,0.57,0.92);
 					}
 					// Text is empty
 					else
 					{
 						// Render space texture
-				displayText(gRenderer," ",SCREEN_WIDTH,SCREEN_HEIGHT, 0.5,0.9,0.5,0.10,0.32,0.17);
+				displayText(gRenderer," ",SCREEN_WIDTH,SCREEN_HEIGHT, 0.5,0.9,0.5,0.10,0.57,0.92);
 					}
 				}
 				ResumeButton.render();
