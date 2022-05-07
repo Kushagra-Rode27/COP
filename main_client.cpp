@@ -76,6 +76,8 @@ void print_init_flags(int flags);
 //lib 49,17
 //57,13
 //51,6
+string rece="none";
+string inpmsg="none";
 
 int emote=0;
 int emotetimer=0;
@@ -182,6 +184,7 @@ struct Info
 	int tusk;
 	int time;
 	int emoji;
+	char* s;
 	//Point* pointarr;
 };
 
@@ -200,14 +203,15 @@ void toNetwork(char *buffer, struct Info *mydata)
     std::sprintf(buffer + 23, "%03d", mydata->CG);
     std::sprintf(buffer + 27, "%03d", mydata->money);
 	std::sprintf(buffer+31,"%06d",mydata->tusk);
-	std::sprintf(buffer+38,"%01d",mydata->time);
+    std::sprintf(buffer+38,"%01d",mydata->time);
 	std::sprintf(buffer+40,"%03d",mydata->emoji);
-    buffer[44] = '#';
+	std::sprintf(buffer+44,"%.15s",mydata->s);
+    buffer[60] = '#';
 }
 
 bool fromNetwork(char *buffer, struct Info *indata)
 {
-    if (buffer[0] != '*' || buffer[44] != '#')
+    if (buffer[0] != '*' || buffer[60] != '#')
         return false;
     indata->stateFirst = atoi(buffer + 1);
     indata->stateSecond = atoi(buffer + 4);
@@ -220,6 +224,7 @@ bool fromNetwork(char *buffer, struct Info *indata)
 	indata->tusk=atoi(buffer+31);
 	indata->time=atoi(buffer+38);
 	indata->emoji=atoi(buffer+40);
+	indata->s=buffer+44;
     return true;
 }
 
@@ -1360,7 +1365,7 @@ bool MoveSnake(){
 
 	}
 	else{
-		
+		return false;
 	}
 
 	return true;
@@ -1416,6 +1421,25 @@ void GameLoop(bool &quit){
 
 int poweruptimer;
 
+void displayText(SDL_Renderer *gRenderer, std::string sentence, int WindowWidth, int WindowHeight, double textBoxX, double textBoxY, double textBoxWidth, double textBoxHeight, double sentenceX, double sentenceY)
+{
+    LTexture myTexture;
+    SDL_Color textColor = {0, 0, 0};
+    if (!myTexture.loadFromRenderedText(sentence, textColor, gFont, gRenderer))
+    {
+        printf("Error in loading texture for string ");
+    }
+
+    SDL_Rect textbox = {(int)(((double)(WindowWidth)) * textBoxX), (int)(((double)(WindowHeight)) * textBoxY), (int)(((double)(WindowWidth)) * textBoxWidth), (int)(((double)(WindowHeight)) * textBoxHeight)};
+
+    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderFillRect(gRenderer, &textbox);
+
+    // myTexture.render(gRenderer,WindowWidth/3 , WindowHeight*9/10, WindowWidth/3 , WindowHeight/11 );
+    myTexture.render(gRenderer, (int)(((double)(WindowWidth)) * sentenceX), (int)(((double)(WindowHeight)) * sentenceY));
+    myTexture.free();
+}
+
 int main( int argc, char* argv[] )
 {
 	//starting sockets for client
@@ -1423,10 +1447,11 @@ int main( int argc, char* argv[] )
 
 	int cli_fd, bytes_sent, bytes_recvd;
 	int port_no = PORT;
-	char in_buffer[45], out_buffer[45], sname[16], cname[16];
+	char in_buffer[61], out_buffer[61], sname[16], cname[16];
 
 	struct Info indata;
-	struct Info mydata = {42, 5, 6, 7, 8, 9, 1, 4,0,0,0};
+	strcpy(sname, inpmsg.c_str());
+	struct Info mydata = {42, 5, 6, 7, 8, 9, 1, 4,0,0,0,sname};
 	bool validate_data;
 
 	// IP address of server
@@ -1643,7 +1668,7 @@ int main( int argc, char* argv[] )
 			LButton kumaon; 
 			kumaon.InitialiseButton(1,&gameTimer,&curr_state,0.80,0.25,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/KUMAON.png","");
 			
-			
+			bool renderText=true;
 			
 			LButton nilgiri; 
 			nilgiri.InitialiseButton(1,&gameTimer,&curr_state,0.05,0.40,0.1,0.1,"sounds/mixkit-quick-win-video-game-notification-269.wav",gRenderer,"assets/NILGIRI.png","");
@@ -2100,6 +2125,9 @@ int main( int argc, char* argv[] )
 				gTextTexture.loadFromRenderedText("Shivalik",textColor,gFont,gRenderer);//41,4
 				gTextTexture.render(gRenderer,32*32-camera.x,13*32-camera.y,0,0);
 				
+				gTextTexture.loadFromRenderedText(rece,textColor,gFont,gRenderer);//41,4
+				gTextTexture.render(gRenderer,30*32,5*32,0,0);
+
 				//MinimapTexture.render(gRenderer,1500,0,0,0);
 				dot2.renderPlayer2(camera,gTextTexture,myFont,gRenderer);
 
@@ -2258,6 +2286,37 @@ int main( int argc, char* argv[] )
 					{
 						quit = true;
 					}
+					else if (e.type == SDL_KEYDOWN)
+					{
+						// Handle backspace
+						if (e.key.keysym.sym == SDLK_BACKSPACE && inpmsg.length() > 0)
+						{
+							// lop off character
+							inpmsg.pop_back();
+							renderText = true;
+						}
+						// Handle copy
+						else if (e.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL)
+						{
+							SDL_SetClipboardText(inpmsg.c_str());
+						}
+						// Handle paste
+						else if (e.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL)
+						{
+							inpmsg = SDL_GetClipboardText();
+							renderText = true;
+						}
+					}
+					else if (e.type == SDL_TEXTINPUT)
+					{
+						// Not copy or pasting
+						if (!(SDL_GetModState() & KMOD_CTRL && (e.text.text[0] == 'c' || e.text.text[0] == 'C' || e.text.text[0] == 'v' || e.text.text[0] == 'V')))
+						{
+							// Append character
+							inpmsg += e.text.text;
+							renderText = true;
+						}
+					}
 
 					//dot.handleEvent( e );
 					ResumeButton.handleEvent(&e,5);
@@ -2288,7 +2347,21 @@ int main( int argc, char* argv[] )
 				MinimapTexture.render(gRenderer,1200,SCREEN_HEIGHT/2 - 125);
 				minidot1.render(gRenderer,1200 + ((dot.mBox.x*500)/4800),(SCREEN_HEIGHT/2 - 125) + (dot.mBox.y*250)/2400);
 				minidot2.render(gRenderer,1200 + ((dot2.mBox.x*500)/4800),(SCREEN_HEIGHT/2 - 125) + (dot2.mBox.y*250)/2400);
-
+				if (renderText)
+				{
+					// Text is not empty
+					if (inpmsg != "")
+					{
+						// Render new text
+				displayText(gRenderer,inpmsg,SCREEN_WIDTH,SCREEN_HEIGHT, 0.25,0.15,0.5,0.10,0.32,0.17);
+					}
+					// Text is empty
+					else
+					{
+						// Render space texture
+				displayText(gRenderer," ",SCREEN_WIDTH,SCREEN_HEIGHT, 0.25,0.15,0.5,0.10,0.32,0.17);
+					}
+				}
 				ResumeButton.render();
 				SDL_RenderPresent( gRenderer );
 			}
@@ -2499,12 +2572,8 @@ int main( int argc, char* argv[] )
 			// 	curr_state=5;
 			// }
 			else if (curr_state==10){
-				if (gamestart){
-					NewRound();
-					gamestart=false;
-				}
 				
-				while (SDL_PollEvent(&e)){
+				while (SDL_PollEvent(&e)!=0){
 
 					if (e.type == SDL_QUIT){
 						curr_state=5;
@@ -2542,6 +2611,10 @@ int main( int argc, char* argv[] )
 						
 					}
 
+				}
+				if (gamestart){
+					NewRound();
+					gamestart=false;
 				}
 
 				SDL_RenderClear(gRenderer);
@@ -2612,7 +2685,8 @@ int main( int argc, char* argv[] )
 						var2=emote;
 					}
 					else var2=0;
-			mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money,dot.tasksComp,var,var2};
+			strcpy(sname, inpmsg.c_str());
+			mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money,dot.tasksComp,var,var2,sname};
 
 			toNetwork(out_buffer, &mydata);
 			bytes_sent = send(cli_fd, &out_buffer, sizeof(out_buffer), 0);
@@ -2622,7 +2696,7 @@ int main( int argc, char* argv[] )
 				cout<<"hello"<<"\n";
 				curr_state=7;
 			}
-			else if (bytes_sent != 45){
+			else if (bytes_sent != 61){
 				cout << "complete data not sent, what is going on???????\n";
 				curr_state=7;
 			}
@@ -2643,7 +2717,7 @@ int main( int argc, char* argv[] )
 				dot2.money = 0;
 			}
 
-			else if (bytes_recvd != 45){
+			else if (bytes_recvd != 61){
 				curr_state=7;
 				cout << "complete data not received, what is going on!!!\n"<<bytes_recvd<<"\n";
 				dot2.myState.first = 0;
@@ -2675,6 +2749,7 @@ int main( int argc, char* argv[] )
 					if (indata.time==1) curr_state=7;
 					if (emote!=indata.emoji && indata.emoji!=0) emotetimer=5;
 					emote=indata.emoji;
+					rece=indata.s;
 				}
 			}
 		}

@@ -75,10 +75,13 @@ LTexture CoolTexture;
 LTexture minidot1;
 LTexture minidot2;
 
-string inpmsg;
+string inpmsg="none";
 
 LTexture startmsg;
 LTexture hostelmsg;
+
+bool displaymsg=false;
+string rece="none";
 // init SDL
 // SDL_Window* initSDL(SDL_Window* window)
 // {
@@ -237,6 +240,7 @@ struct Info
 	int tusk;
 	int time;
 	int emoji;
+	char* s;
 	//Point* pointarr;
 };
 
@@ -257,12 +261,13 @@ void toNetwork(char *buffer, struct Info *mydata)
 	std::sprintf(buffer+31,"%06d",mydata->tusk);
     std::sprintf(buffer+38,"%01d",mydata->time);
 	std::sprintf(buffer+40,"%03d",mydata->emoji);
-    buffer[44] = '#';
+	std::sprintf(buffer+44,"%.15s",mydata->s);
+    buffer[60] = '#';
 }
 
 bool fromNetwork(char *buffer, struct Info *indata)
 {
-    if (buffer[0] != '*' || buffer[44] != '#')
+    if (buffer[0] != '*' || buffer[60] != '#')
         return false;
     indata->stateFirst = atoi(buffer + 1);
     indata->stateSecond = atoi(buffer + 4);
@@ -275,6 +280,7 @@ bool fromNetwork(char *buffer, struct Info *indata)
 	indata->tusk=atoi(buffer+31);
 	indata->time=atoi(buffer+38);
 	indata->emoji=atoi(buffer+40);
+	indata->s=buffer+44;
     return true;
 }
 
@@ -1495,9 +1501,10 @@ int main( int argc, char* argv[] )
 	//starting sockets
 	int serv_fd, newserv_fd, bytes_sent, bytes_recvd;
     int port_no = PORT;
-    char in_buffer[45], out_buffer[45], sname[64], cname[64];
+    char in_buffer[61], out_buffer[61], sname[64], cname[64];
     struct Info indata;
-    struct Info mydata = {42, 5, 6, 7, 8, 9, 1, 4,0,0,0};
+	strcpy(sname, inpmsg.c_str());
+    struct Info mydata = {42, 5, 6, 7, 8, 9, 1, 4,0,0,0,sname};
     bool validate_data;
 
     char cli_ip[INET_ADDRSTRLEN];
@@ -2218,6 +2225,9 @@ int main( int argc, char* argv[] )
 				gTextTexture.render(gRenderer,32*32-camera.x,26*32-camera.y,0,0);
 				gTextTexture.loadFromRenderedText("Shivalik",textColor,gFont,gRenderer);//41,4
 				gTextTexture.render(gRenderer,32*32-camera.x,13*32-camera.y,0,0);
+
+				gTextTexture.loadFromRenderedText(rece,textColor,gFont,gRenderer);//41,4
+				gTextTexture.render(gRenderer,30*32,5*32,0,0);
 				
 				
 
@@ -2381,6 +2391,9 @@ int main( int argc, char* argv[] )
 							renderText = true;
 						}
 						// Handle copy
+						else if (e.key.keysym.sym==SDLK_KP_ENTER){
+							displaymsg=true;
+						}
 						else if (e.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL)
 						{
 							SDL_SetClipboardText(inpmsg.c_str());
@@ -2577,12 +2590,8 @@ int main( int argc, char* argv[] )
         			state = 0; // so the game loop knows the end of the current game
 			}
 			else if (curr_state==10){
-				if (gamestart){
-					NewRound();
-					gamestart=false;
-				}
 				
-				while (SDL_PollEvent(&e)){
+				while (SDL_PollEvent(&e)!=0){
 
 					if (e.type == SDL_QUIT){
 						curr_state=5;
@@ -2620,6 +2629,10 @@ int main( int argc, char* argv[] )
 						
 					}
 
+				}
+				if (gamestart){
+					NewRound();
+					gamestart=false;
 				}
 
 				SDL_RenderClear(gRenderer);
@@ -2682,7 +2695,7 @@ int main( int argc, char* argv[] )
                              << "\n";
 							 curr_state=7;
 					}
-                    else if (bytes_recvd != 45){
+                    else if (bytes_recvd != 61){
                         cout << "complete data not received \n";
 						curr_state=7;
 						dot2.myState.first = 0;
@@ -2714,6 +2727,7 @@ int main( int argc, char* argv[] )
 							if (indata.time==1) curr_state=7;
 							if (emote!=indata.emoji && indata.emoji!=0) emotetimer=5;
 							if (indata.emoji!=0) emote=indata.emoji;
+							rece=indata.s;
                         }
                     }
 
@@ -2732,15 +2746,15 @@ int main( int argc, char* argv[] )
 					// if (win==false){
 					// 	curr_state=7;
 					// }
-
-                    mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money, dot.tasksComp,var,var2};
+					strcpy(sname, inpmsg.c_str());
+                    mydata = {dot.myState.first, dot.myState.second, dot.mBox.x, dot.mBox.y, curr_state, (int)dot.health, (int)dot.CG, (int)dot.money, dot.tasksComp,var,var2,sname};
 
 
                     toNetwork(out_buffer, &mydata);
                     bytes_sent = send(newserv_fd, &out_buffer, sizeof(out_buffer), 0);
                     if (bytes_sent == -1)
                         cout << "Frame data not sent" << "\n"; 
-                    else if (bytes_sent != 45)
+                    else if (bytes_sent != 61)
                         cout << "complete data not sent, what is going on???????\n";
                 }
 
