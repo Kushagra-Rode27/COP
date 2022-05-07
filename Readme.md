@@ -3,9 +3,9 @@ by Kushagra Rode, 2020CS10354
 & Akarsh Jain, 2020CS10318
 
 The name of our game is SURVIVE IITD.
-This is a 2 player game based on IIT Delhi Campus made using SDL in C++. In this game you will find various kinds of tasks which you can do. But, why should you even do tasks?? The reason for doing tasks is to maintain 3 most important parameters for your survival in IITD, your Health, CG and Money. Apart from this you can also enable powerups and then collide with the opponent to decrease their health. Further, there are various features like a Minimap , an Info sheet displaying the tasks left to be done and also you could even send an emoji to your opponent while you are playing.
+This is a 2 player game based on IIT Delhi Campus made using SDL in C++. In this game you will find various kinds of tasks which you can do. But, why should you even do tasks?? The reason for doing tasks is to maintain 3 most important parameters for your survival in IITD, your Health, CG and Money. Apart from this you can also enable power-ups and then collide with the opponent to decrease their health. Further, there are various features like a Minimap , an Info sheet displaying the tasks left to be done and also you could even send an emoji to your opponent while you are playing. You can further read the instructions pdf for more details.
 
-# How to Install
+# How to Install (On Linux)
 First we install the SDL libraries by the following commands :-
 ```bash
   sudo apt-get install libsdl2-dev
@@ -44,3 +44,11 @@ make client
    - https://beej.us/guide/bgnet/html/
    - http://www.sdltutorials.com/sdl-net-part-1-user-tutorial
 
+4. For ping pong game,
+   - https://github.com/cluder/pong_sdl2/tree/master/Pong_LibSDL2/src
+
+5. For tic-tac-toe
+   - https://github.com/t3nma/sdl2-TicTacToe/tree/master/src
+
+6. For snake game
+   - https://github.com/teamclouday/Snake_Game-SDL2

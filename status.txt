@@ -1,1 +1,4 @@
-The game seems to be working fine in terms of the input
+It compiles and runs as we want it to. 
+
+Just one thing the retry button doesnt seem to work completely. 
+Snake game is under construction and not completed
